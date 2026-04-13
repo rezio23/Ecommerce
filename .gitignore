@@ -1,0 +1,18 @@
+# vendor folder
+vendor/
+
+# Environment variables
+.env
+.env.*
+
+# MacOS
+.DS_Store
+
+# IDEs and Text Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Composer
+composer.phar
