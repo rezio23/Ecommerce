@@ -123,32 +123,32 @@ $activeBrand = $brandRanking[$activeBrandIndex];
 $categoryCards = [
     [
         'label' => 'Perfume',
-        'brand' => 'Chanel',
-        'image' => 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=520&q=80',
+        'brand' => 'Basmni',
+        'image' => 'https://static.wixstatic.com/media/7187d3_912f04d78e424ab98bd1bf0decaa5c72~mv2.png/v1/fill/w_560,h_746,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/7187d3_912f04d78e424ab98bd1bf0decaa5c72~mv2.png',
         'class' => 'category-card--tall',
     ],
     [
         'label' => 'Clothes',
         'brand' => 'Nike',
-        'image' => 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=520&q=80',
+        'image' => 'https://static.nike.com/a/images/f_auto,cs_srgb/w_1536,c_limit/5feaa9c2-a959-4986-872a-54ab79f32485/nike-lookbook.jpg',
         'class' => 'category-card--high',
     ],
     [
         'label' => 'Bag',
-        'brand' => 'Gucci',
-        'image' => 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=520&q=80',
+        'brand' => 'Polo',
+        'image' => 'https://assets.vogue.com/photos/66f8397bb531aa4c6be8a91b/master/w_2560%2Cc_limit/00017-polo-ralph-lauren-spring-2025-ready-to-wear-detail-credit-brand.jpg',
         'class' => 'category-card--mid',
     ],
     [
         'label' => 'Accessories',
-        'brand' => 'Ray-Ban',
-        'image' => 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=520&q=80',
+        'brand' => 'Gucci',
+        'image' => 'https://www.net-a-porter.com/variants/images/46376663162894040/ou/w2000_q60.jpg',
         'class' => 'category-card--wide',
     ],
     [
         'label' => 'Premium',
-        'brand' => 'Chanel',
-        'image' => 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=520&q=80',
+        'brand' => 'Prada',
+        'image' => 'https://www.packshotfactory.co.uk/leather-goods-explorer/prada-handbag_001393_p.jpg',
         'class' => 'category-card--high',
     ],
 ];
@@ -184,6 +184,79 @@ $products = [
     ],
 ];
 
+$menProducts = [
+    [
+        'name' => 'Core Knit Polo',
+        'brand' => 'Polo',
+        'description' => 'Clean collar layer with a soft handfeel.',
+        'price' => 118,
+        'image' => 'https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=620&q=80',
+    ],
+    [
+        'name' => 'City Runner Set',
+        'brand' => 'Nike',
+        'description' => 'Lightweight pieces built for motion.',
+        'price' => 174,
+        'image' => 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=620&q=80',
+    ],
+    [
+        'name' => 'Classic Denim Layer',
+        'brand' => 'Adidas',
+        'description' => 'Everyday denim with premium structure.',
+        'price' => 142,
+        'image' => 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=620&q=80',
+    ],
+    [
+        'name' => 'Black Utility Bag',
+        'brand' => 'Gucci',
+        'description' => 'Compact carry for daily essentials.',
+        'price' => 260,
+        'image' => 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=620&q=80',
+    ],
+];
+
+$womenProducts = [
+    [
+        'name' => 'Soft Crop Hoodie',
+        'brand' => 'Nike',
+        'description' => 'Relaxed fleece with a sculpted fit.',
+        'price' => 128,
+        'image' => 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=620&q=80',
+    ],
+    [
+        'name' => 'Evening Mini Tote',
+        'brand' => 'Gucci',
+        'description' => 'Bright structured bag for polished looks.',
+        'price' => 286,
+        'image' => 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=620&q=80',
+    ],
+    [
+        'name' => 'Rose Signature Pour',
+        'brand' => 'Chanel',
+        'description' => 'Fresh floral notes for day-to-night wear.',
+        'price' => 156,
+        'image' => 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=620&q=80',
+    ],
+    [
+        'name' => 'Pearl Sport Sneaker',
+        'brand' => 'Adidas',
+        'description' => 'Soft runner with a clean profile.',
+        'price' => 138,
+        'image' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=620&q=80',
+    ],
+];
+
+$productAccordions = [
+    'man' => [
+        'label' => 'Man',
+        'products' => $menProducts,
+    ],
+    'woman' => [
+        'label' => 'Woman',
+        'products' => $womenProducts,
+    ],
+];
+
 $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELESS CUTS', 'CLASSIC AND COMFORT'];
 ?>
 <!DOCTYPE html>
@@ -195,7 +268,7 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=34">
+    <link rel="stylesheet" href="assets/css/styles.css?v=48">
 </head>
 <body>
     <header class="site-header" id="home">
@@ -242,7 +315,7 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
             </div>
 
             <figure class="hero-model">
-                <img src="https://png.pngtree.com/png-vector/20250828/ourlarge/pngtree-nike-air-dynamic-fashion-with-female-model-and-neon-green-png-image_17328525.webp" alt="Nike Air dynamic fashion female model with neon green outfit">
+                <img src="https://wallpapers.com/images/hd/high-top-nike-sneakers-png-plu11-rhcegylkjkwb4db9.png" alt="High top Nike sneakers">
             </figure>
 
             <div class="hero-sidecopy">
@@ -307,6 +380,16 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
         <span class="section-anchor" id="gender" aria-hidden="true"></span>
 
         <section class="category-section" id="shop" aria-labelledby="category-heading">
+            <section class="feature-ribbon" aria-label="Store quality highlights">
+                <div class="feature-track">
+                    <?php for ($i = 0; $i < 4; $i++): ?>
+                        <?php foreach ($featureLine as $feature): ?>
+                            <span><?= htmlspecialchars($feature); ?></span>
+                        <?php endforeach; ?>
+                    <?php endfor; ?>
+                </div>
+            </section>
+
             <div class="section-heading">
                 <h2 id="category-heading">Explore with all<br><span>- luxuries</span></h2>
                 <a href="#new" class="text-link">2026</a>
@@ -325,16 +408,6 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
             </div>
         </section>
 
-        <section class="feature-ribbon" aria-label="Store quality highlights">
-            <div class="feature-track">
-                <?php for ($i = 0; $i < 4; $i++): ?>
-                    <?php foreach ($featureLine as $feature): ?>
-                        <span><?= htmlspecialchars($feature); ?></span>
-                    <?php endforeach; ?>
-                <?php endfor; ?>
-            </div>
-        </section>
-
         <section class="products-section" id="new" aria-labelledby="products-heading">
             <div class="section-heading section-heading--products">
                 <h2 id="products-heading">New drops<br><span>- ready now</span></h2>
@@ -347,41 +420,76 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
             </div>
 
             <div class="products-panel">
-                <div class="products-panel__heading">
-                    <h3>Popular</h3>
-                    <span aria-hidden="true"></span>
+                <button
+                    class="products-panel__heading"
+                    type="button"
+                    data-product-toggle
+                    aria-expanded="true"
+                    aria-controls="products-popular"
+                >
+                    <span>Popular</span>
+                </button>
+
+                <div class="product-panel-content product-panel-content--popular" id="products-popular" data-product-content>
+                    <div class="product-grid">
+                        <?php foreach ($products as $product): ?>
+                            <article class="product-card" data-product-card data-name="<?= htmlspecialchars(strtolower($product['name'] . ' ' . $product['brand'])); ?>">
+                                <a class="product-image" href="#" aria-label="View <?= htmlspecialchars($product['name']); ?>">
+                                    <img src="<?= htmlspecialchars($product['image']); ?>" alt="<?= htmlspecialchars($product['name']); ?>">
+                                </a>
+                                <div class="product-info">
+                                    <p><?= htmlspecialchars($product['brand']); ?></p>
+                                    <h3><?= htmlspecialchars($product['name']); ?></h3>
+                                    <span><?= htmlspecialchars($product['description']); ?></span>
+                                </div>
+                                <div class="product-actions">
+                                    <strong>$<?= number_format($product['price'], 2); ?></strong>
+                                    <button class="cart-button" type="button" data-add-to-cart>
+                                        <span>Add to Cart</span>
+                                        <i data-lucide="arrow-right"></i>
+                                    </button>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
 
-                <div class="product-grid">
-                    <?php foreach ($products as $product): ?>
-                        <article class="product-card" data-product-card data-name="<?= htmlspecialchars(strtolower($product['name'] . ' ' . $product['brand'])); ?>">
-                            <a class="product-image" href="#" aria-label="View <?= htmlspecialchars($product['name']); ?>">
-                                <img src="<?= htmlspecialchars($product['image']); ?>" alt="<?= htmlspecialchars($product['name']); ?>">
-                            </a>
-                            <div class="product-info">
-                                <p><?= htmlspecialchars($product['brand']); ?></p>
-                                <h3><?= htmlspecialchars($product['name']); ?></h3>
-                                <span><?= htmlspecialchars($product['description']); ?></span>
-                            </div>
-                            <div class="product-actions">
-                                <strong>$<?= number_format($product['price'], 2); ?></strong>
-                                <button class="cart-button" type="button" data-add-to-cart>
-                                    <span>Add to Cart</span>
-                                    <i data-lucide="arrow-right"></i>
-                                </button>
-                            </div>
-                        </article>
-                    <?php endforeach; ?>
-                </div>
-
-                <div class="product-panel-row">
-                    <span>Man</span>
-                    <i data-lucide="chevron-up"></i>
-                </div>
-                <div class="product-panel-row">
-                    <span>Woman</span>
-                    <i data-lucide="chevron-up"></i>
-                </div>
+                <?php foreach ($productAccordions as $key => $group): ?>
+                    <?php $panelId = 'products-' . $key; ?>
+                    <button
+                        class="product-panel-row"
+                        type="button"
+                        data-product-toggle
+                        aria-expanded="false"
+                        aria-controls="<?= htmlspecialchars($panelId); ?>"
+                    >
+                        <span><?= htmlspecialchars($group['label']); ?></span>
+                        <i data-lucide="chevron-up"></i>
+                    </button>
+                    <div class="product-panel-content" id="<?= htmlspecialchars($panelId); ?>" data-product-content hidden>
+                        <div class="product-grid product-grid--nested">
+                            <?php foreach ($group['products'] as $product): ?>
+                                <article class="product-card" data-product-card data-name="<?= htmlspecialchars(strtolower($product['name'] . ' ' . $product['brand'] . ' ' . $group['label'])); ?>">
+                                    <a class="product-image" href="#" aria-label="View <?= htmlspecialchars($product['name']); ?>">
+                                        <img src="<?= htmlspecialchars($product['image']); ?>" alt="<?= htmlspecialchars($product['name']); ?>">
+                                    </a>
+                                    <div class="product-info">
+                                        <p><?= htmlspecialchars($product['brand']); ?></p>
+                                        <h3><?= htmlspecialchars($product['name']); ?></h3>
+                                        <span><?= htmlspecialchars($product['description']); ?></span>
+                                    </div>
+                                    <div class="product-actions">
+                                        <strong>$<?= number_format($product['price'], 2); ?></strong>
+                                        <button class="cart-button" type="button" data-add-to-cart>
+                                            <span>Add to Cart</span>
+                                            <i data-lucide="arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </article>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </section>
     </main>
@@ -392,6 +500,6 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="assets/js/app.js?v=7"></script>
+    <script src="assets/js/app.js?v=9"></script>
 </body>
 </html>

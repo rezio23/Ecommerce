@@ -47,6 +47,61 @@ searchInput?.addEventListener('input', (event) => {
     });
 });
 
+const productToggles = document.querySelectorAll('[data-product-toggle]');
+
+productToggles.forEach((button) => {
+    const content = document.getElementById(button.getAttribute('aria-controls'));
+
+    if (!content) {
+        return;
+    }
+
+    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+
+    content.toggleAttribute('hidden', !isExpanded);
+    content.classList.toggle('is-open', isExpanded);
+    content.style.maxHeight = isExpanded ? 'none' : '0px';
+
+    button.addEventListener('click', () => {
+        const shouldOpen = button.getAttribute('aria-expanded') !== 'true';
+
+        button.setAttribute('aria-expanded', String(shouldOpen));
+
+        if (shouldOpen) {
+            content.hidden = false;
+            content.style.maxHeight = '0px';
+            content.classList.add('is-open');
+
+            window.requestAnimationFrame(() => {
+                content.style.maxHeight = `${content.scrollHeight}px`;
+            });
+
+            return;
+        }
+
+        content.style.maxHeight = `${content.scrollHeight}px`;
+
+        window.requestAnimationFrame(() => {
+            content.classList.remove('is-open');
+            content.style.maxHeight = '0px';
+        });
+    });
+
+    content.addEventListener('transitionend', (event) => {
+        if (event.propertyName !== 'max-height') {
+            return;
+        }
+
+        const isOpen = button.getAttribute('aria-expanded') === 'true';
+
+        if (isOpen) {
+            content.style.maxHeight = 'none';
+        } else {
+            content.hidden = true;
+        }
+    });
+});
+
 const brandStackImages = Array.from(document.querySelectorAll('[data-brand-stack]'));
 const brandSwitchers = document.querySelectorAll('[data-brand-trigger]');
 const brandItems = Array.from(document.querySelectorAll('[data-brand-item]'));
