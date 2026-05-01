@@ -18,7 +18,7 @@ addButtons.forEach((button) => {
         button.setAttribute('aria-label', 'Added to bag');
 
         window.setTimeout(() => {
-            label.textContent = 'Add';
+            label.textContent = 'Add to Cart';
             button.removeAttribute('aria-label');
         }, 1200);
     });
@@ -47,12 +47,12 @@ searchInput?.addEventListener('input', (event) => {
     });
 });
 
-const brandImage = document.querySelector('[data-brand-image]');
+const brandStackImages = Array.from(document.querySelectorAll('[data-brand-stack]'));
 const brandSwitchers = document.querySelectorAll('[data-brand-trigger]');
 const brandItems = Array.from(document.querySelectorAll('[data-brand-item]'));
-const momentStack = brandImage?.closest('.moment-stack');
-let activeBrandImage = brandImage?.getAttribute('src') || '';
+const momentStack = brandStackImages[0]?.closest('.moment-stack');
 let activeBrandIndex = brandItems.findIndex((item) => item.classList.contains('is-active'));
+const brandMotionClasses = ['is-moving-up', 'is-moving-down', 'is-wrapping-up', 'is-wrapping-down'];
 
 if (activeBrandIndex < 0) {
     activeBrandIndex = 0;
@@ -74,24 +74,96 @@ const getBrandSlot = (itemIndex, selectedIndex) => {
     return slot;
 };
 
-const applyBrandSlots = (selectedIndex, directionClass = '') => {
-    brandItems.forEach((item, itemIndex) => {
-        item.classList.remove('is-moving-up', 'is-moving-down');
+const getSlotTransform = (slot) => {
+    const transforms = {
+        '-2': 'calc(-50% - var(--brand-edge-gap))',
+        '-1': 'calc(-50% - var(--brand-step-gap))',
+        0: '-50%',
+        1: 'calc(-50% + var(--brand-step-gap))',
+        2: 'calc(-50% + var(--brand-edge-gap))',
+    };
 
-        if (directionClass) {
+    return transforms[slot] || '-50%';
+};
+
+const getSlotOpacity = (slot) => {
+    const opacities = {
+        '-2': '0.86',
+        '-1': '0.9',
+        0: '1',
+        1: '0.9',
+        2: '0.86',
+    };
+
+    return opacities[slot] || '0.88';
+};
+
+const clearBrandMotion = (item) => {
+    item.classList.remove(...brandMotionClasses);
+    item.style.removeProperty('--brand-from-y');
+    item.style.removeProperty('--brand-from-opacity');
+};
+
+const applyBrandSlots = (selectedIndex, direction = 0) => {
+    brandItems.forEach(clearBrandMotion);
+
+    if (direction !== 0) {
+        brandItems.forEach((item) => {
             void item.offsetWidth;
-            item.classList.add(directionClass);
+        });
+    }
+
+    brandItems.forEach((item, itemIndex) => {
+        const previousSlot = Number(item.dataset.slot || getBrandSlot(itemIndex, activeBrandIndex));
+        const nextSlot = getBrandSlot(itemIndex, selectedIndex);
+        const isWrappingUp = direction > 0 && nextSlot > previousSlot;
+        const isWrappingDown = direction < 0 && nextSlot < previousSlot;
+
+        if (direction !== 0) {
+            item.style.setProperty('--brand-from-y', getSlotTransform(previousSlot));
+            item.style.setProperty('--brand-from-opacity', getSlotOpacity(previousSlot));
         }
 
-        item.dataset.slot = String(getBrandSlot(itemIndex, selectedIndex));
+        item.dataset.slot = String(nextSlot);
+
+        if (isWrappingUp) {
+            item.classList.add('is-wrapping-up');
+        } else if (isWrappingDown) {
+            item.classList.add('is-wrapping-down');
+        } else if (direction > 0) {
+            item.classList.add('is-moving-up');
+        } else if (direction < 0) {
+            item.classList.add('is-moving-down');
+        }
     });
 };
 
 applyBrandSlots(activeBrandIndex);
 
+const getBrandStack = (button) => brandStackImages.map((image) => {
+    const position = image.dataset.brandStack || '';
+    const key = position.charAt(0).toUpperCase() + position.slice(1);
+
+    return {
+        image,
+        src: button.dataset[`brand${key}Image`] || '',
+        alt: button.dataset[`brand${key}Alt`] || button.dataset.brandName || 'Selected brand image',
+    };
+}).filter((item) => item.src);
+
+const preloadBrandStack = (items) => Promise.all(items.map((item) => new Promise((resolve) => {
+    const preload = new Image();
+
+    preload.onload = () => resolve(item);
+    preload.onerror = () => resolve(null);
+    preload.src = item.src;
+}))).then((results) => results.filter(Boolean));
+
+const stackExitMs = 240;
+const stackRevealMs = 760;
+let brandStackSwitchId = 0;
+
 const setActiveBrand = (selectedButton) => {
-    const nextImage = selectedButton.dataset.brandImage;
-    const nextAlt = selectedButton.dataset.brandAlt || selectedButton.dataset.brandName || 'Selected brand image';
     const selectedItem = selectedButton.closest('[data-brand-item]');
     const selectedIndex = brandItems.indexOf(selectedItem);
 
@@ -100,7 +172,7 @@ const setActiveBrand = (selectedButton) => {
     }
 
     const selectedSlot = Number(selectedItem.dataset.slot || 0);
-    const directionClass = selectedSlot > 0 ? 'is-moving-up' : 'is-moving-down';
+    const direction = Math.sign(selectedSlot);
 
     brandSwitchers.forEach((button) => {
         const isSelected = button === selectedButton;
@@ -108,32 +180,60 @@ const setActiveBrand = (selectedButton) => {
         button.closest('li')?.classList.toggle('is-active', isSelected);
     });
 
-    applyBrandSlots(selectedIndex, selectedSlot === 0 ? '' : directionClass);
+    applyBrandSlots(selectedIndex, direction);
     activeBrandIndex = selectedIndex;
 
-    if (!brandImage || !nextImage || nextImage === activeBrandImage) {
+    const nextStack = getBrandStack(selectedButton);
+    const switchId = ++brandStackSwitchId;
+    const hasStackChange = nextStack.some((item) => item.image.getAttribute('src') !== item.src);
+
+    if (!nextStack.length || !hasStackChange) {
+        momentStack?.classList.remove('is-switching', 'is-revealing');
         return;
     }
 
-    const preload = new Image();
+    preloadBrandStack(nextStack).then((loadedStack) => {
+        if (switchId !== brandStackSwitchId || !loadedStack.length) {
+            return;
+        }
 
-    momentStack?.classList.add('is-switching');
+        if (!momentStack) {
+            loadedStack.forEach((item) => {
+                item.image.src = item.src;
+                item.image.alt = item.alt;
+            });
+            return;
+        }
 
-    preload.onload = () => {
-        brandImage.src = nextImage;
-        brandImage.alt = nextAlt;
-        activeBrandImage = nextImage;
+        momentStack.classList.remove('is-revealing');
+        momentStack.classList.add('is-switching');
 
         window.setTimeout(() => {
-            momentStack?.classList.remove('is-switching');
-        }, 80);
-    };
+            if (switchId !== brandStackSwitchId) {
+                return;
+            }
 
-    preload.onerror = () => {
-        momentStack?.classList.remove('is-switching');
-    };
+            loadedStack.forEach((item) => {
+                item.image.src = item.src;
+                item.image.alt = item.alt;
+            });
 
-    preload.src = nextImage;
+            window.requestAnimationFrame(() => {
+                if (switchId !== brandStackSwitchId) {
+                    return;
+                }
+
+                momentStack.classList.remove('is-switching');
+                momentStack.classList.add('is-revealing');
+
+                window.setTimeout(() => {
+                    if (switchId === brandStackSwitchId) {
+                        momentStack.classList.remove('is-revealing');
+                    }
+                }, stackRevealMs);
+            });
+        }, stackExitMs);
+    });
 };
 
 brandSwitchers.forEach((button) => {

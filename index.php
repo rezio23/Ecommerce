@@ -19,62 +19,135 @@ $brandRanking = [
     [
         'name' => 'Balenciaga',
         'count' => 48,
-        'image' => 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=560&q=85',
-        'alt' => 'Balenciaga inspired black streetwear look',
+        'stack' => [
+            'left' => [
+                'image' => 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=500&q=80',
+                'alt' => 'Layered streetwear outfit detail',
+            ],
+            'center' => [
+                'image' => 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=560&q=85',
+                'alt' => 'Balenciaga inspired black streetwear look',
+            ],
+            'right' => [
+                'image' => 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=500&q=80',
+                'alt' => 'Premium folded fashion pieces',
+            ],
+        ],
     ],
     [
         'name' => 'Gucci',
         'count' => 12,
-        'image' => 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=560&q=85',
-        'alt' => 'Gucci inspired premium handbag styling',
+        'stack' => [
+            'left' => [
+                'image' => 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=500&q=80',
+                'alt' => 'Luxury sunglasses accessory detail',
+            ],
+            'center' => [
+                'image' => 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=560&q=85',
+                'alt' => 'Gucci inspired premium handbag styling',
+            ],
+            'right' => [
+                'image' => 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=500&q=80',
+                'alt' => 'Structured designer handbag',
+            ],
+        ],
     ],
     [
         'name' => 'Nike',
         'count' => 48,
-        'image' => 'https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=560&q=85',
-        'alt' => 'Nike black puffer jacket outfit',
+        'stack' => [
+            'left' => [
+                'image' => 'https://images.unsplash.com/photo-1516826957135-700dedea698c?auto=format&fit=crop&w=500&q=80',
+                'alt' => 'Athletic black outfit styling',
+            ],
+            'center' => [
+                'image' => 'https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=560&q=85',
+                'alt' => 'Nike black puffer jacket outfit',
+            ],
+            'right' => [
+                'image' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80',
+                'alt' => 'Sport sneaker product closeup',
+            ],
+        ],
         'active' => true,
     ],
     [
         'name' => 'Polo',
         'count' => 32,
-        'image' => 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=560&q=85',
-        'alt' => 'Polo inspired fragrance bottle',
+        'stack' => [
+            'left' => [
+                'image' => 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=500&q=80',
+                'alt' => 'Classic folded wardrobe essentials',
+            ],
+            'center' => [
+                'image' => 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=560&q=85',
+                'alt' => 'Polo inspired fragrance bottle',
+            ],
+            'right' => [
+                'image' => 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=500&q=80',
+                'alt' => 'Premium fragrance bottle detail',
+            ],
+        ],
     ],
     [
         'name' => 'Adidas',
         'count' => 48,
-        'image' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=560&q=85',
-        'alt' => 'Adidas inspired sneaker in rose color',
+        'stack' => [
+            'left' => [
+                'image' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80',
+                'alt' => 'Sport sneaker product angle',
+            ],
+            'center' => [
+                'image' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=560&q=85',
+                'alt' => 'Adidas inspired sneaker in rose color',
+            ],
+            'right' => [
+                'image' => 'https://images.unsplash.com/photo-1516826957135-700dedea698c?auto=format&fit=crop&w=500&q=80',
+                'alt' => 'Sporty fashion outfit styling',
+            ],
+        ],
     ],
 ];
 
-$activeBrandIndex = array_search(true, array_column($brandRanking, 'active'), true);
-$activeBrandIndex = $activeBrandIndex === false ? 0 : $activeBrandIndex;
+$activeBrandIndex = 0;
+
+foreach ($brandRanking as $index => $brand) {
+    if (!empty($brand['active'])) {
+        $activeBrandIndex = $index;
+        break;
+    }
+}
+
+$activeBrand = $brandRanking[$activeBrandIndex];
 
 $categoryCards = [
     [
         'label' => 'Perfume',
+        'brand' => 'Chanel',
         'image' => 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=520&q=80',
         'class' => 'category-card--tall',
     ],
     [
         'label' => 'Clothes',
+        'brand' => 'Nike',
         'image' => 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=520&q=80',
         'class' => 'category-card--high',
     ],
     [
         'label' => 'Bag',
+        'brand' => 'Gucci',
         'image' => 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=520&q=80',
         'class' => 'category-card--mid',
     ],
     [
         'label' => 'Accessories',
+        'brand' => 'Ray-Ban',
         'image' => 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=520&q=80',
         'class' => 'category-card--wide',
     ],
     [
         'label' => 'Premium',
+        'brand' => 'Chanel',
         'image' => 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=520&q=80',
         'class' => 'category-card--high',
     ],
@@ -84,24 +157,28 @@ $products = [
     [
         'name' => 'Midnight Puffer',
         'brand' => 'Nike',
+        'description' => 'Technical layer for city movement.',
         'price' => 189,
         'image' => 'https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=620&q=80',
     ],
     [
         'name' => 'Orange Stitch Tote',
         'brand' => 'Gucci',
+        'description' => 'Structured carry with a bright finish.',
         'price' => 246,
         'image' => 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=620&q=80',
     ],
     [
         'name' => 'Polo Night Pour',
         'brand' => 'Polo',
+        'description' => 'Warm fragrance for late evenings.',
         'price' => 96,
         'image' => 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=620&q=80',
     ],
     [
         'name' => 'Runner Rose',
         'brand' => 'Adidas',
+        'description' => 'Soft runner with everyday comfort.',
         'price' => 132,
         'image' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=620&q=80',
     ],
@@ -118,7 +195,7 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=5">
+    <link rel="stylesheet" href="assets/css/styles.css?v=34">
 </head>
 <body>
     <header class="site-header" id="home">
@@ -165,7 +242,7 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
             </div>
 
             <figure class="hero-model">
-                <img src="https://images.unsplash.com/photo-1516826957135-700dedea698c?auto=format&fit=crop&w=850&q=85" alt="Model wearing a black luxury outfit">
+                <img src="https://png.pngtree.com/png-vector/20250828/ourlarge/pngtree-nike-air-dynamic-fashion-with-female-model-and-neon-green-png-image_17328525.webp" alt="Nike Air dynamic fashion female model with neon green outfit">
             </figure>
 
             <div class="hero-sidecopy">
@@ -176,7 +253,7 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
 
         <section class="brand-ticker" aria-label="Luxury brands">
             <div class="brand-track">
-                <?php for ($i = 0; $i < 2; $i++): ?>
+                <?php for ($i = 0; $i < 4; $i++): ?>
                     <?php foreach ($tickerBrands as $brand): ?>
                         <span><?= htmlspecialchars($brand); ?></span>
                     <?php endforeach; ?>
@@ -188,9 +265,9 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
             <div class="moment-media">
                 <h2 id="moment-heading">All about -<br><span>2026</span> moment</h2>
                 <div class="moment-stack">
-                    <img class="stack-img stack-img--left" src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=500&q=80" alt="">
-                    <img class="stack-img stack-img--center" data-brand-image src="https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=560&q=85" alt="Nike black puffer jacket outfit">
-                    <img class="stack-img stack-img--right" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80" alt="">
+                    <img class="stack-img stack-img--left" data-brand-stack="left" src="<?= htmlspecialchars($activeBrand['stack']['left']['image']); ?>" alt="<?= htmlspecialchars($activeBrand['stack']['left']['alt']); ?>">
+                    <img class="stack-img stack-img--center" data-brand-stack="center" src="<?= htmlspecialchars($activeBrand['stack']['center']['image']); ?>" alt="<?= htmlspecialchars($activeBrand['stack']['center']['alt']); ?>">
+                    <img class="stack-img stack-img--right" data-brand-stack="right" src="<?= htmlspecialchars($activeBrand['stack']['right']['image']); ?>" alt="<?= htmlspecialchars($activeBrand['stack']['right']['alt']); ?>">
                 </div>
                 <a class="outline-cta" href="#new">
                     See Product
@@ -206,8 +283,12 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
                                 type="button"
                                 data-brand-trigger
                                 data-brand-name="<?= htmlspecialchars($brand['name']); ?>"
-                                data-brand-image="<?= htmlspecialchars($brand['image']); ?>"
-                                data-brand-alt="<?= htmlspecialchars($brand['alt']); ?>"
+                                data-brand-left-image="<?= htmlspecialchars($brand['stack']['left']['image']); ?>"
+                                data-brand-left-alt="<?= htmlspecialchars($brand['stack']['left']['alt']); ?>"
+                                data-brand-center-image="<?= htmlspecialchars($brand['stack']['center']['image']); ?>"
+                                data-brand-center-alt="<?= htmlspecialchars($brand['stack']['center']['alt']); ?>"
+                                data-brand-right-image="<?= htmlspecialchars($brand['stack']['right']['image']); ?>"
+                                data-brand-right-alt="<?= htmlspecialchars($brand['stack']['right']['alt']); ?>"
                                 aria-pressed="<?= !empty($brand['active']) ? 'true' : 'false'; ?>"
                             >
                                 <span class="brand-label">
@@ -223,11 +304,7 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
             </div>
         </section>
 
-        <section class="feature-ribbon" aria-label="Store quality highlights">
-            <?php foreach ($featureLine as $feature): ?>
-                <span><?= htmlspecialchars($feature); ?></span>
-            <?php endforeach; ?>
-        </section>
+        <span class="section-anchor" id="gender" aria-hidden="true"></span>
 
         <section class="category-section" id="shop" aria-labelledby="category-heading">
             <div class="section-heading">
@@ -235,15 +312,26 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
                 <a href="#new" class="text-link">2026</a>
             </div>
 
-            <div class="category-board" id="gender">
+            <div class="category-board">
                 <?php foreach ($categoryCards as $card): ?>
                     <article class="category-card <?= htmlspecialchars($card['class']); ?>">
-                        <h3><?= htmlspecialchars($card['label']); ?></h3>
                         <a href="#new" aria-label="Shop <?= htmlspecialchars($card['label']); ?>">
                             <img src="<?= htmlspecialchars($card['image']); ?>" alt="<?= htmlspecialchars($card['label']); ?> fashion category">
+                            <span class="category-title"><?= htmlspecialchars($card['label']); ?></span>
+                            <span class="category-brand"><?= htmlspecialchars($card['brand']); ?></span>
                         </a>
                     </article>
                 <?php endforeach; ?>
+            </div>
+        </section>
+
+        <section class="feature-ribbon" aria-label="Store quality highlights">
+            <div class="feature-track">
+                <?php for ($i = 0; $i < 4; $i++): ?>
+                    <?php foreach ($featureLine as $feature): ?>
+                        <span><?= htmlspecialchars($feature); ?></span>
+                    <?php endforeach; ?>
+                <?php endfor; ?>
             </div>
         </section>
 
@@ -258,23 +346,42 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
                 <input id="product-search" type="search" placeholder="Try Nike, bag, puffer...">
             </div>
 
-            <div class="product-grid">
-                <?php foreach ($products as $product): ?>
-                    <article class="product-card" data-product-card data-name="<?= htmlspecialchars(strtolower($product['name'] . ' ' . $product['brand'])); ?>">
-                        <a class="product-image" href="#" aria-label="View <?= htmlspecialchars($product['name']); ?>">
-                            <img src="<?= htmlspecialchars($product['image']); ?>" alt="<?= htmlspecialchars($product['name']); ?>">
-                        </a>
-                        <div class="product-info">
-                            <p><?= htmlspecialchars($product['brand']); ?></p>
-                            <h3><?= htmlspecialchars($product['name']); ?></h3>
-                            <span>$<?= number_format($product['price']); ?></span>
-                        </div>
-                        <button class="cart-button" type="button" data-add-to-cart>
-                            <span>Add</span>
-                            <i data-lucide="shopping-bag"></i>
-                        </button>
-                    </article>
-                <?php endforeach; ?>
+            <div class="products-panel">
+                <div class="products-panel__heading">
+                    <h3>Popular</h3>
+                    <span aria-hidden="true"></span>
+                </div>
+
+                <div class="product-grid">
+                    <?php foreach ($products as $product): ?>
+                        <article class="product-card" data-product-card data-name="<?= htmlspecialchars(strtolower($product['name'] . ' ' . $product['brand'])); ?>">
+                            <a class="product-image" href="#" aria-label="View <?= htmlspecialchars($product['name']); ?>">
+                                <img src="<?= htmlspecialchars($product['image']); ?>" alt="<?= htmlspecialchars($product['name']); ?>">
+                            </a>
+                            <div class="product-info">
+                                <p><?= htmlspecialchars($product['brand']); ?></p>
+                                <h3><?= htmlspecialchars($product['name']); ?></h3>
+                                <span><?= htmlspecialchars($product['description']); ?></span>
+                            </div>
+                            <div class="product-actions">
+                                <strong>$<?= number_format($product['price'], 2); ?></strong>
+                                <button class="cart-button" type="button" data-add-to-cart>
+                                    <span>Add to Cart</span>
+                                    <i data-lucide="arrow-right"></i>
+                                </button>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+
+                <div class="product-panel-row">
+                    <span>Man</span>
+                    <i data-lucide="chevron-up"></i>
+                </div>
+                <div class="product-panel-row">
+                    <span>Woman</span>
+                    <i data-lucide="chevron-up"></i>
+                </div>
             </div>
         </section>
     </main>
@@ -285,6 +392,6 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="assets/js/app.js?v=3"></script>
+    <script src="assets/js/app.js?v=7"></script>
 </body>
 </html>
