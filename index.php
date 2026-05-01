@@ -8,9 +8,21 @@ $navItems = [
 ];
 
 $brandBadges = [
-    ['name' => 'adidas', 'abbr' => 'ADI'],
-    ['name' => 'nike', 'abbr' => 'NIKE'],
-    ['name' => 'polo', 'abbr' => 'POLO'],
+    [
+        'name' => 'polo',
+        'abbr' => 'POLO',
+        'logo' => 'https://static.vecteezy.com/system/resources/previews/023/867/295/non_2x/polo-brand-logo-white-symbol-clothes-design-icon-abstract-illustration-with-black-background-free-vector.jpg',
+    ],
+    [
+        'name' => 'nike',
+        'abbr' => 'NIKE',
+        'logo' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHLm_ETnATw3cjxh5JahsJfORsm6HzZts5VA&s',
+    ],
+    [
+        'name' => 'adidas',
+        'abbr' => 'ADIDAS',
+        'logo' => 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/28549a58-638c-4112-81a9-ab45e3bb4453/dg0ugic-e8f7c206-aa5e-4cf5-afdb-ba5c97554682.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiIvZi8yODU0OWE1OC02MzhjLTQxMTItODFhOS1hYjQ1ZTNiYjQ0NTMvZGcwdWdpYy1lOGY3YzIwNi1hYTVlLTRjZjUtYWZkYi1iYTVjOTc1NTQ2ODIuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.2wxaDYrhrd1rwunDfAhi4ooNzr_ZzkRLCwXmW9xaVyQ',
+    ],
 ];
 
 $tickerBrands = ['POLO', 'BALENCIAGA', 'adidas', 'NIKE', 'PUMA', 'GUCCI', 'POLO', 'VERSACE'];
@@ -268,7 +280,7 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=48">
+    <link rel="stylesheet" href="assets/css/styles.css?v=63">
 </head>
 <body>
     <header class="site-header" id="home">
@@ -305,7 +317,7 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
                 <div class="brand-badges" aria-label="Featured brands">
                     <?php foreach ($brandBadges as $badge): ?>
                         <span class="brand-badge" title="<?= htmlspecialchars($badge['name']); ?>">
-                            <?= htmlspecialchars($badge['abbr']); ?>
+                            <img src="<?= htmlspecialchars($badge['logo']); ?>" alt="<?= htmlspecialchars($badge['abbr']); ?> logo">
                         </span>
                     <?php endforeach; ?>
                     <a class="add-orbit" href="#shop" aria-label="Explore more brands">
@@ -495,8 +507,64 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
     </main>
 
     <footer class="site-footer">
-        <a class="brand-mark brand-mark--footer" href="#home">the DS</a>
-        <p><span>- Fabric Luxury</span><br>and Premium</p>
+        <section class="footer-brand" aria-label="Store footer">
+            <a class="brand-mark brand-mark--footer" href="#home">the DS</a>
+            <p><span>- Fabric Luxury</span><br>and Premium</p>
+
+            <div class="footer-socials" aria-label="Social links">
+                <a class="footer-social" href="#" aria-label="Facebook" title="Facebook">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Logo_de_Facebook.png" alt="">
+                </a>
+                <a class="footer-social" href="#" aria-label="Telegram" title="Telegram">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/960px-Telegram_logo.svg.png" alt="">
+                </a>
+                <a class="footer-social" href="#" aria-label="Instagram" title="Instagram">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/3840px-Instagram_logo_2016.svg.png" alt="">
+                </a>
+                <a class="footer-social" href="#" aria-label="TikTok" title="TikTok">
+                    <img src="https://img.freepik.com/premium-vector/tik-tok-logo_578229-290.jpg?semt=ais_hybrid&amp;w=740&amp;q=80" alt="">
+                </a>
+            </div>
+        </section>
+
+        <div class="footer-groups">
+            <section class="footer-group">
+                <h2>Location</h2>
+                <p>Phnom Penh, Cambodia</p>
+            </section>
+            <section class="footer-group">
+                <h2>Call Us</h2>
+                <p><a href="tel:+855112233">+855 112 233</a></p>
+            </section>
+            <section class="footer-group">
+                <h2>Email</h2>
+                <p><a href="mailto:thedaservice@store.com">thedaservice@store.com</a></p>
+            </section>
+
+            <nav class="footer-group footer-links" aria-label="Footer home links">
+                <h2>Home</h2>
+                <a href="#about">About</a>
+                <a href="#new">Products</a>
+                <a href="#shop">Categories</a>
+            </nav>
+            <nav class="footer-group footer-links" aria-label="Footer shop links">
+                <h2>Shop</h2>
+                <a href="#shop">Clothes</a>
+                <a href="#shop">Perfumes</a>
+                <a href="#shop">Accessories</a>
+            </nav>
+            <nav class="footer-group footer-links footer-links--brands" aria-label="Footer brand links">
+                <h2>Brand</h2>
+                <div>
+                    <a href="#about">Polo</a>
+                    <a href="#about">Balenciaga</a>
+                    <a href="#about">Prada</a>
+                    <a href="#about">Puma</a>
+                    <a href="#about">Gucci</a>
+                    <a href="#about">Nike</a>
+                </div>
+            </nav>
+        </div>
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
