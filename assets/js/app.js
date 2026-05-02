@@ -28,6 +28,11 @@ const searchTrigger = document.querySelector('.search-trigger');
 const searchPanel = document.querySelector('.search-panel');
 const searchInput = document.querySelector('#product-search');
 const productCards = document.querySelectorAll('[data-product-card]');
+const brandFilter = document.querySelector('[data-product-brand-filter]');
+const audienceFilter = document.querySelector('[data-product-audience-filter]');
+const filterSelects = document.querySelectorAll('[data-filter-select]');
+const filterToggles = document.querySelectorAll('[data-filter-toggle]');
+const filterOptions = document.querySelectorAll('[data-filter-option]');
 
 searchTrigger?.addEventListener('click', () => {
     const isHidden = searchPanel.hasAttribute('hidden');
@@ -38,13 +43,91 @@ searchTrigger?.addEventListener('click', () => {
     }
 });
 
-searchInput?.addEventListener('input', (event) => {
-    const query = event.target.value.trim().toLowerCase();
+const applyProductFilters = () => {
+    const query = searchInput?.value.trim().toLowerCase() || '';
+    const selectedBrand = brandFilter?.dataset.filterValue || brandFilter?.value || '';
+    const selectedAudience = audienceFilter?.dataset.filterValue || audienceFilter?.value || '';
 
     productCards.forEach((card) => {
         const searchableText = `${card.dataset.name || ''} ${card.dataset.tags || ''}`;
-        card.classList.toggle('is-hidden', query !== '' && !searchableText.includes(query));
+        const matchesSearch = query === '' || searchableText.includes(query);
+        const matchesBrand = selectedBrand === '' || card.dataset.brand === selectedBrand;
+        const matchesAudience = selectedAudience === '' || card.dataset.audience === selectedAudience;
+
+        card.classList.toggle('is-hidden', !(matchesSearch && matchesBrand && matchesAudience));
     });
+};
+
+searchInput?.addEventListener('input', applyProductFilters);
+
+const closeFilterSelect = (select) => {
+    const toggle = select.querySelector('[data-filter-toggle]');
+
+    select.classList.remove('is-open');
+    toggle?.setAttribute('aria-expanded', 'false');
+};
+
+const closeFilterSelects = (activeSelect = null) => {
+    filterSelects.forEach((select) => {
+        if (select !== activeSelect) {
+            closeFilterSelect(select);
+        }
+    });
+};
+
+filterToggles.forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+        const select = toggle.closest('[data-filter-select]');
+
+        if (!select) {
+            return;
+        }
+
+        const shouldOpen = !select.classList.contains('is-open');
+        closeFilterSelects(select);
+        select.classList.toggle('is-open', shouldOpen);
+        toggle.setAttribute('aria-expanded', String(shouldOpen));
+    });
+});
+
+filterOptions.forEach((option) => {
+    option.addEventListener('click', () => {
+        const select = option.closest('[data-filter-select]');
+        const toggle = select?.querySelector('[data-filter-toggle]');
+        const currentLabel = toggle?.querySelector('[data-filter-current]');
+
+        if (!select || !toggle || !currentLabel) {
+            return;
+        }
+
+        select.querySelectorAll('[data-filter-option]').forEach((item) => {
+            const isSelected = item === option;
+
+            item.classList.toggle('is-selected', isSelected);
+            item.setAttribute('aria-selected', String(isSelected));
+        });
+
+        toggle.dataset.filterValue = option.dataset.filterValue || '';
+        currentLabel.textContent = option.textContent.trim();
+        closeFilterSelect(select);
+        applyProductFilters();
+    });
+});
+
+document.addEventListener('click', (event) => {
+    const clickedFilter = event.target instanceof Element
+        ? event.target.closest('[data-filter-select]')
+        : null;
+
+    if (!clickedFilter) {
+        closeFilterSelects();
+    }
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        closeFilterSelects();
+    }
 });
 
 const productToggles = document.querySelectorAll('[data-product-toggle]');

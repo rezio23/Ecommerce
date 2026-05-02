@@ -1,10 +1,10 @@
 <?php
 $navItems = [
-    ['label' => 'Home', 'href' => '#home', 'active' => true],
-    ['label' => 'Gender', 'href' => '#gender'],
-    ['label' => 'Shop', 'href' => '#shop'],
-    ['label' => 'About', 'href' => '#about'],
-    ['label' => 'New', 'href' => '#new'],
+    ['label' => 'Home', 'href' => 'index.php#home', 'active' => true],
+    ['label' => 'Gender', 'href' => 'index.php#gender'],
+    ['label' => 'Shop', 'href' => 'shop.php'],
+    ['label' => 'About', 'href' => 'index.php#about'],
+    ['label' => 'New', 'href' => 'index.php#new'],
 ];
 
 $brandBadges = [
@@ -292,11 +292,11 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=63">
+    <link rel="stylesheet" href="assets/css/styles.css?v=69">
 </head>
 <body>
     <header class="site-header" id="home">
-        <a class="brand-mark" href="#home" aria-label="The DS home">the DS</a>
+        <a class="brand-mark" href="index.php#home" aria-label="The DS home">the DS</a>
 
         <nav class="site-nav" aria-label="Primary navigation">
             <?php foreach ($navItems as $item): ?>
@@ -548,7 +548,7 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
 
     <footer class="site-footer">
         <section class="footer-brand" aria-label="Store footer">
-            <a class="brand-mark brand-mark--footer" href="#home">the DS</a>
+            <a class="brand-mark brand-mark--footer" href="index.php#home">the DS</a>
             <p><span>- Fabric Luxury</span><br>and Premium</p>
 
             <div class="footer-socials" aria-label="Social links">
@@ -583,31 +583,31 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
 
             <nav class="footer-group footer-links" aria-label="Footer home links">
                 <h2>Home</h2>
-                <a href="#about">About</a>
-                <a href="#new">Products</a>
-                <a href="#shop">Categories</a>
+                <a href="index.php#about">About</a>
+                <a href="index.php#new">Products</a>
+                <a href="index.php#gender">Categories</a>
             </nav>
             <nav class="footer-group footer-links" aria-label="Footer shop links">
                 <h2>Shop</h2>
-                <a href="#shop">Clothes</a>
-                <a href="#shop">Perfumes</a>
-                <a href="#shop">Accessories</a>
+                <a href="shop.php#shop-grid">Clothes</a>
+                <a href="shop.php#shop-grid">Perfumes</a>
+                <a href="shop.php#shop-grid">Accessories</a>
             </nav>
             <nav class="footer-group footer-links footer-links--brands" aria-label="Footer brand links">
                 <h2>Brand</h2>
                 <div>
-                    <a href="#about">Polo</a>
-                    <a href="#about">Balenciaga</a>
-                    <a href="#about">Prada</a>
-                    <a href="#about">Puma</a>
-                    <a href="#about">Gucci</a>
-                    <a href="#about">Nike</a>
+                    <a href="shop.php#shop-grid">Polo</a>
+                    <a href="shop.php#shop-grid">Balenciaga</a>
+                    <a href="shop.php#shop-grid">Prada</a>
+                    <a href="shop.php#shop-grid">Puma</a>
+                    <a href="shop.php#shop-grid">Gucci</a>
+                    <a href="shop.php#shop-grid">Nike</a>
                 </div>
             </nav>
         </div>
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="assets/js/app.js?v=9"></script>
+    <script src="assets/js/app.js?v=11"></script>
 </body>
 </html>
