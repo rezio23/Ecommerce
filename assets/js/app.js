@@ -25,8 +25,12 @@ addButtons.forEach((button) => {
 });
 
 const searchTrigger = document.querySelector('.search-trigger');
+const headerSearch = document.querySelector('[data-header-search]');
+const headerSearchInput = headerSearch?.querySelector('[data-product-search]');
+const siteHeader = headerSearch?.closest('.site-header');
 const searchPanel = document.querySelector('.search-panel');
-const searchInput = document.querySelector('#product-search');
+const searchInputs = document.querySelectorAll('[data-product-search]');
+const searchInput = searchInputs[0] || document.querySelector('#product-search');
 const productCards = document.querySelectorAll('[data-product-card]');
 const shopProductGrid = document.querySelector('[data-shop-product-grid]');
 const shopPagination = document.querySelector('[data-shop-pagination]');
@@ -38,6 +42,7 @@ const filterToggles = document.querySelectorAll('[data-filter-toggle]');
 const filterOptions = document.querySelectorAll('[data-filter-option]');
 let selectedProductGroup = '';
 let selectedProductPage = 1;
+let productSearchQuery = searchInput?.value || '';
 const productsPerPage = Number(shopPagination?.dataset.pageSize) || 8;
 const productPageExitMs = 220;
 const productPageEnterMs = 320;
@@ -105,7 +110,52 @@ const renderShopPagination = (totalPages) => {
     });
 };
 
+const setHeaderSearchOpen = (shouldOpen) => {
+    if (!headerSearch) {
+        return;
+    }
+
+    headerSearch.classList.toggle('is-open', shouldOpen);
+    siteHeader?.classList.toggle('has-header-search', shouldOpen);
+    searchTrigger?.setAttribute('aria-expanded', String(shouldOpen));
+    searchTrigger?.setAttribute('aria-label', shouldOpen ? 'Search products' : 'Open search');
+
+    if (!headerSearchInput) {
+        return;
+    }
+
+    headerSearchInput.tabIndex = shouldOpen ? 0 : -1;
+    headerSearchInput.setAttribute('aria-hidden', String(!shouldOpen));
+
+    if (shouldOpen) {
+        window.requestAnimationFrame(() => {
+            headerSearchInput.focus();
+        });
+    } else if (document.activeElement === headerSearchInput) {
+        headerSearchInput.blur();
+    }
+};
+
+const syncSearchInputs = (sourceInput = searchInput) => {
+    productSearchQuery = sourceInput?.value || '';
+
+    searchInputs.forEach((input) => {
+        if (input !== sourceInput) {
+            input.value = productSearchQuery;
+        }
+    });
+};
+
 searchTrigger?.addEventListener('click', () => {
+    if (headerSearch) {
+        setHeaderSearchOpen(true);
+        return;
+    }
+
+    if (!searchPanel || !searchInput) {
+        return;
+    }
+
     const isHidden = searchPanel.hasAttribute('hidden');
     searchPanel.toggleAttribute('hidden', !isHidden);
 
@@ -115,7 +165,7 @@ searchTrigger?.addEventListener('click', () => {
 });
 
 const applyProductFilters = ({ keepPage = false } = {}) => {
-    const query = searchInput?.value.trim().toLowerCase() || '';
+    const query = productSearchQuery.trim().toLowerCase();
     const selectedBrand = brandFilter?.dataset.filterValue || brandFilter?.value || '';
     const selectedAudience = audienceFilter?.dataset.filterValue || audienceFilter?.value || '';
     const matchingCards = [];
@@ -213,7 +263,12 @@ shopPagination?.addEventListener('click', (event) => {
 
 applyProductFilters({ keepPage: true });
 
-searchInput?.addEventListener('input', applyProductFilters);
+searchInputs.forEach((input) => {
+    input.addEventListener('input', (event) => {
+        syncSearchInputs(event.currentTarget);
+        applyProductFilters();
+    });
+});
 
 groupFilters.forEach((button) => {
     button.addEventListener('click', () => {
@@ -285,18 +340,28 @@ filterOptions.forEach((option) => {
 });
 
 document.addEventListener('click', (event) => {
-    const clickedFilter = event.target instanceof Element
-        ? event.target.closest('[data-filter-select]')
+    const targetElement = event.target instanceof Element ? event.target : null;
+    const clickedFilter = targetElement
+        ? targetElement.closest('[data-filter-select]')
         : null;
 
     if (!clickedFilter) {
         closeFilterSelects();
+    }
+
+    const clickedHeaderSearch = targetElement
+        ? targetElement.closest('[data-header-search]')
+        : null;
+
+    if (headerSearch && !clickedHeaderSearch && !headerSearchInput?.value) {
+        setHeaderSearchOpen(false);
     }
 });
 
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
         closeFilterSelects();
+        setHeaderSearchOpen(false);
     }
 });
 

@@ -292,7 +292,7 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=72">
+    <link rel="stylesheet" href="assets/css/styles.css?v=79">
 </head>
 <body>
     <header class="site-header" id="home">
@@ -307,9 +307,12 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
         </nav>
 
         <div class="header-actions" aria-label="Store actions">
-            <button class="icon-button search-trigger" type="button" aria-label="Search products" title="Search">
-                <i data-lucide="search"></i>
-            </button>
+            <div class="header-search" data-header-search>
+                <input class="header-search-input" id="header-product-search" data-product-search type="search" placeholder="Search products..." aria-label="Search products" autocomplete="off" tabindex="-1" aria-hidden="true">
+                <button class="icon-button search-trigger" type="button" aria-label="Open search" aria-controls="header-product-search" aria-expanded="false" title="Search">
+                    <i data-lucide="search"></i>
+                </button>
+            </div>
             <button class="icon-button bag-button" type="button" aria-label="Shopping bag" title="Bag">
                 <i data-lucide="shopping-bag"></i>
                 <span class="bag-count" aria-live="polite">0</span>
@@ -440,7 +443,7 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
 
             <div class="search-panel" hidden>
                 <label for="product-search">Search collection</label>
-                <input id="product-search" type="search" placeholder="Try Nike, bag, puffer...">
+                <input id="product-search" data-product-search type="search" placeholder="Try Nike, bag, puffer...">
             </div>
 
             <div class="products-panel">
@@ -608,6 +611,6 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="assets/js/app.js?v=12"></script>
+    <script src="assets/js/app.js?v=17"></script>
 </body>
 </html>
