@@ -292,7 +292,7 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=69">
+    <link rel="stylesheet" href="assets/css/styles.css?v=72">
 </head>
 <body>
     <header class="site-header" id="home">
@@ -608,6 +608,6 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="assets/js/app.js?v=11"></script>
+    <script src="assets/js/app.js?v=12"></script>
 </body>
 </html>

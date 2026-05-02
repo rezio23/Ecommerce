@@ -30,9 +30,11 @@ const searchInput = document.querySelector('#product-search');
 const productCards = document.querySelectorAll('[data-product-card]');
 const brandFilter = document.querySelector('[data-product-brand-filter]');
 const audienceFilter = document.querySelector('[data-product-audience-filter]');
+const groupFilters = document.querySelectorAll('[data-product-group-filter]');
 const filterSelects = document.querySelectorAll('[data-filter-select]');
 const filterToggles = document.querySelectorAll('[data-filter-toggle]');
 const filterOptions = document.querySelectorAll('[data-filter-option]');
+let selectedProductGroup = '';
 
 searchTrigger?.addEventListener('click', () => {
     const isHidden = searchPanel.hasAttribute('hidden');
@@ -50,15 +52,32 @@ const applyProductFilters = () => {
 
     productCards.forEach((card) => {
         const searchableText = `${card.dataset.name || ''} ${card.dataset.tags || ''}`;
+        const groups = (card.dataset.groups || '').split(' ').filter(Boolean);
         const matchesSearch = query === '' || searchableText.includes(query);
         const matchesBrand = selectedBrand === '' || card.dataset.brand === selectedBrand;
         const matchesAudience = selectedAudience === '' || card.dataset.audience === selectedAudience;
+        const matchesGroup = selectedProductGroup === '' || groups.includes(selectedProductGroup);
 
-        card.classList.toggle('is-hidden', !(matchesSearch && matchesBrand && matchesAudience));
+        card.classList.toggle('is-hidden', !(matchesSearch && matchesBrand && matchesAudience && matchesGroup));
     });
 };
 
 searchInput?.addEventListener('input', applyProductFilters);
+
+groupFilters.forEach((button) => {
+    button.addEventListener('click', () => {
+        selectedProductGroup = button.dataset.filterValue || '';
+
+        groupFilters.forEach((item) => {
+            const isSelected = item === button;
+
+            item.classList.toggle('is-active', isSelected);
+            item.setAttribute('aria-pressed', String(isSelected));
+        });
+
+        applyProductFilters();
+    });
+});
 
 const closeFilterSelect = (select) => {
     const toggle = select.querySelector('[data-filter-toggle]');

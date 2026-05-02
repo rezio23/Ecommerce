@@ -161,6 +161,36 @@ function getShopAudienceFilter(array $tags): string
     return '';
 }
 
+function getShopFilterGroups(array $product): string
+{
+    $tags = array_map('strtolower', $product['tags'] ?? []);
+    $groups = [];
+
+    if (in_array('popular', $tags, true)) {
+        $groups[] = 'popular';
+    } else {
+        $groups[] = 'new-drops';
+    }
+
+    if (in_array('fragrance', $tags, true)) {
+        $groups[] = 'perfumes';
+    }
+
+    if (in_array('bag', $tags, true)) {
+        $groups[] = 'bags';
+    }
+
+    if (in_array('sneaker', $tags, true) || in_array('shoes', $tags, true)) {
+        $groups[] = 'sneakers';
+    }
+
+    if (count(array_intersect($tags, ['classic', 'polo', 'jacket', 'sport', 'streetwear'])) > 0) {
+        $groups[] = 'clothes';
+    }
+
+    return implode(' ', array_values(array_unique($groups)));
+}
+
 function renderShopProductCard(array $product, bool $filterable = true): void
 {
     $productTags = $product['tags'] ?? [];
@@ -169,11 +199,12 @@ function renderShopProductCard(array $product, bool $filterable = true): void
 
     if ($filterable) {
         $dataAttributes = sprintf(
-            ' data-product-card data-name="%s" data-tags="%s" data-brand="%s" data-audience="%s"',
+            ' data-product-card data-name="%s" data-tags="%s" data-brand="%s" data-audience="%s" data-groups="%s"',
             htmlspecialchars(strtolower($product['name'] . ' ' . $product['brand'] . ' ' . $productTagText)),
             htmlspecialchars(strtolower($productTagText)),
             htmlspecialchars(getShopBrandFilter($product['brand'])),
-            htmlspecialchars(getShopAudienceFilter($productTags))
+            htmlspecialchars(getShopAudienceFilter($productTags)),
+            htmlspecialchars(getShopFilterGroups($product))
         );
     }
     ?>
@@ -204,18 +235,6 @@ function renderShopProductCard(array $product, bool $filterable = true): void
     <?php
 }
 
-$popularProducts = array_values(array_filter($shopProducts, static function (array $product): bool {
-    return in_array('Popular', $product['tags'] ?? [], true);
-}));
-
-$newDropProducts = array_slice(array_values(array_filter($shopProducts, static function (array $product): bool {
-    return !in_array('Popular', $product['tags'] ?? [], true);
-})), 0, 4);
-
-$essentialProducts = array_slice(array_values(array_filter($shopProducts, static function (array $product): bool {
-    return count(array_intersect($product['tags'] ?? [], ['Luxury', 'Classic', 'Sport'])) > 0;
-})), 0, 4);
-
 $shopHighlights = [
     [
         'icon' => 'badge-check',
@@ -243,7 +262,7 @@ $shopHighlights = [
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=69">
+    <link rel="stylesheet" href="assets/css/styles.css?v=72">
 </head>
 <body class="shop-page">
     <header class="site-header" id="shop-top">
@@ -280,125 +299,101 @@ $shopHighlights = [
                 <p class="pixel-note">Curated premium pieces<br>ready for checkout.</p>
             </div>
 
-            <section class="shop-feature-section shop-feature-section--top" aria-labelledby="popular-heading">
-                <div class="shop-feature-heading">
-                    <h2 id="popular-heading">Popular</h2>
-                    <p>Best moving pieces across fragrance, bags, and sneakers.</p>
-                </div>
-                <div class="product-grid shop-product-grid shop-product-grid--featured">
-                    <?php foreach ($popularProducts as $product): ?>
-                        <?php renderShopProductCard($product, false); ?>
-                    <?php endforeach; ?>
-                </div>
-            </section>
-
-            <section class="shop-feature-section" aria-labelledby="drops-heading">
-                <div class="shop-feature-heading">
-                    <h2 id="drops-heading">New Drops</h2>
-                    <p>Fresh arrivals selected for daily style and premium detail.</p>
-                </div>
-                <div class="product-grid shop-product-grid shop-product-grid--featured">
-                    <?php foreach ($newDropProducts as $product): ?>
-                        <?php renderShopProductCard($product, false); ?>
-                    <?php endforeach; ?>
-                </div>
-            </section>
-
-            <section class="shop-feature-section" aria-labelledby="essentials-heading">
-                <div class="shop-feature-heading">
-                    <h2 id="essentials-heading">Essential Picks</h2>
-                    <p>Important staples for a complete premium rotation.</p>
-                </div>
-                <div class="product-grid shop-product-grid shop-product-grid--featured">
-                    <?php foreach ($essentialProducts as $product): ?>
-                        <?php renderShopProductCard($product, false); ?>
-                    <?php endforeach; ?>
-                </div>
-            </section>
-
-            <div class="search-panel shop-search-panel" hidden>
-                <label for="product-search">Search collection</label>
-                <input id="product-search" type="search" placeholder="Try Nike, bag, perfume...">
-            </div>
-
-            <div class="shop-toolbar">
-                <nav class="shop-filter-row" aria-label="Shop categories">
-                    <a href="#shop-grid" class="is-active">All</a>
-                    <a href="#shop-grid">Clothes</a>
-                    <a href="#shop-grid">Perfumes</a>
-                    <a href="#shop-grid">Bags</a>
-                    <a href="#shop-grid">Sneakers</a>
-                </nav>
-
-                <div class="shop-selectors" aria-label="Shop filters">
-                    <div class="shop-select-control" data-filter-select>
-                        <span class="shop-select-control__label">Brand</span>
-                        <button
-                            class="shop-select-toggle"
-                            type="button"
-                            data-filter-toggle
-                            data-product-brand-filter
-                            data-filter-value=""
-                            aria-haspopup="listbox"
-                            aria-expanded="false"
-                            aria-controls="shop-brand-list"
-                        >
-                            <span data-filter-current>All brands</span>
-                            <i data-lucide="chevron-down"></i>
-                        </button>
-                        <div class="shop-select-menu" id="shop-brand-list" role="listbox" aria-label="Select brand">
-                            <?php foreach ($shopBrandOptions as $index => $option): ?>
-                                <button
-                                    class="<?= $index === 0 ? 'is-selected' : ''; ?>"
-                                    type="button"
-                                    role="option"
-                                    aria-selected="<?= $index === 0 ? 'true' : 'false'; ?>"
-                                    data-filter-option
-                                    data-filter-value="<?= htmlspecialchars($option['value']); ?>"
-                                >
-                                    <?= htmlspecialchars($option['label']); ?>
-                                </button>
-                            <?php endforeach; ?>
-                        </div>
+            <section class="shop-catalog" id="shop-grid" aria-labelledby="catalog-heading">
+                <div class="shop-catalog__heading">
+                    <div>
+                        <h2 id="catalog-heading">All Products</h2>
+                        <p>Browse the full edit with category, brand, and audience filters.</p>
                     </div>
-                    <div class="shop-select-control" data-filter-select>
-                        <span class="shop-select-control__label">For</span>
-                        <button
-                            class="shop-select-toggle"
-                            type="button"
-                            data-filter-toggle
-                            data-product-audience-filter
-                            data-filter-value=""
-                            aria-haspopup="listbox"
-                            aria-expanded="false"
-                            aria-controls="shop-audience-list"
-                        >
-                            <span data-filter-current>All</span>
-                            <i data-lucide="chevron-down"></i>
-                        </button>
-                        <div class="shop-select-menu" id="shop-audience-list" role="listbox" aria-label="Select audience">
-                            <?php foreach ($shopAudienceOptions as $index => $option): ?>
-                                <button
-                                    class="<?= $index === 0 ? 'is-selected' : ''; ?>"
-                                    type="button"
-                                    role="option"
-                                    aria-selected="<?= $index === 0 ? 'true' : 'false'; ?>"
-                                    data-filter-option
-                                    data-filter-value="<?= htmlspecialchars($option['value']); ?>"
-                                >
-                                    <?= htmlspecialchars($option['label']); ?>
-                                </button>
-                            <?php endforeach; ?>
+                    <span><?= count($shopProducts); ?> pieces</span>
+                </div>
+
+                <div class="search-panel shop-search-panel" hidden>
+                    <label for="product-search">Search collection</label>
+                    <input id="product-search" type="search" placeholder="Try Nike, bag, perfume...">
+                </div>
+
+                <div class="shop-toolbar">
+                    <nav class="shop-filter-row" aria-label="Shop categories">
+                        <button class="is-active" type="button" data-product-group-filter data-filter-value="" aria-pressed="true">All</button>
+                        <button type="button" data-product-group-filter data-filter-value="popular" aria-pressed="false">Popular</button>
+                        <button type="button" data-product-group-filter data-filter-value="new-drops" aria-pressed="false">New Drops</button>
+                        <button type="button" data-product-group-filter data-filter-value="clothes" aria-pressed="false">Clothes</button>
+                        <button type="button" data-product-group-filter data-filter-value="perfumes" aria-pressed="false">Perfumes</button>
+                        <button type="button" data-product-group-filter data-filter-value="bags" aria-pressed="false">Bags</button>
+                        <button type="button" data-product-group-filter data-filter-value="sneakers" aria-pressed="false">Sneakers</button>
+                    </nav>
+
+                    <div class="shop-selectors" aria-label="Shop filters">
+                        <div class="shop-select-control" data-filter-select>
+                            <span class="shop-select-control__label">Brand</span>
+                            <button
+                                class="shop-select-toggle"
+                                type="button"
+                                data-filter-toggle
+                                data-product-brand-filter
+                                data-filter-value=""
+                                aria-haspopup="listbox"
+                                aria-expanded="false"
+                                aria-controls="shop-brand-list"
+                            >
+                                <span data-filter-current>All brands</span>
+                                <i data-lucide="chevron-down"></i>
+                            </button>
+                            <div class="shop-select-menu" id="shop-brand-list" role="listbox" aria-label="Select brand">
+                                <?php foreach ($shopBrandOptions as $index => $option): ?>
+                                    <button
+                                        class="<?= $index === 0 ? 'is-selected' : ''; ?>"
+                                        type="button"
+                                        role="option"
+                                        aria-selected="<?= $index === 0 ? 'true' : 'false'; ?>"
+                                        data-filter-option
+                                        data-filter-value="<?= htmlspecialchars($option['value']); ?>"
+                                    >
+                                        <?= htmlspecialchars($option['label']); ?>
+                                    </button>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        <div class="shop-select-control" data-filter-select>
+                            <span class="shop-select-control__label">For</span>
+                            <button
+                                class="shop-select-toggle"
+                                type="button"
+                                data-filter-toggle
+                                data-product-audience-filter
+                                data-filter-value=""
+                                aria-haspopup="listbox"
+                                aria-expanded="false"
+                                aria-controls="shop-audience-list"
+                            >
+                                <span data-filter-current>All</span>
+                                <i data-lucide="chevron-down"></i>
+                            </button>
+                            <div class="shop-select-menu" id="shop-audience-list" role="listbox" aria-label="Select audience">
+                                <?php foreach ($shopAudienceOptions as $index => $option): ?>
+                                    <button
+                                        class="<?= $index === 0 ? 'is-selected' : ''; ?>"
+                                        type="button"
+                                        role="option"
+                                        aria-selected="<?= $index === 0 ? 'true' : 'false'; ?>"
+                                        data-filter-option
+                                        data-filter-value="<?= htmlspecialchars($option['value']); ?>"
+                                    >
+                                        <?= htmlspecialchars($option['label']); ?>
+                                    </button>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="product-grid shop-product-grid" id="shop-grid">
-                <?php foreach ($shopProducts as $product): ?>
-                    <?php renderShopProductCard($product); ?>
-                <?php endforeach; ?>
-            </div>
+                <div class="product-grid shop-product-grid">
+                    <?php foreach ($shopProducts as $product): ?>
+                        <?php renderShopProductCard($product); ?>
+                    <?php endforeach; ?>
+                </div>
+            </section>
 
             <section class="shop-highlight-band" aria-label="Important shop details">
                 <?php foreach ($shopHighlights as $highlight): ?>
@@ -477,6 +472,6 @@ $shopHighlights = [
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="assets/js/app.js?v=11"></script>
+    <script src="assets/js/app.js?v=12"></script>
 </body>
 </html>
