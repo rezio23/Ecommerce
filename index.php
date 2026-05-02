@@ -167,94 +167,106 @@ $categoryCards = [
 
 $products = [
     [
-        'name' => 'Midnight Puffer',
+        'name' => 'Blazer Mid Premium',
         'brand' => 'Nike',
-        'description' => 'Technical layer for city movement.',
-        'price' => 189,
-        'image' => 'https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=620&q=80',
+        'description' => 'Layered high-top sneaker with a vintage edge.',
+        'price' => 110,
+        'tags' => ['Man', 'Sneaker', 'Popular'],
+        'image' => 'https://www.creativeboom.com/upload/articles/34/34fc53c4c1a50ddea6bbb35a25186d2f4bf17262_944.jpg',
     ],
     [
-        'name' => 'Orange Stitch Tote',
-        'brand' => 'Gucci',
-        'description' => 'Structured carry with a bright finish.',
-        'price' => 246,
-        'image' => 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=620&q=80',
+        'name' => 'Paradigme Eau de Parfum',
+        'brand' => 'Prada',
+        'description' => 'Ambery woody fragrance in a refillable bottle.',
+        'price' => 165,
+        'tags' => ['Man', 'Fragrance', 'Popular'],
+        'image' => 'https://cosmeticsbusiness.com/article-image-alias/spider-man-s-tom-holland-swings-into-prada.jpg',
     ],
     [
-        'name' => 'Polo Night Pour',
-        'brand' => 'Polo',
-        'description' => 'Warm fragrance for late evenings.',
-        'price' => 96,
-        'image' => 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=620&q=80',
+        'name' => 'Graffiti Classic City Bag',
+        'brand' => 'Balenciaga',
+        'description' => 'Black and white leather city bag with signature hardware.',
+        'price' => 1595,
+        'tags' => ['Bag', 'Luxury', 'Popular'],
+        'image' => 'https://mygemma.com/cdn/shop/articles/mygemma-WPD-Top-Blog-Image-48.png?v=1695913153',
     ],
     [
-        'name' => 'Runner Rose',
-        'brand' => 'Adidas',
-        'description' => 'Soft runner with everyday comfort.',
-        'price' => 132,
-        'image' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=620&q=80',
+        'name' => 'Polo Blue Parfum',
+        'brand' => 'Ralph Lauren',
+        'description' => 'Woody fresh parfum with smoky vetiver notes.',
+        'price' => 148,
+        'tags' => ['Man', 'Fragrance', 'Popular'],
+        'image' => 'https://i.ytimg.com/vi/kQmjVsaXiKg/maxresdefault.jpg',
     ],
 ];
 
 $menProducts = [
     [
-        'name' => 'Core Knit Polo',
-        'brand' => 'Polo',
-        'description' => 'Clean collar layer with a soft handfeel.',
-        'price' => 118,
-        'image' => 'https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=620&q=80',
+        'name' => 'Classic-Fit Mesh Polo',
+        'brand' => 'Polo Ralph Lauren',
+        'description' => 'Breathable textured polo with a clean collar.',
+        'price' => 120,
+        'tags' => ['Man', 'Classic', 'Polo'],
+        'image' => 'https://i.gadgets360cdn.com/large/Untitled-design161-1766054573857.png',
     ],
     [
-        'name' => 'City Runner Set',
+        'name' => 'Air Max 90 Off-White',
+        'brand' => 'Nike x Off-White',
+        'description' => 'Deconstructed sneaker from The Ten collection.',
+        'price' => 160,
+        'tags' => ['Man', 'Sneaker', 'Streetwear'],
+        'image' => 'https://i.ytimg.com/vi/lA_DF1wLEkQ/maxresdefault.jpg',
+    ],
+    [
+        'name' => 'Rebound V6 Low Sneakers',
+        'brand' => 'Puma',
+        'description' => 'Low-cut court sneaker with a perforated toe.',
+        'price' => 70,
+        'tags' => ['Man', 'Sneaker', 'Sport'],
+        'image' => 'https://t4.ftcdn.net/jpg/05/23/51/15/360_F_523511500_1807EEj4w00yFC6bAVcn82amkEHnBmeg.jpg',
+    ],
+    [
+        'name' => 'Trail Running Jacket',
         'brand' => 'Nike',
-        'description' => 'Lightweight pieces built for motion.',
-        'price' => 174,
-        'image' => 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=620&q=80',
-    ],
-    [
-        'name' => 'Classic Denim Layer',
-        'brand' => 'Adidas',
-        'description' => 'Everyday denim with premium structure.',
-        'price' => 142,
-        'image' => 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=620&q=80',
-    ],
-    [
-        'name' => 'Black Utility Bag',
-        'brand' => 'Gucci',
-        'description' => 'Compact carry for daily essentials.',
-        'price' => 260,
-        'image' => 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=620&q=80',
+        'description' => 'Light shell for cool forest runs.',
+        'price' => 125,
+        'tags' => ['Man', 'Jacket', 'Sport'],
+        'image' => 'https://img.freepik.com/premium-photo/runner-golden-jacket-pauses-check-his-watch-sunlit-forest-path-breath_283470-13385.jpg',
     ],
 ];
 
 $womenProducts = [
     [
-        'name' => 'Soft Crop Hoodie',
-        'brand' => 'Nike',
-        'description' => 'Relaxed fleece with a sculpted fit.',
-        'price' => 128,
-        'image' => 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=620&q=80',
+        'name' => 'Mesh Fabric Slingback Pumps',
+        'brand' => 'Prada',
+        'description' => 'Pointed mesh pumps with triangle logo detail.',
+        'price' => 1270,
+        'tags' => ['Woman', 'Shoes', 'Luxury'],
+        'image' => 'https://i.ebayimg.com/images/g/Q2AAAOSw~GpnWUfI/s-l1200.jpg',
     ],
     [
-        'name' => 'Evening Mini Tote',
-        'brand' => 'Gucci',
-        'description' => 'Bright structured bag for polished looks.',
-        'price' => 286,
-        'image' => 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=620&q=80',
-    ],
-    [
-        'name' => 'Rose Signature Pour',
+        'name' => 'No. 5 Eau Premiere',
         'brand' => 'Chanel',
-        'description' => 'Fresh floral notes for day-to-night wear.',
-        'price' => 156,
-        'image' => 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=620&q=80',
+        'description' => 'Light, airy floral version of the classic fragrance.',
+        'price' => 185,
+        'tags' => ['Woman', 'Fragrance', 'Classic'],
+        'image' => 'https://static.vecteezy.com/system/resources/previews/013/254/291/non_2x/ternopil-ukraine-september-2-2022-chanel-number-5-eau-premiere-worldwide-famous-french-perfume-bottle-among-other-perfumes-on-shiny-glitter-background-in-yellow-colors-free-photo.JPG',
     ],
     [
-        'name' => 'Pearl Sport Sneaker',
-        'brand' => 'Adidas',
-        'description' => 'Soft runner with a clean profile.',
-        'price' => 138,
-        'image' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=620&q=80',
+        'name' => 'Womens Jersey Polo Shirt',
+        'brand' => 'Ralph Lauren',
+        'description' => 'Cream cotton-blend polo with classic golf styling.',
+        'price' => 20,
+        'tags' => ['Woman', 'Polo', 'Golf'],
+        'image' => 'https://trendygolfusa.com/cdn/shop/files/LAUNCHES_HERO_7c49c26e-fc63-4418-a7d4-2d4b3d44ece2.jpg?v=1689281730',
+    ],
+    [
+        'name' => 'GG Marmont Medium Bag',
+        'brand' => 'Gucci',
+        'description' => 'Black chevron leather shoulder bag with Double G.',
+        'price' => 2850,
+        'tags' => ['Woman', 'Bag', 'Luxury'],
+        'image' => 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z3VjY2klMjBiYWd8ZW58MHx8MHx8fDA%3D',
     ],
 ];
 
@@ -445,7 +457,14 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
                 <div class="product-panel-content product-panel-content--popular" id="products-popular" data-product-content>
                     <div class="product-grid">
                         <?php foreach ($products as $product): ?>
-                            <article class="product-card" data-product-card data-name="<?= htmlspecialchars(strtolower($product['name'] . ' ' . $product['brand'])); ?>">
+                            <?php $productTags = $product['tags'] ?? []; ?>
+                            <?php $productTagText = implode(' ', $productTags); ?>
+                            <article
+                                class="product-card"
+                                data-product-card
+                                data-name="<?= htmlspecialchars(strtolower($product['name'] . ' ' . $product['brand'] . ' ' . $productTagText)); ?>"
+                                data-tags="<?= htmlspecialchars(strtolower($productTagText)); ?>"
+                            >
                                 <a class="product-image" href="#" aria-label="View <?= htmlspecialchars($product['name']); ?>">
                                     <img src="<?= htmlspecialchars($product['image']); ?>" alt="<?= htmlspecialchars($product['name']); ?>">
                                 </a>
@@ -454,6 +473,13 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
                                     <h3><?= htmlspecialchars($product['name']); ?></h3>
                                     <span><?= htmlspecialchars($product['description']); ?></span>
                                 </div>
+                                <?php if (!empty($productTags)): ?>
+                                    <div class="product-tags" aria-label="Product tags">
+                                        <?php foreach ($productTags as $tag): ?>
+                                            <span><?= htmlspecialchars($tag); ?></span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
                                 <div class="product-actions">
                                     <strong>$<?= number_format($product['price'], 2); ?></strong>
                                     <button class="cart-button" type="button" data-add-to-cart>
@@ -481,7 +507,14 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
                     <div class="product-panel-content" id="<?= htmlspecialchars($panelId); ?>" data-product-content hidden>
                         <div class="product-grid product-grid--nested">
                             <?php foreach ($group['products'] as $product): ?>
-                                <article class="product-card" data-product-card data-name="<?= htmlspecialchars(strtolower($product['name'] . ' ' . $product['brand'] . ' ' . $group['label'])); ?>">
+                                <?php $productTags = $product['tags'] ?? []; ?>
+                                <?php $productTagText = implode(' ', $productTags); ?>
+                                <article
+                                    class="product-card"
+                                    data-product-card
+                                    data-name="<?= htmlspecialchars(strtolower($product['name'] . ' ' . $product['brand'] . ' ' . $group['label'] . ' ' . $productTagText)); ?>"
+                                    data-tags="<?= htmlspecialchars(strtolower($productTagText)); ?>"
+                                >
                                     <a class="product-image" href="#" aria-label="View <?= htmlspecialchars($product['name']); ?>">
                                         <img src="<?= htmlspecialchars($product['image']); ?>" alt="<?= htmlspecialchars($product['name']); ?>">
                                     </a>
@@ -490,6 +523,13 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
                                         <h3><?= htmlspecialchars($product['name']); ?></h3>
                                         <span><?= htmlspecialchars($product['description']); ?></span>
                                     </div>
+                                    <?php if (!empty($productTags)): ?>
+                                        <div class="product-tags" aria-label="Product tags">
+                                            <?php foreach ($productTags as $tag): ?>
+                                                <span><?= htmlspecialchars($tag); ?></span>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
                                     <div class="product-actions">
                                         <strong>$<?= number_format($product['price'], 2); ?></strong>
                                         <button class="cart-button" type="button" data-add-to-cart>

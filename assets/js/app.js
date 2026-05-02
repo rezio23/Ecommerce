@@ -42,8 +42,8 @@ searchInput?.addEventListener('input', (event) => {
     const query = event.target.value.trim().toLowerCase();
 
     productCards.forEach((card) => {
-        const name = card.dataset.name || '';
-        card.classList.toggle('is-hidden', query !== '' && !name.includes(query));
+        const searchableText = `${card.dataset.name || ''} ${card.dataset.tags || ''}`;
+        card.classList.toggle('is-hidden', query !== '' && !searchableText.includes(query));
     });
 });
 
