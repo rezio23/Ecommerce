@@ -40,9 +40,14 @@ const groupFilters = document.querySelectorAll('[data-product-group-filter]');
 const filterSelects = document.querySelectorAll('[data-filter-select]');
 const filterToggles = document.querySelectorAll('[data-filter-toggle]');
 const filterOptions = document.querySelectorAll('[data-filter-option]');
+const productSizeGroups = document.querySelectorAll('[data-product-size-group]');
+const productGalleryMain = document.querySelector('[data-product-gallery-main]');
+const productGalleryThumbs = document.querySelectorAll('[data-product-gallery-thumb]');
+const productGalleryFrame = productGalleryMain?.closest('.product-hero-media');
 let selectedProductGroup = '';
 let selectedProductPage = 1;
 let productSearchQuery = searchInput?.value || '';
+let productGallerySwitchId = 0;
 const productsPerPage = Number(shopPagination?.dataset.pageSize) || 8;
 const productPageExitMs = 220;
 const productPageEnterMs = 320;
@@ -336,6 +341,105 @@ filterOptions.forEach((option) => {
         currentLabel.textContent = option.textContent.trim();
         closeFilterSelect(select);
         applyProductFilters();
+    });
+});
+
+const setActiveProductSize = (activeButton) => {
+    const group = activeButton.closest('[data-product-size-group]');
+
+    if (!group) {
+        return;
+    }
+
+    const selectedSize = activeButton.dataset.sizeValue || activeButton.textContent.trim();
+    group.dataset.selectedSize = selectedSize;
+
+    group.querySelectorAll('[data-product-size-option]').forEach((button) => {
+        const isActive = button === activeButton;
+
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+    });
+};
+
+productSizeGroups.forEach((group) => {
+    const initialSize = group.querySelector('[data-product-size-option].is-active')
+        || group.querySelector('[data-product-size-option]');
+
+    if (initialSize) {
+        setActiveProductSize(initialSize);
+    }
+
+    group.addEventListener('click', (event) => {
+        const button = event.target instanceof Element
+            ? event.target.closest('[data-product-size-option]')
+            : null;
+
+        if (!button || !group.contains(button)) {
+            return;
+        }
+
+        setActiveProductSize(button);
+    });
+});
+
+const setActiveProductGalleryThumb = (activeButton) => {
+    productGalleryThumbs.forEach((item) => {
+        const isActive = item === activeButton;
+
+        item.classList.toggle('is-active', isActive);
+        item.setAttribute('aria-selected', String(isActive));
+    });
+};
+
+productGalleryThumbs.forEach((button) => {
+    button.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        if (!productGalleryMain) {
+            return;
+        }
+
+        const nextImage = button.dataset.galleryImage;
+        const nextAlt = button.dataset.galleryAlt || 'Selected product image';
+
+        if (!nextImage) {
+            return;
+        }
+
+        setActiveProductGalleryThumb(button);
+
+        if (productGalleryMain.getAttribute('src') === nextImage) {
+            return;
+        }
+
+        const switchId = ++productGallerySwitchId;
+        const nextGalleryImage = new Image();
+
+        productGalleryFrame?.classList.add('is-switching');
+
+        nextGalleryImage.onload = () => {
+            window.setTimeout(() => {
+                if (switchId !== productGallerySwitchId) {
+                    return;
+                }
+
+                productGalleryMain.src = nextImage;
+                productGalleryMain.alt = nextAlt;
+
+                window.requestAnimationFrame(() => {
+                    productGalleryFrame?.classList.remove('is-switching');
+                });
+            }, 120);
+        };
+
+        nextGalleryImage.onerror = () => {
+            if (switchId === productGallerySwitchId) {
+                productGalleryFrame?.classList.remove('is-switching');
+            }
+        };
+
+        nextGalleryImage.src = nextImage;
     });
 });
 

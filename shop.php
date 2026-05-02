@@ -228,6 +228,7 @@ function renderShopProductCard(array $product, bool $filterable = true): void
     $productTags = $product['tags'] ?? [];
     $productTagText = implode(' ', $productTags);
     $dataAttributes = '';
+    $productHref = strtolower($product['name']) === 'paradigme eau de parfum' ? 'product-detail.php' : '#';
 
     if ($filterable) {
         $dataAttributes = sprintf(
@@ -241,7 +242,7 @@ function renderShopProductCard(array $product, bool $filterable = true): void
     }
     ?>
     <article class="product-card"<?= $dataAttributes; ?>>
-        <a class="product-image" href="#" aria-label="View <?= htmlspecialchars($product['name']); ?>">
+        <a class="product-image" href="<?= htmlspecialchars($productHref); ?>" aria-label="View <?= htmlspecialchars($product['name']); ?>">
             <img src="<?= htmlspecialchars($product['image']); ?>" alt="<?= htmlspecialchars($product['name']); ?>">
         </a>
         <div class="product-info">
@@ -297,7 +298,7 @@ $shopPageCount = max(1, (int) ceil(count($shopProducts) / $shopProductsPerPage))
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=79">
+    <link rel="stylesheet" href="assets/css/styles.css?v=82">
 </head>
 <body class="shop-page">
     <header class="site-header" id="shop-top">
@@ -530,6 +531,6 @@ $shopPageCount = max(1, (int) ceil(count($shopProducts) / $shopProductsPerPage))
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="assets/js/app.js?v=17"></script>
+    <script src="assets/js/app.js?v=20"></script>
 </body>
 </html>

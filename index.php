@@ -282,6 +282,11 @@ $productAccordions = [
 ];
 
 $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELESS CUTS', 'CLASSIC AND COMFORT'];
+
+function getProductDetailHref(array $product): string
+{
+    return strtolower($product['name']) === 'paradigme eau de parfum' ? 'product-detail.php' : '#';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -292,7 +297,7 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=79">
+    <link rel="stylesheet" href="assets/css/styles.css?v=82">
 </head>
 <body>
     <header class="site-header" id="home">
@@ -462,13 +467,14 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
                         <?php foreach ($products as $product): ?>
                             <?php $productTags = $product['tags'] ?? []; ?>
                             <?php $productTagText = implode(' ', $productTags); ?>
+                            <?php $productHref = getProductDetailHref($product); ?>
                             <article
                                 class="product-card"
                                 data-product-card
                                 data-name="<?= htmlspecialchars(strtolower($product['name'] . ' ' . $product['brand'] . ' ' . $productTagText)); ?>"
                                 data-tags="<?= htmlspecialchars(strtolower($productTagText)); ?>"
                             >
-                                <a class="product-image" href="#" aria-label="View <?= htmlspecialchars($product['name']); ?>">
+                                <a class="product-image" href="<?= htmlspecialchars($productHref); ?>" aria-label="View <?= htmlspecialchars($product['name']); ?>">
                                     <img src="<?= htmlspecialchars($product['image']); ?>" alt="<?= htmlspecialchars($product['name']); ?>">
                                 </a>
                                 <div class="product-info">
@@ -512,13 +518,14 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
                             <?php foreach ($group['products'] as $product): ?>
                                 <?php $productTags = $product['tags'] ?? []; ?>
                                 <?php $productTagText = implode(' ', $productTags); ?>
+                                <?php $productHref = getProductDetailHref($product); ?>
                                 <article
                                     class="product-card"
                                     data-product-card
                                     data-name="<?= htmlspecialchars(strtolower($product['name'] . ' ' . $product['brand'] . ' ' . $group['label'] . ' ' . $productTagText)); ?>"
                                     data-tags="<?= htmlspecialchars(strtolower($productTagText)); ?>"
                                 >
-                                    <a class="product-image" href="#" aria-label="View <?= htmlspecialchars($product['name']); ?>">
+                                    <a class="product-image" href="<?= htmlspecialchars($productHref); ?>" aria-label="View <?= htmlspecialchars($product['name']); ?>">
                                         <img src="<?= htmlspecialchars($product['image']); ?>" alt="<?= htmlspecialchars($product['name']); ?>">
                                     </a>
                                     <div class="product-info">
@@ -611,6 +618,6 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="assets/js/app.js?v=17"></script>
+    <script src="assets/js/app.js?v=20"></script>
 </body>
 </html>
