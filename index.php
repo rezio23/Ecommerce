@@ -285,7 +285,9 @@ $featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELES
 
 function getProductDetailHref(array $product): string
 {
-    return strtolower($product['name']) === 'paradigme eau de parfum' ? 'product-detail.php' : '#';
+    $slug = trim((string) preg_replace('/[^a-z0-9]+/', '-', strtolower($product['name'])), '-');
+
+    return 'product-detail.php?product=' . rawurlencode($slug);
 }
 ?>
 <!DOCTYPE html>
@@ -297,7 +299,7 @@ function getProductDetailHref(array $product): string
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=82">
+    <link rel="stylesheet" href="assets/css/styles.css?v=89">
 </head>
 <body>
     <header class="site-header" id="home">
@@ -322,9 +324,9 @@ function getProductDetailHref(array $product): string
                 <i data-lucide="shopping-bag"></i>
                 <span class="bag-count" aria-live="polite">0</span>
             </button>
-            <button class="icon-button" type="button" aria-label="Account" title="Account">
+            <a class="icon-button" href="profile.php" aria-label="Account profile" title="Account">
                 <i data-lucide="user-round"></i>
-            </button>
+            </a>
         </div>
     </header>
 
@@ -618,6 +620,6 @@ function getProductDetailHref(array $product): string
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="assets/js/app.js?v=20"></script>
+    <script src="assets/js/app.js?v=22"></script>
 </body>
 </html>

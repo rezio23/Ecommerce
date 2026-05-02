@@ -44,6 +44,7 @@ const productSizeGroups = document.querySelectorAll('[data-product-size-group]')
 const productGalleryMain = document.querySelector('[data-product-gallery-main]');
 const productGalleryThumbs = document.querySelectorAll('[data-product-gallery-thumb]');
 const productGalleryFrame = productGalleryMain?.closest('.product-hero-media');
+const profileSections = document.querySelectorAll('[data-profile-section]');
 let selectedProductGroup = '';
 let selectedProductPage = 1;
 let productSearchQuery = searchInput?.value || '';
@@ -440,6 +441,69 @@ productGalleryThumbs.forEach((button) => {
         };
 
         nextGalleryImage.src = nextImage;
+    });
+});
+
+const getProfileCarouselStep = (panel) => {
+    const track = panel.querySelector('[data-profile-carousel]');
+    const card = track?.querySelector('.profile-product-card');
+
+    if (!track || !card) {
+        return panel.clientWidth;
+    }
+
+    const trackStyles = window.getComputedStyle(track);
+    const trackGap = Number.parseFloat(trackStyles.columnGap || trackStyles.gap) || 0;
+
+    return card.getBoundingClientRect().width + trackGap;
+};
+
+const moveProfileCarousel = (section, direction) => {
+    const panel = section.querySelector('[data-profile-carousel-panel]');
+    const toggle = section.querySelector('[data-product-toggle]');
+
+    if (!panel) {
+        return;
+    }
+
+    if (toggle?.getAttribute('aria-expanded') === 'false') {
+        toggle.click();
+    }
+
+    const maxScroll = Math.max(0, panel.scrollWidth - panel.clientWidth);
+
+    if (maxScroll <= 1) {
+        return;
+    }
+
+    const step = getProfileCarouselStep(panel);
+    const current = panel.scrollLeft;
+    let nextPosition = current + (step * direction);
+
+    if (direction > 0 && current >= maxScroll - 4) {
+        nextPosition = 0;
+    } else if (direction < 0 && current <= 4) {
+        nextPosition = maxScroll;
+    } else {
+        nextPosition = Math.max(0, Math.min(maxScroll, nextPosition));
+    }
+
+    panel.scrollTo({
+        left: nextPosition,
+        behavior: reducedMotionQuery?.matches ? 'auto' : 'smooth',
+    });
+};
+
+profileSections.forEach((section) => {
+    const previousButton = section.querySelector('[data-profile-carousel-prev]');
+    const nextButton = section.querySelector('[data-profile-carousel-next]');
+
+    previousButton?.addEventListener('click', () => {
+        moveProfileCarousel(section, -1);
+    });
+
+    nextButton?.addEventListener('click', () => {
+        moveProfileCarousel(section, 1);
     });
 });
 

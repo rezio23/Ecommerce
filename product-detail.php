@@ -7,60 +7,348 @@ $navItems = [
     ['label' => 'New', 'href' => 'index.php#new'],
 ];
 
-$product = [
-    'name' => 'Paradigme Eau de Parfum',
-    'brand' => 'Prada',
-    'description' => 'Ambery woody fragrance in a refillable bottle.',
-    'category' => 'Men\'s Perfume',
-    'price' => 165,
-    'rating' => '4.8',
-    'badge' => 'New Arrival',
-    'sizes' => ['30ML', '50ML', '90ML', '100ML', '150ML', 'Refill'],
-    'active_size' => '100ML',
-];
+function getProductSlug(string $name): string
+{
+    return trim((string) preg_replace('/[^a-z0-9]+/', '-', strtolower($name)), '-');
+}
 
-$productGallery = [
-    [
-        'image' => 'https://perfumeuae.com/wp-content/uploads/2025/08/para-1.jpg',
-        'alt' => 'Prada Paradigme perfume campaign with green bottle',
-    ],
-    [
-        'image' => 'https://tb-static.uber.com/prod/image-proc/processed_images/f2ee7468b6c1bf9e73326764b691e585/b4665c191b34baf3d0e0fa45dfdd3d1d.jpeg',
-        'alt' => 'Prada Paradigme Eau de Parfum second gallery image',
-    ],
-    [
-        'image' => 'https://profumerialanza.com/cdn/shop/files/prada_paradigme_eau_de_parfum_img1.jpg?v=1769518444&width=900',
-        'alt' => 'Prada Paradigme Eau de Parfum bottle product image',
-    ],
-    [
-        'image' => 'https://www.prada-beauty.com/on/demandware.static/-/Sites-prada-us-Library/default/dw3cab6365/images/plp/pushes/nav-flyout/NAV-FRAG-PARADIGME.jpg',
-        'alt' => 'Prada Paradigme fragrance bottle on green background',
-    ],
-];
+function getProductCategory(array $product): string
+{
+    $tags = array_map('strtolower', $product['tags'] ?? []);
+    $audience = in_array('woman', $tags, true) ? "Women's" : "Men's";
 
-$similarProducts = [
-    [
-        'name' => 'Blue Signature Perfume',
-        'image' => 'https://foryou.ma/cdn/shop/files/photo_5922755336093764687_y.jpg?v=1766189500',
+    if (in_array('fragrance', $tags, true)) {
+        return $audience . ' Perfume';
+    }
+
+    if (in_array('bag', $tags, true)) {
+        return 'Luxury Bag';
+    }
+
+    if (in_array('sneaker', $tags, true)) {
+        return $audience . ' Sneaker';
+    }
+
+    if (in_array('shoes', $tags, true)) {
+        return $audience . ' Shoes';
+    }
+
+    if (in_array('jacket', $tags, true)) {
+        return $audience . ' Jacket';
+    }
+
+    if (in_array('polo', $tags, true)) {
+        return $audience . ' Polo Shirt';
+    }
+
+    return 'Premium Product';
+}
+
+function getProductSizes(array $product): array
+{
+    $tags = array_map('strtolower', $product['tags'] ?? []);
+
+    if (in_array('fragrance', $tags, true)) {
+        return ['30ML', '50ML', '90ML', '100ML', '150ML', 'Refill'];
+    }
+
+    if (in_array('bag', $tags, true)) {
+        return ['Mini', 'Small', 'Medium', 'Large', 'XL', 'One Size'];
+    }
+
+    if (in_array('sneaker', $tags, true) || in_array('shoes', $tags, true)) {
+        return ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45'];
+    }
+
+    return ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+}
+
+function getDefaultActiveSize(array $product, array $sizes): string
+{
+    $tags = array_map('strtolower', $product['tags'] ?? []);
+
+    if (in_array('fragrance', $tags, true)) {
+        return '100ML';
+    }
+
+    if (in_array('bag', $tags, true)) {
+        return 'Medium';
+    }
+
+    if (in_array('sneaker', $tags, true) || in_array('shoes', $tags, true)) {
+        return '40';
+    }
+
+    return 'M';
+}
+
+$productCatalog = [
+    'blazer-mid-premium' => [
+        'name' => 'Blazer Mid Premium',
+        'brand' => 'Nike',
+        'description' => 'Layered high-top sneaker with a vintage edge.',
+        'price' => 110,
+        'tags' => ['Man', 'Sneaker', 'Popular'],
+        'rating' => '4.8',
+        'badge' => 'New Arrival',
+        'gallery' => [
+            'https://www.creativeboom.com/upload/articles/34/34fc53c4c1a50ddea6bbb35a25186d2f4bf17262_944.jpg',
+            'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto%2Cq_auto%3Aeco%2Cu_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/8af72051-937c-4b7a-9676-86638e6f4faf/BLAZER%2BMID%2B%2777%2BPRM.png',
+            'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto%2Cq_auto%3Aeco%2Cu_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/bfd07f21-0c77-4d75-8e2b-80f572d0c7d8/BLAZER%2BMID%2B%2777%2BPRM.png',
+            'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto%2Cq_auto%3Aeco%2Cu_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/05bdbfba-a04e-4ef5-94c5-43c195b6f7f7/BLAZER%2BMID%2B%2777%2BPRM.png',
+        ],
     ],
-    [
+    'paradigme-eau-de-parfum' => [
+        'name' => 'Paradigme Eau de Parfum',
+        'brand' => 'Prada',
+        'description' => 'Ambery woody fragrance in a refillable bottle.',
+        'price' => 165,
+        'tags' => ['Man', 'Fragrance', 'Popular'],
+        'rating' => '4.8',
+        'badge' => 'New Arrival',
+        'gallery' => [
+            'https://cosmeticsbusiness.com/article-image-alias/spider-man-s-tom-holland-swings-into-prada.jpg',
+            'https://perfumeuae.com/wp-content/uploads/2025/08/para-1.jpg',
+            'https://tb-static.uber.com/prod/image-proc/processed_images/f2ee7468b6c1bf9e73326764b691e585/b4665c191b34baf3d0e0fa45dfdd3d1d.jpeg',
+            'https://profumerialanza.com/cdn/shop/files/prada_paradigme_eau_de_parfum_img1.jpg?v=1769518444&width=900',
+            'https://www.prada-beauty.com/on/demandware.static/-/Sites-prada-us-Library/default/dw3cab6365/images/plp/pushes/nav-flyout/NAV-FRAG-PARADIGME.jpg',
+        ],
+    ],
+    'graffiti-classic-city-bag' => [
+        'name' => 'Graffiti Classic City Bag',
+        'brand' => 'Balenciaga',
+        'description' => 'Black and white leather city bag with signature hardware.',
+        'price' => 1595,
+        'tags' => ['Bag', 'Luxury', 'Popular'],
+        'rating' => '4.7',
+        'badge' => 'Popular',
+        'gallery' => [
+            'https://mygemma.com/cdn/shop/articles/mygemma-WPD-Top-Blog-Image-48.png?v=1695913153',
+            'https://product-images.therealreal.com/BAL377818_1_enlarged.jpg?auto=webp&width=1400',
+            'https://product-images.therealreal.com/BAL377818_2_enlarged.jpg?auto=webp&width=1400',
+            'https://product-images.therealreal.com/BAL377818_3_enlarged.jpg?auto=webp&width=1400',
+            'https://product-images.therealreal.com/BAL377818_4_enlarged.jpg?auto=webp&width=1400',
+            'https://product-images.therealreal.com/BAL377818_5_enlarged.jpg?auto=webp&width=1400',
+        ],
+    ],
+    'polo-blue-parfum' => [
         'name' => 'Polo Blue Parfum',
-        'image' => 'https://www.fragrancedirect.co.uk/images?url=https://static.thcdn.com/productimg/original/13522064-1065266787614683.jpg&format=webp&auto=avif&width=1000&height=1000&fit=cover',
+        'brand' => 'Ralph Lauren',
+        'description' => 'Woody fresh parfum with smoky vetiver notes.',
+        'price' => 148,
+        'tags' => ['Man', 'Fragrance', 'Popular'],
+        'rating' => '4.7',
+        'badge' => 'Popular',
+        'gallery' => [
+            'https://i.ytimg.com/vi/kQmjVsaXiKg/maxresdefault.jpg',
+            'https://www.ralphlaurenfragrances.com/dw/image/v2/AANG_PRD/on/demandware.static/-/Sites-ralphlauren-master-catalog/default/dw3955e72e/images/pdp/RLFE002/ralph-lauren-fragrances-polo-blue-parfum-pdp-product-carousel.jpg?q=80&sfrm=jpg&sh=1000&sm=cut&sw=1000',
+            'https://www.ralphlaurenfragrances.com/dw/image/v2/AANG_PRD/on/demandware.static/-/Sites-ralphlauren-master-catalog/default/dw4c02241b/images/pdp/RLFE002/ralph-lauren-fragrances-polo-blue-parfum-pdp-product-carousel-1.jpg?q=80&sfrm=jpg&sh=1000&sm=cut&sw=1000',
+            'https://www.ralphlaurenfragrances.com/dw/image/v2/AANG_PRD/on/demandware.static/-/Sites-ralphlauren-master-catalog/default/dw0dfd8c9d/images/pdp/RLFE002/ralph-lauren-fragrances-polo-blue-eau-de-parfum-pdp-product-carousel-2.jpg?q=80&sfrm=jpg&sh=1000&sm=cut&sw=1000',
+            'https://www.ralphlaurenfragrances.com/dw/image/v2/AANG_PRD/on/demandware.static/-/Sites-ralphlauren-master-catalog/default/dwfa581c66/images/pdp/RLFE002/ralph-lauren-fragrances-polo-blue-eau-de-parfum-pdp-product-carousel-3.jpg?q=80&sfrm=jpg&sh=1000&sm=cut&sw=1000',
+            'https://www.ralphlaurenfragrances.com/dw/image/v2/AANG_PRD/on/demandware.static/-/Sites-ralphlauren-master-catalog/default/dw4790bbe4/images/pdp/RLFE002/ralph-lauren-fragrances-polo-blue-eau-de-parfum-pdp-product-carousel-4.jpg?q=80&sfrm=jpg&sh=1000&sm=cut&sw=1000',
+        ],
     ],
-    [
-        'name' => 'Prada Luna Rossa',
-        'image' => 'https://media.ulta.com/i/ulta/77010863_alt01?w=800&h=800&fmt=auto',
+    'classic-fit-mesh-polo' => [
+        'name' => 'Classic-Fit Mesh Polo',
+        'brand' => 'Polo Ralph Lauren',
+        'description' => 'Breathable textured polo with a clean collar.',
+        'price' => 120,
+        'tags' => ['Man', 'Classic', 'Polo'],
+        'rating' => '4.6',
+        'badge' => 'Essential',
+        'gallery' => [
+            'https://i.gadgets360cdn.com/large/Untitled-design161-1766054573857.png',
+        ],
     ],
-    [
-        'name' => 'Amber Signature',
-        'image' => 'https://i.makeup.be/g/go/goppxwiupxl3.jpg',
+    'air-max-90-off-white' => [
+        'name' => 'Air Max 90 Off-White',
+        'brand' => 'Nike x Off-White',
+        'description' => 'Deconstructed sneaker from The Ten collection.',
+        'price' => 160,
+        'tags' => ['Man', 'Sneaker', 'Streetwear'],
+        'rating' => '4.9',
+        'badge' => 'Limited',
+        'gallery' => [
+            'https://i.ytimg.com/vi/lA_DF1wLEkQ/maxresdefault.jpg',
+            'https://image.goat.com/transform/v1/attachments/product_template_pictures/images/079/296/946/original/466439_01.png.png?action=crop&width=1200',
+            'https://image.goat.com/transform/v1/attachments/product_template_pictures/images/079/296/949/original/466439_02.png.png?action=crop&width=1200',
+            'https://image.goat.com/transform/v1/attachments/product_template_pictures/images/079/296/948/original/466439_03.png.png?action=crop&width=1200',
+            'https://image.goat.com/transform/v1/attachments/product_template_pictures/images/079/296/950/original/466439_04.png.png?action=crop&width=1200',
+        ],
     ],
-    [
-        'name' => 'Designer Fragrance',
-        'image' => 'https://www.allbeauty.com/images?url=https://static.thcdn.com/productimg/original/12271391-1835265763900530.jpg&format=webp&auto=avif&width=1000&height=1000&fit=cover',
+    'rebound-v6-low-sneakers' => [
+        'name' => 'Rebound V6 Low Sneakers',
+        'brand' => 'Puma',
+        'description' => 'Low-cut court sneaker with a perforated toe.',
+        'price' => 70,
+        'tags' => ['Man', 'Sneaker', 'Sport'],
+        'rating' => '4.5',
+        'badge' => 'Sport',
+        'gallery' => [
+            'https://t4.ftcdn.net/jpg/05/23/51/15/360_F_523511500_1807EEj4w00yFC6bAVcn82amkEHnBmeg.jpg',
+            'https://images.puma.com/image/upload/f_auto,q_auto,w_1200,b_rgb:FAFAFA/global/392328/01/sv01/fnd/MEX/fmt/png',
+            'https://images.puma.com/image/upload/f_auto,q_auto,w_1200,b_rgb:FAFAFA/global/392328/01/mod01/fnd/MEX/fmt/png',
+            'https://images.puma.com/image/upload/f_auto,q_auto,w_1200,b_rgb:FAFAFA/global/392328/01/mod02/fnd/MEX/fmt/png',
+            'https://images.puma.com/image/upload/f_auto,q_auto,w_1200,b_rgb:FAFAFA/global/392328/01/fnd/MEX/fmt/png',
+        ],
+    ],
+    'trail-running-jacket' => [
+        'name' => 'Trail Running Jacket',
+        'brand' => 'Nike',
+        'description' => 'Light shell for cool forest runs.',
+        'price' => 125,
+        'tags' => ['Man', 'Jacket', 'Sport'],
+        'rating' => '4.6',
+        'badge' => 'Lightweight',
+        'gallery' => [
+            'https://img.freepik.com/premium-photo/runner-golden-jacket-pauses-check-his-watch-sunlit-forest-path-breath_283470-13385.jpg',
+        ],
+    ],
+    'mesh-fabric-slingback-pumps' => [
+        'name' => 'Mesh Fabric Slingback Pumps',
+        'brand' => 'Prada',
+        'description' => 'Pointed mesh pumps with triangle logo detail.',
+        'price' => 1270,
+        'tags' => ['Woman', 'Shoes', 'Luxury'],
+        'rating' => '4.8',
+        'badge' => 'Luxury',
+        'gallery' => [
+            'https://i.ebayimg.com/images/g/Q2AAAOSw~GpnWUfI/s-l1200.jpg',
+        ],
+    ],
+    'no-5-eau-premiere' => [
+        'name' => 'No. 5 Eau Premiere',
+        'brand' => 'Chanel',
+        'description' => 'Light, airy floral version of the classic fragrance.',
+        'price' => 185,
+        'tags' => ['Woman', 'Fragrance', 'Classic'],
+        'rating' => '4.7',
+        'badge' => 'Classic',
+        'gallery' => [
+            'https://static.vecteezy.com/system/resources/previews/013/254/291/non_2x/ternopil-ukraine-september-2-2022-chanel-number-5-eau-premiere-worldwide-famous-french-perfume-bottle-among-other-perfumes-on-shiny-glitter-background-in-yellow-colors-free-photo.JPG',
+            'https://www.allbeauty.com/images?url=https://static.thcdn.com/productimg/original/12271391-1835265763900530.jpg&format=webp&auto=avif&width=1000&height=1000&fit=cover',
+        ],
+    ],
+    'womens-jersey-polo-shirt' => [
+        'name' => 'Womens Jersey Polo Shirt',
+        'brand' => 'Ralph Lauren',
+        'description' => 'Cream cotton-blend polo with classic golf styling.',
+        'price' => 20,
+        'tags' => ['Woman', 'Polo', 'Golf'],
+        'rating' => '4.4',
+        'badge' => 'Everyday',
+        'gallery' => [
+            'https://trendygolfusa.com/cdn/shop/files/LAUNCHES_HERO_7c49c26e-fc63-4418-a7d4-2d4b3d44ece2.jpg?v=1689281730',
+        ],
+    ],
+    'gg-marmont-medium-bag' => [
+        'name' => 'GG Marmont Medium Bag',
+        'brand' => 'Gucci',
+        'description' => 'Black chevron leather shoulder bag with Double G.',
+        'price' => 2850,
+        'tags' => ['Woman', 'Bag', 'Luxury'],
+        'rating' => '4.8',
+        'badge' => 'Luxury',
+        'gallery' => [
+            'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z3VjY2klMjBiYWd8ZW58MHx8MHx8fDA%3D',
+            'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?fm=jpg&q=70&w=1800&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?fm=jpg&q=80&w=1200&auto=format&fit=crop',
+        ],
+    ],
+    'cortez-leather-sneaker' => [
+        'name' => 'Cortez Leather Sneaker',
+        'brand' => 'Nike',
+        'description' => 'Low-profile leather runner with retro contrast.',
+        'price' => 90,
+        'tags' => ['Woman', 'Sneaker', 'Sport'],
+        'rating' => '4.6',
+        'badge' => 'Retro',
+        'gallery' => [
+            'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80',
+            'https://static.nike.com/a/images/t_PDP_1728_v1/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/734a4eb2-bcb0-467e-b43f-76c471be16e5/W%2BNIKE%2BCORTEZ.png',
+            'https://static.nike.com/a/images/t_PDP_1728_v1/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/d82a66ff-38f2-45b7-b22a-e9080adca623/W%2BNIKE%2BCORTEZ.png',
+            'https://static.nike.com/a/images/t_PDP_1728_v1/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/2a766a36-07ba-49e8-921b-3f259960744a/W%2BNIKE%2BCORTEZ.png',
+            'https://static.nike.com/a/images/t_PDP_1728_v1/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/909b9a87-9c5a-4617-85cc-e3eec53fbc18/W%2BNIKE%2BCORTEZ.png',
+        ],
+    ],
+    'la-femme-intense' => [
+        'name' => 'La Femme Intense',
+        'brand' => 'Prada',
+        'description' => 'Amber floral fragrance with soft vanilla warmth.',
+        'price' => 172,
+        'tags' => ['Woman', 'Fragrance', 'Luxury'],
+        'rating' => '4.7',
+        'badge' => 'Luxury',
+        'gallery' => [
+            'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1200&q=80',
+            'https://www.allbeauty.com/images?url=https://static.thcdn.com/productimg/original/12271391-1835265763900530.jpg&format=webp&auto=avif&width=1000&height=1000&fit=cover',
+            'https://i.makeup.be/g/go/goppxwiupxl3.jpg',
+        ],
+    ],
+    'quilted-chain-mini-bag' => [
+        'name' => 'Quilted Chain Mini Bag',
+        'brand' => 'Gucci',
+        'description' => 'Compact quilted bag with polished chain detail.',
+        'price' => 1980,
+        'tags' => ['Woman', 'Bag', 'Luxury'],
+        'rating' => '4.7',
+        'badge' => 'Luxury',
+        'gallery' => [
+            'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=900&q=70',
+            'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=700&q=80',
+        ],
+    ],
+    'performance-half-zip-jacket' => [
+        'name' => 'Performance Half-Zip Jacket',
+        'brand' => 'Puma',
+        'description' => 'Light training layer for warmups and city runs.',
+        'price' => 95,
+        'tags' => ['Man', 'Jacket', 'Sport'],
+        'rating' => '4.5',
+        'badge' => 'Training',
+        'gallery' => [
+            'https://images.unsplash.com/photo-1523381294911-8d3cead13475?auto=format&fit=crop&w=1200&q=80',
+        ],
     ],
 ];
 
+foreach ($productCatalog as $slug => $catalogProduct) {
+    $productCatalog[$slug]['slug'] = $slug;
+}
+
+$currentSlug = getProductSlug($_GET['product'] ?? 'paradigme-eau-de-parfum');
+$product = $productCatalog[$currentSlug] ?? $productCatalog['paradigme-eau-de-parfum'];
+$product['category'] = getProductCategory($product);
+$product['sizes'] = getProductSizes($product);
+$product['active_size'] = getDefaultActiveSize($product, $product['sizes']);
+
+$productGallery = array_map(
+    fn (string $image): array => [
+        'image' => $image,
+        'alt' => $product['name'] . ' product image',
+    ],
+    $product['gallery']
+);
+
+$similarProducts = array_values(array_filter($productCatalog, function (array $catalogProduct) use ($product): bool {
+    if ($catalogProduct['slug'] === $product['slug']) {
+        return false;
+    }
+
+    return $catalogProduct['brand'] === $product['brand']
+        || count(array_intersect($catalogProduct['tags'], $product['tags'])) > 0;
+}));
+
+if (count($similarProducts) < 5) {
+    foreach ($productCatalog as $catalogProduct) {
+        if ($catalogProduct['slug'] !== $product['slug'] && !in_array($catalogProduct, $similarProducts, true)) {
+            $similarProducts[] = $catalogProduct;
+        }
+    }
+}
+
+$similarProducts = array_slice($similarProducts, 0, 5);
 $activeGallery = $productGallery[0];
 ?>
 <!DOCTYPE html>
@@ -72,7 +360,7 @@ $activeGallery = $productGallery[0];
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=82">
+    <link rel="stylesheet" href="assets/css/styles.css?v=89">
 </head>
 <body class="product-detail-page">
     <header class="site-header" id="product-top">
@@ -97,9 +385,9 @@ $activeGallery = $productGallery[0];
                 <i data-lucide="shopping-bag"></i>
                 <span class="bag-count" aria-live="polite">0</span>
             </button>
-            <button class="icon-button" type="button" aria-label="Account" title="Account">
+            <a class="icon-button" href="profile.php" aria-label="Account profile" title="Account">
                 <i data-lucide="user-round"></i>
-            </button>
+            </a>
         </div>
     </header>
 
@@ -107,7 +395,7 @@ $activeGallery = $productGallery[0];
         <nav class="product-breadcrumb" aria-label="Breadcrumb">
             <a href="shop.php">Shop</a>
             <span>/</span>
-            <a href="shop.php#shop-grid">Man</a>
+            <a href="shop.php#shop-grid"><?= htmlspecialchars(str_replace("'s", '', $product['category'])); ?></a>
             <span>/</span>
             <span><?= htmlspecialchars($product['name']); ?></span>
         </nav>
@@ -177,16 +465,14 @@ $activeGallery = $productGallery[0];
                     <h2 id="similar-product-title">Similar Product</h2>
                     <div class="product-similar-list">
                         <?php foreach ($similarProducts as $index => $similarProduct): ?>
-                            <button
-                                type="button"
-                                data-product-gallery-thumb
-                                data-gallery-image="<?= htmlspecialchars($similarProduct['image']); ?>"
-                                data-gallery-alt="<?= htmlspecialchars($similarProduct['name']); ?>"
-                                aria-label="Show <?= htmlspecialchars($similarProduct['name']); ?>"
-                                aria-selected="false"
+                            <?php $similarImage = $similarProduct['gallery'][0] ?? ''; ?>
+                            <a
+                                href="product-detail.php?product=<?= rawurlencode($similarProduct['slug']); ?>"
+                                aria-label="View <?= htmlspecialchars($similarProduct['name']); ?>"
+                                title="<?= htmlspecialchars($similarProduct['name']); ?>"
                             >
-                                <img src="<?= htmlspecialchars($similarProduct['image']); ?>" alt="<?= htmlspecialchars($similarProduct['name']); ?>">
-                            </button>
+                                <img src="<?= htmlspecialchars($similarImage); ?>" alt="<?= htmlspecialchars($similarProduct['name']); ?>">
+                            </a>
                         <?php endforeach; ?>
                     </div>
                 </section>
@@ -256,6 +542,6 @@ $activeGallery = $productGallery[0];
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="assets/js/app.js?v=20"></script>
+    <script src="assets/js/app.js?v=22"></script>
 </body>
 </html>

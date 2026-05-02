@@ -223,12 +223,19 @@ function getShopFilterGroups(array $product): string
     return implode(' ', array_values(array_unique($groups)));
 }
 
+function getProductDetailHref(array $product): string
+{
+    $slug = trim((string) preg_replace('/[^a-z0-9]+/', '-', strtolower($product['name'])), '-');
+
+    return 'product-detail.php?product=' . rawurlencode($slug);
+}
+
 function renderShopProductCard(array $product, bool $filterable = true): void
 {
     $productTags = $product['tags'] ?? [];
     $productTagText = implode(' ', $productTags);
     $dataAttributes = '';
-    $productHref = strtolower($product['name']) === 'paradigme eau de parfum' ? 'product-detail.php' : '#';
+    $productHref = getProductDetailHref($product);
 
     if ($filterable) {
         $dataAttributes = sprintf(
@@ -298,7 +305,7 @@ $shopPageCount = max(1, (int) ceil(count($shopProducts) / $shopProductsPerPage))
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=82">
+    <link rel="stylesheet" href="assets/css/styles.css?v=89">
 </head>
 <body class="shop-page">
     <header class="site-header" id="shop-top">
@@ -323,9 +330,9 @@ $shopPageCount = max(1, (int) ceil(count($shopProducts) / $shopProductsPerPage))
                 <i data-lucide="shopping-bag"></i>
                 <span class="bag-count" aria-live="polite">0</span>
             </button>
-            <button class="icon-button" type="button" aria-label="Account" title="Account">
+            <a class="icon-button" href="profile.php" aria-label="Account profile" title="Account">
                 <i data-lucide="user-round"></i>
-            </button>
+            </a>
         </div>
     </header>
 
@@ -531,6 +538,6 @@ $shopPageCount = max(1, (int) ceil(count($shopProducts) / $shopProductsPerPage))
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="assets/js/app.js?v=20"></script>
+    <script src="assets/js/app.js?v=22"></script>
 </body>
 </html>
