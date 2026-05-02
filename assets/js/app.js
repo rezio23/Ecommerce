@@ -28,6 +28,8 @@ const searchTrigger = document.querySelector('.search-trigger');
 const searchPanel = document.querySelector('.search-panel');
 const searchInput = document.querySelector('#product-search');
 const productCards = document.querySelectorAll('[data-product-card]');
+const shopProductGrid = document.querySelector('[data-shop-product-grid]');
+const shopPagination = document.querySelector('[data-shop-pagination]');
 const brandFilter = document.querySelector('[data-product-brand-filter]');
 const audienceFilter = document.querySelector('[data-product-audience-filter]');
 const groupFilters = document.querySelectorAll('[data-product-group-filter]');
@@ -35,6 +37,73 @@ const filterSelects = document.querySelectorAll('[data-filter-select]');
 const filterToggles = document.querySelectorAll('[data-filter-toggle]');
 const filterOptions = document.querySelectorAll('[data-filter-option]');
 let selectedProductGroup = '';
+let selectedProductPage = 1;
+const productsPerPage = Number(shopPagination?.dataset.pageSize) || 8;
+const productPageExitMs = 220;
+const productPageEnterMs = 320;
+const productGridMotionClasses = [
+    'is-sliding-out-left',
+    'is-sliding-out-right',
+    'is-sliding-in-left',
+    'is-sliding-in-right',
+];
+const reducedMotionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+let isProductPageAnimating = false;
+
+const clearProductGridMotion = () => {
+    shopProductGrid?.classList.remove(...productGridMotionClasses);
+};
+
+const getPaginationItems = (totalPages) => {
+    if (totalPages <= 4) {
+        return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    if (selectedProductPage <= 2) {
+        return [1, 2, 'ellipsis', totalPages];
+    }
+
+    if (selectedProductPage >= totalPages - 1) {
+        return [1, 'ellipsis', totalPages - 1, totalPages];
+    }
+
+    return [1, 'ellipsis', selectedProductPage, 'ellipsis', totalPages];
+};
+
+const renderShopPagination = (totalPages) => {
+    if (!shopPagination) {
+        return;
+    }
+
+    shopPagination.hidden = totalPages <= 1;
+    shopProductGrid?.classList.toggle('has-pagination', totalPages > 1);
+    shopPagination.innerHTML = '';
+
+    getPaginationItems(totalPages).forEach((item) => {
+        if (item === 'ellipsis') {
+            const ellipsis = document.createElement('span');
+            ellipsis.textContent = '...';
+            ellipsis.setAttribute('aria-hidden', 'true');
+            shopPagination.append(ellipsis);
+            return;
+        }
+
+        const pageButton = document.createElement('button');
+        const isActive = item === selectedProductPage;
+
+        pageButton.type = 'button';
+        pageButton.textContent = String(item);
+        pageButton.dataset.productPage = String(item);
+        pageButton.setAttribute('aria-label', `Show product page ${item}`);
+
+        if (isActive) {
+            pageButton.classList.add('is-active');
+            pageButton.setAttribute('aria-current', 'page');
+        }
+
+        shopPagination.append(pageButton);
+    });
+};
 
 searchTrigger?.addEventListener('click', () => {
     const isHidden = searchPanel.hasAttribute('hidden');
@@ -45,10 +114,11 @@ searchTrigger?.addEventListener('click', () => {
     }
 });
 
-const applyProductFilters = () => {
+const applyProductFilters = ({ keepPage = false } = {}) => {
     const query = searchInput?.value.trim().toLowerCase() || '';
     const selectedBrand = brandFilter?.dataset.filterValue || brandFilter?.value || '';
     const selectedAudience = audienceFilter?.dataset.filterValue || audienceFilter?.value || '';
+    const matchingCards = [];
 
     productCards.forEach((card) => {
         const searchableText = `${card.dataset.name || ''} ${card.dataset.tags || ''}`;
@@ -57,10 +127,91 @@ const applyProductFilters = () => {
         const matchesBrand = selectedBrand === '' || card.dataset.brand === selectedBrand;
         const matchesAudience = selectedAudience === '' || card.dataset.audience === selectedAudience;
         const matchesGroup = selectedProductGroup === '' || groups.includes(selectedProductGroup);
+        const isMatch = matchesSearch && matchesBrand && matchesAudience && matchesGroup;
 
-        card.classList.toggle('is-hidden', !(matchesSearch && matchesBrand && matchesAudience && matchesGroup));
+        if (isMatch) {
+            matchingCards.push(card);
+        }
     });
+
+    if (!shopPagination) {
+        productCards.forEach((card) => {
+            card.classList.toggle('is-hidden', !matchingCards.includes(card));
+        });
+        return;
+    }
+
+    const totalPages = Math.max(1, Math.ceil(matchingCards.length / productsPerPage));
+
+    if (!keepPage) {
+        selectedProductPage = 1;
+    }
+
+    selectedProductPage = Math.min(selectedProductPage, totalPages);
+
+    const startIndex = (selectedProductPage - 1) * productsPerPage;
+    const currentPageCards = matchingCards.slice(startIndex, startIndex + productsPerPage);
+    const currentPageSet = new Set(currentPageCards);
+
+    productCards.forEach((card) => {
+        card.classList.toggle('is-hidden', !currentPageSet.has(card));
+    });
+
+    renderShopPagination(totalPages);
 };
+
+shopPagination?.addEventListener('click', (event) => {
+    const pageButton = event.target instanceof Element
+        ? event.target.closest('[data-product-page]')
+        : null;
+
+    if (!pageButton || !shopPagination.contains(pageButton)) {
+        return;
+    }
+
+    event.preventDefault();
+
+    const nextPage = Number(pageButton.dataset.productPage);
+
+    if (!Number.isFinite(nextPage) || nextPage === selectedProductPage || isProductPageAnimating) {
+        return;
+    }
+
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const isNextPage = nextPage > selectedProductPage;
+
+    if (!shopProductGrid || reducedMotionQuery?.matches) {
+        selectedProductPage = nextPage;
+        applyProductFilters({ keepPage: true });
+        window.scrollTo(scrollX, scrollY);
+        return;
+    }
+
+    isProductPageAnimating = true;
+    shopPagination.classList.add('is-busy');
+    clearProductGridMotion();
+    void shopProductGrid.offsetWidth;
+    shopProductGrid.classList.add(isNextPage ? 'is-sliding-out-left' : 'is-sliding-out-right');
+
+    window.setTimeout(() => {
+        selectedProductPage = nextPage;
+        applyProductFilters({ keepPage: true });
+        window.scrollTo(scrollX, scrollY);
+
+        clearProductGridMotion();
+        void shopProductGrid.offsetWidth;
+        shopProductGrid.classList.add(isNextPage ? 'is-sliding-in-right' : 'is-sliding-in-left');
+
+        window.setTimeout(() => {
+            clearProductGridMotion();
+            shopPagination.classList.remove('is-busy');
+            isProductPageAnimating = false;
+        }, productPageEnterMs);
+    }, productPageExitMs);
+});
+
+applyProductFilters({ keepPage: true });
 
 searchInput?.addEventListener('input', applyProductFilters);
 

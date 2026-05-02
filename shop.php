@@ -104,6 +104,38 @@ $shopProducts = [
         'tags' => ['Woman', 'Bag', 'Luxury'],
         'image' => 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z3VjY2klMjBiYWd8ZW58MHx8MHx8fDA%3D',
     ],
+    [
+        'name' => 'Cortez Leather Sneaker',
+        'brand' => 'Nike',
+        'description' => 'Low-profile leather runner with retro contrast.',
+        'price' => 90,
+        'tags' => ['Woman', 'Sneaker', 'Sport'],
+        'image' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80',
+    ],
+    [
+        'name' => 'La Femme Intense',
+        'brand' => 'Prada',
+        'description' => 'Amber floral fragrance with soft vanilla warmth.',
+        'price' => 172,
+        'tags' => ['Woman', 'Fragrance', 'Luxury'],
+        'image' => 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1200&q=80',
+    ],
+    [
+        'name' => 'Quilted Chain Mini Bag',
+        'brand' => 'Gucci',
+        'description' => 'Compact quilted bag with polished chain detail.',
+        'price' => 1980,
+        'tags' => ['Woman', 'Bag', 'Luxury'],
+        'image' => 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=1200&q=80',
+    ],
+    [
+        'name' => 'Performance Half-Zip Jacket',
+        'brand' => 'Puma',
+        'description' => 'Light training layer for warmups and city runs.',
+        'price' => 95,
+        'tags' => ['Man', 'Jacket', 'Sport'],
+        'image' => 'https://images.unsplash.com/photo-1523381294911-8d3cead13475?auto=format&fit=crop&w=1200&q=80',
+    ],
 ];
 
 $shopBrandOptions = [
@@ -252,6 +284,9 @@ $shopHighlights = [
         'text' => 'Clear pricing, clean browsing, and quick cart actions.',
     ],
 ];
+
+$shopProductsPerPage = 8;
+$shopPageCount = max(1, (int) ceil(count($shopProducts) / $shopProductsPerPage));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -262,7 +297,7 @@ $shopHighlights = [
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=72">
+    <link rel="stylesheet" href="assets/css/styles.css?v=76">
 </head>
 <body class="shop-page">
     <header class="site-header" id="shop-top">
@@ -388,11 +423,31 @@ $shopHighlights = [
                     </div>
                 </div>
 
-                <div class="product-grid shop-product-grid">
+                <div class="product-grid shop-product-grid" data-shop-product-grid>
                     <?php foreach ($shopProducts as $product): ?>
                         <?php renderShopProductCard($product); ?>
                     <?php endforeach; ?>
                 </div>
+
+                <nav
+                    class="shop-pagination"
+                    data-shop-pagination
+                    data-page-size="<?= $shopProductsPerPage; ?>"
+                    aria-label="Product pages"
+                    <?= $shopPageCount <= 1 ? 'hidden' : ''; ?>
+                >
+                    <?php for ($page = 1; $page <= $shopPageCount; $page++): ?>
+                        <button
+                            class="<?= $page === 1 ? 'is-active' : ''; ?>"
+                            type="button"
+                            data-product-page="<?= $page; ?>"
+                            aria-label="Show product page <?= $page; ?>"
+                            <?= $page === 1 ? 'aria-current="page"' : ''; ?>
+                        >
+                            <?= $page; ?>
+                        </button>
+                    <?php endfor; ?>
+                </nav>
             </section>
 
             <section class="shop-highlight-band" aria-label="Important shop details">
@@ -472,6 +527,6 @@ $shopHighlights = [
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="assets/js/app.js?v=12"></script>
+    <script src="assets/js/app.js?v=16"></script>
 </body>
 </html>
