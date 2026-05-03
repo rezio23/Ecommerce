@@ -10,6 +10,9 @@ $navItems = [
 $profileUser = [
     'name' => 'Vichhean Sombath',
     'handle' => '@sombath123',
+    'email' => 'sombath@gmail.com',
+    'phone' => 'Unknown',
+    'location' => 'Sen Sok, Phnom Penh, Cambodia',
     'avatar' => 'https://i1.sndcdn.com/avatars-tDQKBExQks6cE0zh-HO3N7Q-t240x240.jpg',
 ];
 
@@ -101,6 +104,7 @@ function renderProfileProductSection(string $title, array $products, string $lab
                 aria-controls="<?= htmlspecialchars($panelId); ?>"
             >
                 <span><?= htmlspecialchars($title); ?></span>
+                <i data-lucide="chevron-down" aria-hidden="true"></i>
             </button>
             <div class="profile-section-controls" aria-label="<?= htmlspecialchars($title); ?> controls">
                 <button type="button" data-profile-carousel-prev aria-label="Previous <?= htmlspecialchars($title); ?>">
@@ -132,7 +136,7 @@ function renderProfileProductSection(string $title, array $products, string $lab
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=89">
+    <link rel="stylesheet" href="assets/css/styles.css?v=91">
 </head>
 <body class="profile-page">
     <header class="site-header" id="profile-top">
@@ -169,6 +173,20 @@ function renderProfileProductSection(string $title, array $products, string $lab
                 <img class="profile-avatar" src="<?= htmlspecialchars($profileUser['avatar']); ?>" alt="<?= htmlspecialchars($profileUser['name']); ?>">
                 <h1><?= htmlspecialchars($profileUser['name']); ?></h1>
                 <p><?= htmlspecialchars($profileUser['handle']); ?></p>
+                <dl class="profile-detail-list">
+                    <div>
+                        <dt>Email</dt>
+                        <dd><?= htmlspecialchars($profileUser['email']); ?></dd>
+                    </div>
+                    <div>
+                        <dt>Phone</dt>
+                        <dd><?= htmlspecialchars($profileUser['phone']); ?></dd>
+                    </div>
+                    <div>
+                        <dt>Location</dt>
+                        <dd><?= htmlspecialchars($profileUser['location']); ?></dd>
+                    </div>
+                </dl>
                 <a href="#" class="profile-edit-link">Edit Profile</a>
             </div>
 

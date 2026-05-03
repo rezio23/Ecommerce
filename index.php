@@ -462,6 +462,7 @@ function getProductDetailHref(array $product): string
                     aria-controls="products-popular"
                 >
                     <span>Popular</span>
+                    <i data-lucide="chevron-down" aria-hidden="true"></i>
                 </button>
 
                 <div class="product-panel-content product-panel-content--popular" id="products-popular" data-product-content>
@@ -513,7 +514,7 @@ function getProductDetailHref(array $product): string
                         aria-controls="<?= htmlspecialchars($panelId); ?>"
                     >
                         <span><?= htmlspecialchars($group['label']); ?></span>
-                        <i data-lucide="chevron-up"></i>
+                        <i data-lucide="chevron-down" aria-hidden="true"></i>
                     </button>
                     <div class="product-panel-content" id="<?= htmlspecialchars($panelId); ?>" data-product-content hidden>
                         <div class="product-grid product-grid--nested">
