@@ -780,3 +780,53 @@ const setActiveBrand = (selectedButton) => {
 brandSwitchers.forEach((button) => {
     button.addEventListener('click', () => setActiveBrand(button));
 });
+
+const editProfileModal = document.getElementById('edit-profile-modal');
+const editProfileOpeners = document.querySelectorAll('[data-edit-open]');
+const editProfileClosers = document.querySelectorAll('[data-edit-close]');
+
+const setEditProfileOpen = (shouldOpen) => {
+    if (!editProfileModal) {
+        return;
+    }
+
+    editProfileModal.classList.toggle('is-open', shouldOpen);
+    editProfileModal.setAttribute('aria-hidden', String(!shouldOpen));
+
+    if (shouldOpen) {
+        const firstInput = editProfileModal.querySelector('.edit-form-input');
+        window.requestAnimationFrame(() => firstInput?.focus());
+    }
+};
+
+editProfileOpeners.forEach((button) => {
+    button.addEventListener('click', (event) => {
+        event.preventDefault();
+        setEditProfileOpen(true);
+    });
+});
+
+editProfileClosers.forEach((button) => {
+    button.addEventListener('click', () => setEditProfileOpen(false));
+});
+
+editProfileModal?.addEventListener('click', (event) => {
+    if (event.target === editProfileModal) {
+        setEditProfileOpen(false);
+    }
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && editProfileModal?.classList.contains('is-open')) {
+        setEditProfileOpen(false);
+    }
+});
+
+const editFileInput = document.getElementById('edit-profile-pic');
+const editFileText = document.getElementById('edit-file-text');
+
+if (editFileInput && editFileText) {
+    editFileInput.addEventListener('change', () => {
+        editFileText.textContent = editFileInput.files[0]?.name || 'Browser File';
+    });
+}

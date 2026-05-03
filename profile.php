@@ -12,6 +12,7 @@ $profileUser = [
     'handle' => '@sombath123',
     'email' => 'sombath@gmail.com',
     'phone' => 'Unknown',
+    'gender' => 'Hidden',
     'location' => 'Sen Sok, Phnom Penh, Cambodia',
     'avatar' => 'https://i1.sndcdn.com/avatars-tDQKBExQks6cE0zh-HO3N7Q-t240x240.jpg',
 ];
@@ -136,7 +137,7 @@ function renderProfileProductSection(string $title, array $products, string $lab
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=91">
+    <link rel="stylesheet" href="assets/css/styles.css?v=92">
 </head>
 <body class="profile-page">
     <header class="site-header" id="profile-top">
@@ -179,6 +180,10 @@ function renderProfileProductSection(string $title, array $products, string $lab
                         <dd><?= htmlspecialchars($profileUser['email']); ?></dd>
                     </div>
                     <div>
+                        <dt>Gender</dt>
+                        <dd><?= htmlspecialchars($profileUser['gender']); ?></dd>
+                    </div>
+                    <div>
                         <dt>Phone</dt>
                         <dd><?= htmlspecialchars($profileUser['phone']); ?></dd>
                     </div>
@@ -187,7 +192,7 @@ function renderProfileProductSection(string $title, array $products, string $lab
                         <dd><?= htmlspecialchars($profileUser['location']); ?></dd>
                     </div>
                 </dl>
-                <a href="#" class="profile-edit-link">Edit Profile</a>
+                <a href="edit-profile.php" class="profile-edit-link" data-edit-open>Edit Profile</a>
             </div>
 
             <nav class="profile-footer-links" aria-label="Profile actions">
@@ -264,7 +269,55 @@ function renderProfileProductSection(string $title, array $products, string $lab
         </div>
     </footer>
 
+    <div class="edit-profile-overlay" id="edit-profile-modal" aria-hidden="true">
+        <div class="edit-profile-modal" role="dialog" aria-modal="true" aria-labelledby="edit-profile-title">
+            <button type="button" class="edit-profile-close" data-edit-close aria-label="Close edit profile">
+                <i data-lucide="x"></i>
+            </button>
+            <h2 id="edit-profile-title">Edit Personal Detail</h2>
+            <hr class="edit-form-divider">
+            <form class="edit-form" action="profile.php" method="post">
+                <div class="edit-form-group">
+                    <label class="edit-form-label" for="edit-full-name">Full name</label>
+                    <input class="edit-form-input" id="edit-full-name" name="full_name" type="text" value="<?= htmlspecialchars($profileUser['name']); ?>" placeholder="e.g. John Smith">
+                </div>
+                <div class="edit-form-group">
+                    <label class="edit-form-label" for="edit-username">Username</label>
+                    <input class="edit-form-input" id="edit-username" name="username" type="text" value="<?= htmlspecialchars($profileUser['handle']); ?>" placeholder="e.g. johnsmith123">
+                </div>
+                <div class="edit-form-group">
+                    <label class="edit-form-label" for="edit-gender">Gender</label>
+                    <select class="edit-form-input edit-form-select" id="edit-gender" name="gender">
+                        <option value="Hidden" <?= $profileUser['gender'] === 'Hidden' ? 'selected' : ''; ?>>Hidden</option>
+                        <option value="Male" <?= $profileUser['gender'] === 'Male' ? 'selected' : ''; ?>>Male</option>
+                        <option value="Female" <?= $profileUser['gender'] === 'Female' ? 'selected' : ''; ?>>Female</option>
+                        <option value="Other" <?= $profileUser['gender'] === 'Other' ? 'selected' : ''; ?>>Other</option>
+                    </select>
+                </div>
+                <div class="edit-form-group">
+                    <label class="edit-form-label" for="edit-profile-pic">Profile Picture</label>
+                    <div class="edit-form-file-wrap">
+                        <span class="edit-form-file-text" id="edit-file-text">Browser File</span>
+                        <input id="edit-profile-pic" name="profile_picture" type="file" accept="image/*" aria-label="Profile picture">
+                    </div>
+                </div>
+                <div class="edit-form-group">
+                    <label class="edit-form-label" for="edit-address">Address</label>
+                    <input class="edit-form-input" id="edit-address" name="address" type="text" value="<?= htmlspecialchars($profileUser['location']); ?>" placeholder="e.g. Toul Kork, Cambodia">
+                </div>
+                <div class="edit-form-group">
+                    <label class="edit-form-label" for="edit-phone">Phone</label>
+                    <input class="edit-form-input" id="edit-phone" name="phone" type="tel" value="<?= $profileUser['phone'] !== 'Unknown' ? htmlspecialchars($profileUser['phone']) : ''; ?>" placeholder="e.g. 85511 223 344">
+                </div>
+                <div class="edit-form-actions">
+                    <button type="button" class="edit-form-button edit-form-button--cancel" data-edit-close>Cancel</button>
+                    <button type="submit" class="edit-form-button edit-form-button--submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="assets/js/app.js?v=22"></script>
+    <script src="assets/js/app.js?v=23"></script>
 </body>
 </html>
