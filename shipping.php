@@ -82,16 +82,14 @@ $user = [
     </header>
 
     <main class="shipping-main">
-        <nav class="shipping-breadcrumb" aria-label="Checkout steps">
-            <a href="cart.php">Cart</a>
-            <span>/</span>
-            <span class="is-active" aria-current="step">Shipping</span>
-            <span>/</span>
-            <span>Payment</span>
-        </nav>
-
         <div class="shipping-header-row">
-            <div></div>
+            <nav class="shipping-breadcrumb" aria-label="Checkout steps">
+                <a href="cart.php">Cart</a>
+                <span>/</span>
+                <span class="is-active" aria-current="step">Shipping</span>
+                <span>/</span>
+                <span>Payment</span>
+            </nav>
             <a href="#" class="shipping-help-link">Help Center</a>
         </div>
 
@@ -167,17 +165,19 @@ $user = [
 
             <aside class="shipping-summary-card" aria-label="Order summary">
                 <h2 class="shipping-card-title">Cart</h2>
-                <div class="shipping-summary-items">
+                <div class="shipping-cart-items">
                     <?php foreach ($cartItems as $index => $item): ?>
-                        <div class="shipping-summary-item">
-                            <span class="shipping-item-badge"><?= $index + 1; ?></span>
-                            <img src="<?= htmlspecialchars($item['image']); ?>" alt="<?= htmlspecialchars($item['name']); ?>">
-                            <div class="shipping-item-meta">
+                        <div class="shipping-cart-item">
+                            <div class="shipping-cart-thumb">
+                                <img src="<?= htmlspecialchars($item['image']); ?>" alt="<?= htmlspecialchars($item['name']); ?>">
+                                <span class="shipping-cart-badge"><?= $index + 1; ?></span>
+                            </div>
+                            <div class="shipping-cart-info">
                                 <strong><?= htmlspecialchars($item['name']); ?></strong>
                                 <span>Quantity: <?= (int) $item['quantity']; ?></span>
-                                <span class="shipping-item-size">Size: <?= htmlspecialchars($item['size']); ?></span>
+                                <span class="shipping-cart-size">Size: <?= htmlspecialchars($item['size']); ?></span>
                             </div>
-                            <span class="shipping-item-price">$ <?= number_format($item['price'], 2); ?></span>
+                            <span class="shipping-cart-price">$ <?= number_format($item['price'], 2); ?></span>
                         </div>
                     <?php endforeach; ?>
                 </div>

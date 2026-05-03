@@ -69,16 +69,14 @@ $subtotal = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'],
     </header>
 
     <main class="cart-main">
-        <nav class="cart-breadcrumb" aria-label="Breadcrumb">
-            <a href="index.php#home">Home</a>
-            <span>/</span>
-            <a href="shop.php">Shop</a>
-            <span>/</span>
-            <span aria-current="page">Cart</span>
-        </nav>
-
         <div class="cart-header-row">
-            <h1>Find out your preferring products</h1>
+            <nav class="cart-breadcrumb" aria-label="Breadcrumb">
+                <a href="index.php#home">Home</a>
+                <span>/</span>
+                <a href="shop.php">Shop</a>
+                <span>/</span>
+                <span aria-current="page">Cart</span>
+            </nav>
             <a href="#" class="cart-help-link">Help Center</a>
         </div>
 
