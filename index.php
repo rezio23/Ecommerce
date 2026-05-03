@@ -320,10 +320,10 @@ function getProductDetailHref(array $product): string
                     <i data-lucide="search"></i>
                 </button>
             </div>
-            <button class="icon-button bag-button" type="button" aria-label="Shopping bag" title="Bag">
+            <a class="icon-button bag-button" href="cart.php" aria-label="Shopping bag" title="Bag">
                 <i data-lucide="shopping-bag"></i>
                 <span class="bag-count" aria-live="polite">0</span>
-            </button>
+            </a>
             <a class="icon-button" href="profile.php" aria-label="Account profile" title="Account">
                 <i data-lucide="user-round"></i>
             </a>
