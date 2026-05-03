@@ -122,7 +122,7 @@ $subtotal = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'],
                 <span>Sub Total:</span>
                 <strong>$ <?= number_format($subtotal, 2); ?></strong>
             </div>
-            <a href="#" class="cart-checkout-btn">Go to Checkout</a>
+            <a href="shipping.php" class="cart-checkout-btn">Go to Checkout</a>
         </div>
     </main>
 
