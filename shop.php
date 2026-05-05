@@ -330,18 +330,26 @@ $shopPageCount = max(1, (int) ceil(count($shopProducts) / $shopProductsPerPage))
                 <i data-lucide="shopping-bag"></i>
                 <span class="bag-count" aria-live="polite">0</span>
             </a>
-            <a class="icon-button" href="profile.php" aria-label="Account profile" title="Account">
+            <a class="icon-button" href="login.php" aria-label="Account login" title="Account">
                 <i data-lucide="user-round"></i>
             </a>
         </div>
     </header>
 
     <main class="shop-main">
-        <section class="shop-hero" aria-label="Luxury fragrance shop banner"></section>
+        <section class="shop-hero" aria-label="Luxury fragrance shop banner">
+            <figure class="shop-hero-model">
+                <img src="https://www.pngall.com/wp-content/uploads/13/Nike-Shoes-Air-Max-PNG-Images.png" alt="Nike Air Max shoes">
+            </figure>
+
+            <div class="shop-hero-copy">
+                <p class="pixel-note">/2026 Collection<br>New Arrivals</p>
+                <h1>Shop the<br><span>- Best Brands</span></h1>
+            </div>
+        </section>
 
         <section class="shop-collection" aria-labelledby="shop-heading">
             <div class="section-heading shop-collection__heading">
-                <h1 id="shop-heading">Shop<br><span>- collection</span></h1>
                 <p class="pixel-note">Curated premium pieces<br>ready for checkout.</p>
             </div>
 

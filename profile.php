@@ -198,7 +198,7 @@ function renderProfileProductSection(string $title, array $products, string $lab
             <nav class="profile-footer-links" aria-label="Profile actions">
                 <a href="#">Term Condition</a>
                 <span aria-hidden="true"></span>
-                <a href="#">Logout</a>
+                <a href="login.php">Logout</a>
             </nav>
         </aside>
 

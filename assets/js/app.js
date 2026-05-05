@@ -830,3 +830,33 @@ if (editFileInput && editFileText) {
         editFileText.textContent = editFileInput.files[0]?.name || 'Browser File';
     });
 }
+
+const shopHeroModel = document.querySelector('.shop-hero-model');
+
+if (shopHeroModel) {
+    let maxTranslate = window.innerWidth - shopHeroModel.clientWidth;
+    let ticking = false;
+
+    const updateShopHeroModel = () => {
+        const scrollY = window.scrollY;
+        const translateX = Math.min(scrollY * 1.5, maxTranslate);
+        const rotation = scrollY * 0.15;
+        shopHeroModel.style.transform = `translateX(${translateX}px) rotate(${rotation}deg)`;
+        ticking = false;
+    };
+
+    const recalcMaxTranslate = () => {
+        maxTranslate = Math.max(0, window.innerWidth - shopHeroModel.clientWidth);
+        updateShopHeroModel();
+    };
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(updateShopHeroModel);
+            ticking = true;
+        }
+    }, { passive: true });
+
+    window.addEventListener('resize', recalcMaxTranslate);
+    recalcMaxTranslate();
+}

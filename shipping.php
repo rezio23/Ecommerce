@@ -75,7 +75,7 @@ $user = [
                 <i data-lucide="shopping-bag"></i>
                 <span class="bag-count" aria-live="polite"><?= count($cartItems); ?></span>
             </a>
-            <a class="icon-button" href="profile.php" aria-label="Account profile" title="Account">
+            <a class="icon-button" href="login.php" aria-label="Account login" title="Account">
                 <i data-lucide="user-round"></i>
             </a>
         </div>
