@@ -111,7 +111,7 @@ $shopProducts = [
         'description' => 'Amber floral fragrance with soft vanilla warmth.',
         'price' => 172,
         'tags' => ['Woman', 'Fragrance', 'Luxury'],
-        'image' => 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1200&q=80',
+        'image' => 'https://i.makeup.be/g/go/goppxwiupxl3.jpg',
     ],
     [
         'name' => 'Quilted Chain Mini Bag',

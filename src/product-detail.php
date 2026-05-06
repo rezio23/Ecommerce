@@ -86,9 +86,9 @@ $productCatalog = [
         'badge' => 'New Arrival',
         'gallery' => [
             'https://www.creativeboom.com/upload/articles/34/34fc53c4c1a50ddea6bbb35a25186d2f4bf17262_944.jpg',
-            'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto%2Cq_auto%3Aeco%2Cu_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/8af72051-937c-4b7a-9676-86638e6f4faf/BLAZER%2BMID%2B%2777%2BPRM.png',
-            'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto%2Cq_auto%3Aeco%2Cu_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/bfd07f21-0c77-4d75-8e2b-80f572d0c7d8/BLAZER%2BMID%2B%2777%2BPRM.png',
-            'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto%2Cq_auto%3Aeco%2Cu_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/05bdbfba-a04e-4ef5-94c5-43c195b6f7f7/BLAZER%2BMID%2B%2777%2BPRM.png',
+            'https://content.deadstock.de/media/pages/uploads/2021/07/ea757af117-1731408448/nike-sb-blazer-mid-mosaic-brown-da8854-600-dead-stock-1-1024x719-1920x.webp',
+            'https://content.deadstock.de/media/pages/uploads/2021/07/ed954481d6-1731408448/nike-sb-blazer-mid-mosaic-brown-da8854-600-dead-stock-9-1024x1024-1920x.webp',
+            'https://content.deadstock.de/media/pages/uploads/2021/07/714faa9af9-1731408448/nike-sb-blazer-mid-mosaic-brown-da8854-600-dead-stock-8-1024x1024-1920x.webp',
         ],
     ],
     'paradigme-eau-de-parfum' => [
@@ -151,6 +151,8 @@ $productCatalog = [
         'badge' => 'Essential',
         'gallery' => [
             'https://i.gadgets360cdn.com/large/Untitled-design161-1766054573857.png',
+            'https://images.pexels.com/photos/29499774/pexels-photo-29499774.jpeg',
+            'https://images.pexels.com/photos/27334191/pexels-photo-27334191.jpeg',
         ],
     ],
     'air-max-90-off-white' => [
@@ -163,10 +165,9 @@ $productCatalog = [
         'badge' => 'Limited',
         'gallery' => [
             'https://i.ytimg.com/vi/lA_DF1wLEkQ/maxresdefault.jpg',
-            'https://image.goat.com/transform/v1/attachments/product_template_pictures/images/079/296/946/original/466439_01.png.png?action=crop&width=1200',
-            'https://image.goat.com/transform/v1/attachments/product_template_pictures/images/079/296/949/original/466439_02.png.png?action=crop&width=1200',
-            'https://image.goat.com/transform/v1/attachments/product_template_pictures/images/079/296/948/original/466439_03.png.png?action=crop&width=1200',
-            'https://image.goat.com/transform/v1/attachments/product_template_pictures/images/079/296/950/original/466439_04.png.png?action=crop&width=1200',
+            'https://storage.googleapis.com/hypeclothinga-media/__sized__/products/NIKE_AIR_MAX_90_OFF-WHITE_OG_AA7293-100_HYPE_CLOTHINGA_LIMITED_EDITION__-thumbnail-1080x1080-70.jpg',
+            'https://storage.googleapis.com/hypeclothinga-media/__sized__/products/NIKE_AIR_MAX_90_OFF-WHITE_OG_AA7293-100_HYPE_CLOTHINGA_LIMITED_EDITION___-thumbnail-1080x1080-70.jpg',
+            'https://storage.googleapis.com/hypeclothinga-media/__sized__/products/NIKE_AIR_MAX_90_OFF-WHITE_OG_AA7293-100_HYPE_CLOTHINGA_LIMITED_EDITION-thumbnail-1080x1080-70.jpg',
         ],
     ],
     'rebound-v6-low-sneakers' => [
@@ -179,10 +180,10 @@ $productCatalog = [
         'badge' => 'Sport',
         'gallery' => [
             'https://t4.ftcdn.net/jpg/05/23/51/15/360_F_523511500_1807EEj4w00yFC6bAVcn82amkEHnBmeg.jpg',
-            'https://images.puma.com/image/upload/f_auto,q_auto,w_1200,b_rgb:FAFAFA/global/392328/01/sv01/fnd/MEX/fmt/png',
-            'https://images.puma.com/image/upload/f_auto,q_auto,w_1200,b_rgb:FAFAFA/global/392328/01/mod01/fnd/MEX/fmt/png',
-            'https://images.puma.com/image/upload/f_auto,q_auto,w_1200,b_rgb:FAFAFA/global/392328/01/mod02/fnd/MEX/fmt/png',
-            'https://images.puma.com/image/upload/f_auto,q_auto,w_1200,b_rgb:FAFAFA/global/392328/01/fnd/MEX/fmt/png',
+            'https://m.media-amazon.com/images/I/61LPl3y2txL._AC_SY625_.jpg',
+            'https://m.media-amazon.com/images/I/61wWqXvKQnL._AC_SY625_.jpg',
+            'https://m.media-amazon.com/images/I/71Yc7lCWPpL._AC_SY625_.jpg',
+            'https://m.media-amazon.com/images/I/61tAjlzs6IL._AC_SY625_.jpg',
         ],
     ],
     'trail-running-jacket' => [
@@ -195,6 +196,8 @@ $productCatalog = [
         'badge' => 'Lightweight',
         'gallery' => [
             'https://img.freepik.com/premium-photo/runner-golden-jacket-pauses-check-his-watch-sunlit-forest-path-breath_283470-13385.jpg',
+            'https://upthereathletics.com/cdn/shop/files/ciele-running-mens-elite-flr-jacket-sable-2.jpg?v=1700521012&width=1100',
+            'https://huckberry.imgix.net/spree/products/730690/original/85947_Ciele_Athletics_Lightweight_Performance_Waterproof_Jacket_Sable_01.jpg?auto=format%2C%20compress&crop=top&fit=fill&cs=tinysrgb&ar=4%3A5&fill=solid&fill-color=FFFFFF&ixlib=react-9.8.1',
         ],
     ],
     'mesh-fabric-slingback-pumps' => [
@@ -219,7 +222,8 @@ $productCatalog = [
         'badge' => 'Classic',
         'gallery' => [
             'https://static.vecteezy.com/system/resources/previews/013/254/291/non_2x/ternopil-ukraine-september-2-2022-chanel-number-5-eau-premiere-worldwide-famous-french-perfume-bottle-among-other-perfumes-on-shiny-glitter-background-in-yellow-colors-free-photo.JPG',
-            'https://www.allbeauty.com/images?url=https://static.thcdn.com/productimg/original/12271391-1835265763900530.jpg&format=webp&auto=avif&width=1000&height=1000&fit=cover',
+            'https://scentsware.com/cdn/shop/files/C5F1EEA5-BA44-4F90-A3B9-B0D9C25A53D4.jpg?v=1720211139&width=1445',
+            'https://media.karousell.com/media/photos/products/2024/7/6/chanel__dior_perfume_gift_1720258862_dca9f564_progressive.jpg',
         ],
     ],
     'womens-jersey-polo-shirt' => [
@@ -273,9 +277,8 @@ $productCatalog = [
         'rating' => '4.7',
         'badge' => 'Luxury',
         'gallery' => [
-            'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1200&q=80',
-            'https://www.allbeauty.com/images?url=https://static.thcdn.com/productimg/original/12271391-1835265763900530.jpg&format=webp&auto=avif&width=1000&height=1000&fit=cover',
             'https://i.makeup.be/g/go/goppxwiupxl3.jpg',
+            'https://ssbimages.ssbeauty.in/pub/media/catalog/product/images/S25DAVID638625/S25DAVID638625_base.jpg',
         ],
     ],
     'quilted-chain-mini-bag' => [
