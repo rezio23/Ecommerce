@@ -1,862 +1,910 @@
-const iconLibrary = window.lucide;
+$(function () {
+    const iconLibrary = window.lucide;
 
-if (iconLibrary) {
-    iconLibrary.createIcons();
-}
+    if (iconLibrary) {
+        iconLibrary.createIcons();
+    }
 
-const bagCount = document.querySelector('.bag-count');
-const addButtons = document.querySelectorAll('[data-add-to-cart]');
-let cartTotal = 0;
+    const $bagCount = $('.bag-count');
+    const $addButtons = $('[data-add-to-cart]');
+    let cartTotal = 0;
 
-addButtons.forEach((button) => {
-    button.addEventListener('click', () => {
+    $addButtons.on('click', function () {
+        const $button = $(this);
         cartTotal += 1;
-        bagCount.textContent = cartTotal;
+        $bagCount.text(cartTotal);
 
-        const label = button.querySelector('span');
-        label.textContent = 'Added';
-        button.setAttribute('aria-label', 'Added to bag');
+        const $label = $button.find('span');
+        $label.text('Added');
+        $button.attr('aria-label', 'Added to bag');
 
-        window.setTimeout(() => {
-            label.textContent = 'Add to Cart';
-            button.removeAttribute('aria-label');
+        window.setTimeout(function () {
+            $label.text('Add to Cart');
+            $button.removeAttr('aria-label');
         }, 1200);
     });
-});
 
-const searchTrigger = document.querySelector('.search-trigger');
-const headerSearch = document.querySelector('[data-header-search]');
-const headerSearchInput = headerSearch?.querySelector('[data-product-search]');
-const siteHeader = headerSearch?.closest('.site-header');
-const searchPanel = document.querySelector('.search-panel');
-const searchInputs = document.querySelectorAll('[data-product-search]');
-const searchInput = searchInputs[0] || document.querySelector('#product-search');
-const productCards = document.querySelectorAll('[data-product-card]');
-const shopProductGrid = document.querySelector('[data-shop-product-grid]');
-const shopPagination = document.querySelector('[data-shop-pagination]');
-const brandFilter = document.querySelector('[data-product-brand-filter]');
-const audienceFilter = document.querySelector('[data-product-audience-filter]');
-const groupFilters = document.querySelectorAll('[data-product-group-filter]');
-const filterSelects = document.querySelectorAll('[data-filter-select]');
-const filterToggles = document.querySelectorAll('[data-filter-toggle]');
-const filterOptions = document.querySelectorAll('[data-filter-option]');
-const productSizeGroups = document.querySelectorAll('[data-product-size-group]');
-const productGalleryMain = document.querySelector('[data-product-gallery-main]');
-const productGalleryThumbs = document.querySelectorAll('[data-product-gallery-thumb]');
-const productGalleryFrame = productGalleryMain?.closest('.product-hero-media');
-const profileSections = document.querySelectorAll('[data-profile-section]');
-let selectedProductGroup = '';
-let selectedProductPage = 1;
-let productSearchQuery = searchInput?.value || '';
-let productGallerySwitchId = 0;
-const productsPerPage = Number(shopPagination?.dataset.pageSize) || 8;
-const productPageExitMs = 220;
-const productPageEnterMs = 320;
-const productGridMotionClasses = [
-    'is-sliding-out-left',
-    'is-sliding-out-right',
-    'is-sliding-in-left',
-    'is-sliding-in-right',
-];
-const reducedMotionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-let isProductPageAnimating = false;
+    const $searchTrigger = $('.search-trigger');
+    const $headerSearch = $('[data-header-search]');
+    const $headerSearchInput = $headerSearch.find('[data-product-search]');
+    const $siteHeader = $headerSearch.closest('.site-header');
+    const $searchPanel = $('.search-panel');
+    const $searchInputs = $('[data-product-search]');
+    const $searchInput = $searchInputs.first();
+    const $productCards = $('[data-product-card]');
+    const $shopProductGrid = $('[data-shop-product-grid]');
+    const $shopPagination = $('[data-shop-pagination]');
+    const $brandFilter = $('[data-product-brand-filter]');
+    const $audienceFilter = $('[data-product-audience-filter]');
+    const $groupFilters = $('[data-product-group-filter]');
+    const $filterSelects = $('[data-filter-select]');
+    const $filterToggles = $('[data-filter-toggle]');
+    const $filterOptions = $('[data-filter-option]');
+    const $productSizeGroups = $('[data-product-size-group]');
+    const $productGalleryMain = $('[data-product-gallery-main]');
+    const $productGalleryThumbs = $('[data-product-gallery-thumb]');
+    const $productGalleryFrame = $productGalleryMain.closest('.product-hero-media');
+    const $profileSections = $('[data-profile-section]');
+    let selectedProductGroup = '';
+    let selectedProductPage = 1;
+    let productSearchQuery = $searchInput.val() || '';
+    let productGallerySwitchId = 0;
+    const productsPerPage = Number($shopPagination.attr('data-page-size')) || 8;
+    const productPageExitMs = 220;
+    const productPageEnterMs = 320;
+    const productGridMotionClasses = [
+        'is-sliding-out-left',
+        'is-sliding-out-right',
+        'is-sliding-in-left',
+        'is-sliding-in-right',
+    ];
+    const reducedMotionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    let isProductPageAnimating = false;
 
-const clearProductGridMotion = () => {
-    shopProductGrid?.classList.remove(...productGridMotionClasses);
-};
+    const clearProductGridMotion = function () {
+        $shopProductGrid.removeClass(productGridMotionClasses.join(' '));
+    };
 
-const getPaginationItems = (totalPages) => {
-    if (totalPages <= 4) {
-        return Array.from({ length: totalPages }, (_, index) => index + 1);
-    }
+    const getPaginationItems = function (totalPages) {
+        if (totalPages <= 4) {
+            return Array.from({ length: totalPages }, function (_, index) { return index + 1; });
+        }
 
-    if (selectedProductPage <= 2) {
-        return [1, 2, 'ellipsis', totalPages];
-    }
+        if (selectedProductPage <= 2) {
+            return [1, 2, 'ellipsis', totalPages];
+        }
 
-    if (selectedProductPage >= totalPages - 1) {
-        return [1, 'ellipsis', totalPages - 1, totalPages];
-    }
+        if (selectedProductPage >= totalPages - 1) {
+            return [1, 'ellipsis', totalPages - 1, totalPages];
+        }
 
-    return [1, 'ellipsis', selectedProductPage, 'ellipsis', totalPages];
-};
+        return [1, 'ellipsis', selectedProductPage, 'ellipsis', totalPages];
+    };
 
-const renderShopPagination = (totalPages) => {
-    if (!shopPagination) {
-        return;
-    }
-
-    shopPagination.hidden = totalPages <= 1;
-    shopProductGrid?.classList.toggle('has-pagination', totalPages > 1);
-    shopPagination.innerHTML = '';
-
-    getPaginationItems(totalPages).forEach((item) => {
-        if (item === 'ellipsis') {
-            const ellipsis = document.createElement('span');
-            ellipsis.textContent = '...';
-            ellipsis.setAttribute('aria-hidden', 'true');
-            shopPagination.append(ellipsis);
+    const renderShopPagination = function (totalPages) {
+        if (!$shopPagination.length) {
             return;
         }
 
-        const pageButton = document.createElement('button');
-        const isActive = item === selectedProductPage;
+        $shopPagination.prop('hidden', totalPages <= 1);
+        $shopProductGrid.toggleClass('has-pagination', totalPages > 1);
+        $shopPagination.empty();
 
-        pageButton.type = 'button';
-        pageButton.textContent = String(item);
-        pageButton.dataset.productPage = String(item);
-        pageButton.setAttribute('aria-label', `Show product page ${item}`);
+        getPaginationItems(totalPages).forEach(function (item) {
+            if (item === 'ellipsis') {
+                const $ellipsis = $('<span></span>');
+                $ellipsis.text('...');
+                $ellipsis.attr('aria-hidden', 'true');
+                $shopPagination.append($ellipsis);
+                return;
+            }
 
-        if (isActive) {
-            pageButton.classList.add('is-active');
-            pageButton.setAttribute('aria-current', 'page');
-        }
+            const $pageButton = $('<button></button>');
+            const isActive = item === selectedProductPage;
 
-        shopPagination.append(pageButton);
-    });
-};
+            $pageButton.attr('type', 'button');
+            $pageButton.text(String(item));
+            $pageButton.attr('data-product-page', String(item));
+            $pageButton.attr('aria-label', 'Show product page ' + item);
 
-const setHeaderSearchOpen = (shouldOpen) => {
-    if (!headerSearch) {
-        return;
-    }
+            if (isActive) {
+                $pageButton.addClass('is-active');
+                $pageButton.attr('aria-current', 'page');
+            }
 
-    headerSearch.classList.toggle('is-open', shouldOpen);
-    siteHeader?.classList.toggle('has-header-search', shouldOpen);
-    searchTrigger?.setAttribute('aria-expanded', String(shouldOpen));
-    searchTrigger?.setAttribute('aria-label', shouldOpen ? 'Search products' : 'Open search');
-
-    if (!headerSearchInput) {
-        return;
-    }
-
-    headerSearchInput.tabIndex = shouldOpen ? 0 : -1;
-    headerSearchInput.setAttribute('aria-hidden', String(!shouldOpen));
-
-    if (shouldOpen) {
-        window.requestAnimationFrame(() => {
-            headerSearchInput.focus();
+            $shopPagination.append($pageButton);
         });
-    } else if (document.activeElement === headerSearchInput) {
-        headerSearchInput.blur();
-    }
-};
+    };
 
-const syncSearchInputs = (sourceInput = searchInput) => {
-    productSearchQuery = sourceInput?.value || '';
-
-    searchInputs.forEach((input) => {
-        if (input !== sourceInput) {
-            input.value = productSearchQuery;
+    const setHeaderSearchOpen = function (shouldOpen) {
+        if (!$headerSearch.length) {
+            return;
         }
-    });
-};
 
-searchTrigger?.addEventListener('click', () => {
-    if (headerSearch) {
-        setHeaderSearchOpen(true);
-        return;
-    }
+        $headerSearch.toggleClass('is-open', shouldOpen);
+        $siteHeader.toggleClass('has-header-search', shouldOpen);
+        $searchTrigger.attr('aria-expanded', String(shouldOpen));
+        $searchTrigger.attr('aria-label', shouldOpen ? 'Search products' : 'Open search');
 
-    if (!searchPanel || !searchInput) {
-        return;
-    }
-
-    const isHidden = searchPanel.hasAttribute('hidden');
-    searchPanel.toggleAttribute('hidden', !isHidden);
-
-    if (isHidden) {
-        searchInput.focus();
-    }
-});
-
-const applyProductFilters = ({ keepPage = false } = {}) => {
-    const query = productSearchQuery.trim().toLowerCase();
-    const selectedBrand = brandFilter?.dataset.filterValue || brandFilter?.value || '';
-    const selectedAudience = audienceFilter?.dataset.filterValue || audienceFilter?.value || '';
-    const matchingCards = [];
-
-    productCards.forEach((card) => {
-        const searchableText = `${card.dataset.name || ''} ${card.dataset.tags || ''}`;
-        const groups = (card.dataset.groups || '').split(' ').filter(Boolean);
-        const matchesSearch = query === '' || searchableText.includes(query);
-        const matchesBrand = selectedBrand === '' || card.dataset.brand === selectedBrand;
-        const matchesAudience = selectedAudience === '' || card.dataset.audience === selectedAudience;
-        const matchesGroup = selectedProductGroup === '' || groups.includes(selectedProductGroup);
-        const isMatch = matchesSearch && matchesBrand && matchesAudience && matchesGroup;
-
-        if (isMatch) {
-            matchingCards.push(card);
+        if (!$headerSearchInput.length) {
+            return;
         }
-    });
 
-    if (!shopPagination) {
-        productCards.forEach((card) => {
-            card.classList.toggle('is-hidden', !matchingCards.includes(card));
+        $headerSearchInput.prop('tabIndex', shouldOpen ? 0 : -1);
+        $headerSearchInput.attr('aria-hidden', String(!shouldOpen));
+
+        if (shouldOpen) {
+            window.requestAnimationFrame(function () {
+                $headerSearchInput.focus();
+            });
+        } else if (document.activeElement === $headerSearchInput[0]) {
+            $headerSearchInput.blur();
+        }
+    };
+
+    const syncSearchInputs = function (sourceInput) {
+        const $source = sourceInput ? $(sourceInput) : $searchInput;
+        productSearchQuery = $source.val() || '';
+
+        $searchInputs.each(function () {
+            if (this !== $source[0]) {
+                $(this).val(productSearchQuery);
+            }
         });
-        return;
-    }
+    };
 
-    const totalPages = Math.max(1, Math.ceil(matchingCards.length / productsPerPage));
+    $searchTrigger.on('click', function () {
+        if ($headerSearch.length) {
+            setHeaderSearchOpen(true);
+            return;
+        }
 
-    if (!keepPage) {
-        selectedProductPage = 1;
-    }
+        if (!$searchPanel.length || !$searchInput.length) {
+            return;
+        }
 
-    selectedProductPage = Math.min(selectedProductPage, totalPages);
+        const isHidden = $searchPanel.prop('hidden');
+        $searchPanel.prop('hidden', !isHidden);
 
-    const startIndex = (selectedProductPage - 1) * productsPerPage;
-    const currentPageCards = matchingCards.slice(startIndex, startIndex + productsPerPage);
-    const currentPageSet = new Set(currentPageCards);
-
-    productCards.forEach((card) => {
-        card.classList.toggle('is-hidden', !currentPageSet.has(card));
+        if (isHidden) {
+            $searchInput.focus();
+        }
     });
 
-    renderShopPagination(totalPages);
-};
+    const $navToggle = $('.nav-toggle');
+    const $siteNav = $('.site-nav');
 
-shopPagination?.addEventListener('click', (event) => {
-    const pageButton = event.target instanceof Element
-        ? event.target.closest('[data-product-page]')
-        : null;
+    const setMobileNavOpen = function (shouldOpen) {
+        if (!$siteNav.length || !$navToggle.length) {
+            return;
+        }
 
-    if (!pageButton || !shopPagination.contains(pageButton)) {
-        return;
-    }
+        $siteNav.toggleClass('is-open', shouldOpen);
+        $navToggle.attr('aria-expanded', String(shouldOpen));
+        $navToggle.attr('aria-label', shouldOpen ? 'Close menu' : 'Open menu');
+    };
 
-    event.preventDefault();
+    $navToggle.on('click', function () {
+        setMobileNavOpen(!$siteNav.hasClass('is-open'));
+    });
 
-    const nextPage = Number(pageButton.dataset.productPage);
+    $(document).on('click', function (event) {
+        const $target = $(event.target);
+        if (!$target.closest('.site-header').length && $siteNav.hasClass('is-open')) {
+            setMobileNavOpen(false);
+        }
+    });
 
-    if (!Number.isFinite(nextPage) || nextPage === selectedProductPage || isProductPageAnimating) {
-        return;
-    }
+    $(document).on('keydown', function (event) {
+        if (event.key === 'Escape' && $siteNav.hasClass('is-open')) {
+            setMobileNavOpen(false);
+        }
+    });
 
-    const scrollX = window.scrollX;
-    const scrollY = window.scrollY;
-    const isNextPage = nextPage > selectedProductPage;
+    const applyProductFilters = function (opts) {
+        opts = opts || {};
+        const keepPage = opts.keepPage || false;
+        const query = productSearchQuery.trim().toLowerCase();
+        const selectedBrand = $brandFilter.attr('data-filter-value') || $brandFilter.val() || '';
+        const selectedAudience = $audienceFilter.attr('data-filter-value') || $audienceFilter.val() || '';
+        const matchingCards = [];
 
-    if (!shopProductGrid || reducedMotionQuery?.matches) {
-        selectedProductPage = nextPage;
-        applyProductFilters({ keepPage: true });
-        window.scrollTo(scrollX, scrollY);
-        return;
-    }
+        $productCards.each(function () {
+            const $card = $(this);
+            const searchableText = ($card.attr('data-name') || '') + ' ' + ($card.attr('data-tags') || '');
+            const groups = ($card.attr('data-groups') || '').split(' ').filter(Boolean);
+            const matchesSearch = query === '' || searchableText.includes(query);
+            const matchesBrand = selectedBrand === '' || $card.attr('data-brand') === selectedBrand;
+            const matchesAudience = selectedAudience === '' || $card.attr('data-audience') === selectedAudience;
+            const matchesGroup = selectedProductGroup === '' || groups.includes(selectedProductGroup);
+            const isMatch = matchesSearch && matchesBrand && matchesAudience && matchesGroup;
 
-    isProductPageAnimating = true;
-    shopPagination.classList.add('is-busy');
-    clearProductGridMotion();
-    void shopProductGrid.offsetWidth;
-    shopProductGrid.classList.add(isNextPage ? 'is-sliding-out-left' : 'is-sliding-out-right');
+            if (isMatch) {
+                matchingCards.push(this);
+            }
+        });
 
-    window.setTimeout(() => {
-        selectedProductPage = nextPage;
-        applyProductFilters({ keepPage: true });
-        window.scrollTo(scrollX, scrollY);
+        if (!$shopPagination.length) {
+            $productCards.each(function () {
+                const $card = $(this);
+                $card.toggleClass('is-hidden', matchingCards.indexOf(this) < 0);
+            });
+            return;
+        }
 
+        const totalPages = Math.max(1, Math.ceil(matchingCards.length / productsPerPage));
+
+        if (!keepPage) {
+            selectedProductPage = 1;
+        }
+
+        selectedProductPage = Math.min(selectedProductPage, totalPages);
+
+        const startIndex = (selectedProductPage - 1) * productsPerPage;
+        const currentPageCards = matchingCards.slice(startIndex, startIndex + productsPerPage);
+        const currentPageSet = new Set(currentPageCards);
+
+        $productCards.each(function () {
+            const $card = $(this);
+            $card.toggleClass('is-hidden', !currentPageSet.has(this));
+        });
+
+        renderShopPagination(totalPages);
+    };
+
+    $shopPagination.on('click', function (event) {
+        const $pageButton = $(event.target).closest('[data-product-page]');
+
+        if (!$pageButton.length || !$.contains($shopPagination[0], $pageButton[0])) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const nextPage = Number($pageButton.attr('data-product-page'));
+
+        if (!Number.isFinite(nextPage) || nextPage === selectedProductPage || isProductPageAnimating) {
+            return;
+        }
+
+        const scrollX = $(window).scrollLeft();
+        const scrollY = $(window).scrollTop();
+        const isNextPage = nextPage > selectedProductPage;
+
+        if (!$shopProductGrid.length || reducedMotionQuery?.matches) {
+            selectedProductPage = nextPage;
+            applyProductFilters({ keepPage: true });
+            window.scrollTo(scrollX, scrollY);
+            return;
+        }
+
+        isProductPageAnimating = true;
+        $shopPagination.addClass('is-busy');
         clearProductGridMotion();
-        void shopProductGrid.offsetWidth;
-        shopProductGrid.classList.add(isNextPage ? 'is-sliding-in-right' : 'is-sliding-in-left');
+        void $shopProductGrid[0].offsetWidth;
+        $shopProductGrid.addClass(isNextPage ? 'is-sliding-out-left' : 'is-sliding-out-right');
 
-        window.setTimeout(() => {
+        window.setTimeout(function () {
+            selectedProductPage = nextPage;
+            applyProductFilters({ keepPage: true });
+            window.scrollTo(scrollX, scrollY);
+
             clearProductGridMotion();
-            shopPagination.classList.remove('is-busy');
-            isProductPageAnimating = false;
-        }, productPageEnterMs);
-    }, productPageExitMs);
-});
+            void $shopProductGrid[0].offsetWidth;
+            $shopProductGrid.addClass(isNextPage ? 'is-sliding-in-right' : 'is-sliding-in-left');
 
-applyProductFilters({ keepPage: true });
+            window.setTimeout(function () {
+                clearProductGridMotion();
+                $shopPagination.removeClass('is-busy');
+                isProductPageAnimating = false;
+            }, productPageEnterMs);
+        }, productPageExitMs);
+    });
 
-searchInputs.forEach((input) => {
-    input.addEventListener('input', (event) => {
+    applyProductFilters({ keepPage: true });
+
+    $searchInputs.on('input', function (event) {
         syncSearchInputs(event.currentTarget);
         applyProductFilters();
     });
-});
 
-groupFilters.forEach((button) => {
-    button.addEventListener('click', () => {
-        selectedProductGroup = button.dataset.filterValue || '';
+    $groupFilters.on('click', function () {
+        const $button = $(this);
+        selectedProductGroup = $button.attr('data-filter-value') || '';
 
-        groupFilters.forEach((item) => {
-            const isSelected = item === button;
+        $groupFilters.each(function () {
+            const $item = $(this);
+            const isSelected = $item[0] === $button[0];
 
-            item.classList.toggle('is-active', isSelected);
-            item.setAttribute('aria-pressed', String(isSelected));
+            $item.toggleClass('is-active', isSelected);
+            $item.attr('aria-pressed', String(isSelected));
         });
 
         applyProductFilters();
     });
-});
 
-const closeFilterSelect = (select) => {
-    const toggle = select.querySelector('[data-filter-toggle]');
+    const closeFilterSelect = function ($select) {
+        const $toggle = $select.find('[data-filter-toggle]');
 
-    select.classList.remove('is-open');
-    toggle?.setAttribute('aria-expanded', 'false');
-};
+        $select.removeClass('is-open');
+        $toggle.attr('aria-expanded', 'false');
+    };
 
-const closeFilterSelects = (activeSelect = null) => {
-    filterSelects.forEach((select) => {
-        if (select !== activeSelect) {
-            closeFilterSelect(select);
-        }
-    });
-};
+    const closeFilterSelects = function ($activeSelect) {
+        $filterSelects.each(function () {
+            const $select = $(this);
+            if (!$activeSelect || $select[0] !== $activeSelect[0]) {
+                closeFilterSelect($select);
+            }
+        });
+    };
 
-filterToggles.forEach((toggle) => {
-    toggle.addEventListener('click', () => {
-        const select = toggle.closest('[data-filter-select]');
+    $filterToggles.on('click', function () {
+        const $toggle = $(this);
+        const $select = $toggle.closest('[data-filter-select]');
 
-        if (!select) {
+        if (!$select.length) {
             return;
         }
 
-        const shouldOpen = !select.classList.contains('is-open');
-        closeFilterSelects(select);
-        select.classList.toggle('is-open', shouldOpen);
-        toggle.setAttribute('aria-expanded', String(shouldOpen));
+        const shouldOpen = !$select.hasClass('is-open');
+        closeFilterSelects($select);
+        $select.toggleClass('is-open', shouldOpen);
+        $toggle.attr('aria-expanded', String(shouldOpen));
     });
-});
 
-filterOptions.forEach((option) => {
-    option.addEventListener('click', () => {
-        const select = option.closest('[data-filter-select]');
-        const toggle = select?.querySelector('[data-filter-toggle]');
-        const currentLabel = toggle?.querySelector('[data-filter-current]');
+    $filterOptions.on('click', function () {
+        const $option = $(this);
+        const $select = $option.closest('[data-filter-select]');
+        const $toggle = $select.find('[data-filter-toggle]');
+        const $currentLabel = $toggle.find('[data-filter-current]');
 
-        if (!select || !toggle || !currentLabel) {
+        if (!$select.length || !$toggle.length || !$currentLabel.length) {
             return;
         }
 
-        select.querySelectorAll('[data-filter-option]').forEach((item) => {
-            const isSelected = item === option;
+        $select.find('[data-filter-option]').each(function () {
+            const $item = $(this);
+            const isSelected = $item[0] === $option[0];
 
-            item.classList.toggle('is-selected', isSelected);
-            item.setAttribute('aria-selected', String(isSelected));
+            $item.toggleClass('is-selected', isSelected);
+            $item.attr('aria-selected', String(isSelected));
         });
 
-        toggle.dataset.filterValue = option.dataset.filterValue || '';
-        currentLabel.textContent = option.textContent.trim();
-        closeFilterSelect(select);
+        $toggle.attr('data-filter-value', $option.attr('data-filter-value') || '');
+        $currentLabel.text($option.text().trim());
+        closeFilterSelect($select);
         applyProductFilters();
     });
-});
 
-const setActiveProductSize = (activeButton) => {
-    const group = activeButton.closest('[data-product-size-group]');
+    const setActiveProductSize = function ($activeButton) {
+        const $group = $activeButton.closest('[data-product-size-group]');
 
-    if (!group) {
-        return;
-    }
-
-    const selectedSize = activeButton.dataset.sizeValue || activeButton.textContent.trim();
-    group.dataset.selectedSize = selectedSize;
-
-    group.querySelectorAll('[data-product-size-option]').forEach((button) => {
-        const isActive = button === activeButton;
-
-        button.classList.toggle('is-active', isActive);
-        button.setAttribute('aria-pressed', String(isActive));
-    });
-};
-
-productSizeGroups.forEach((group) => {
-    const initialSize = group.querySelector('[data-product-size-option].is-active')
-        || group.querySelector('[data-product-size-option]');
-
-    if (initialSize) {
-        setActiveProductSize(initialSize);
-    }
-
-    group.addEventListener('click', (event) => {
-        const button = event.target instanceof Element
-            ? event.target.closest('[data-product-size-option]')
-            : null;
-
-        if (!button || !group.contains(button)) {
+        if (!$group.length) {
             return;
         }
 
-        setActiveProductSize(button);
+        const selectedSize = $activeButton.attr('data-size-value') || $activeButton.text().trim();
+        $group.attr('data-selected-size', selectedSize);
+
+        $group.find('[data-product-size-option]').each(function () {
+            const $button = $(this);
+            const isActive = $button[0] === $activeButton[0];
+
+            $button.toggleClass('is-active', isActive);
+            $button.attr('aria-pressed', String(isActive));
+        });
+    };
+
+    $productSizeGroups.each(function () {
+        const $group = $(this);
+        const $initialSize = $group.find('[data-product-size-option].is-active').first();
+        const $firstSize = $group.find('[data-product-size-option]').first();
+        const $sizeToUse = $initialSize.length ? $initialSize : $firstSize;
+
+        if ($sizeToUse.length) {
+            setActiveProductSize($sizeToUse);
+        }
+
+        $group.on('click', function (event) {
+            const $button = $(event.target).closest('[data-product-size-option]');
+
+            if (!$button.length || !$.contains($group[0], $button[0])) {
+                return;
+            }
+
+            setActiveProductSize($button);
+        });
     });
-});
 
-const setActiveProductGalleryThumb = (activeButton) => {
-    productGalleryThumbs.forEach((item) => {
-        const isActive = item === activeButton;
+    const setActiveProductGalleryThumb = function ($activeButton) {
+        $productGalleryThumbs.each(function () {
+            const $item = $(this);
+            const isActive = $item[0] === $activeButton[0];
 
-        item.classList.toggle('is-active', isActive);
-        item.setAttribute('aria-selected', String(isActive));
-    });
-};
+            $item.toggleClass('is-active', isActive);
+            $item.attr('aria-selected', String(isActive));
+        });
+    };
 
-productGalleryThumbs.forEach((button) => {
-    button.addEventListener('click', (event) => {
+    $productGalleryThumbs.on('click', function (event) {
         event.preventDefault();
 
-        if (!productGalleryMain) {
+        if (!$productGalleryMain.length) {
             return;
         }
 
-        const nextImage = button.dataset.galleryImage;
-        const nextAlt = button.dataset.galleryAlt || 'Selected product image';
+        const $button = $(this);
+        const nextImage = $button.attr('data-gallery-image');
+        const nextAlt = $button.attr('data-gallery-alt') || 'Selected product image';
 
         if (!nextImage) {
             return;
         }
 
-        setActiveProductGalleryThumb(button);
+        setActiveProductGalleryThumb($button);
 
-        if (productGalleryMain.getAttribute('src') === nextImage) {
+        if ($productGalleryMain.attr('src') === nextImage) {
             return;
         }
 
         const switchId = ++productGallerySwitchId;
         const nextGalleryImage = new Image();
 
-        productGalleryFrame?.classList.add('is-switching');
+        $productGalleryFrame.addClass('is-switching');
 
-        nextGalleryImage.onload = () => {
-            window.setTimeout(() => {
+        nextGalleryImage.onload = function () {
+            window.setTimeout(function () {
                 if (switchId !== productGallerySwitchId) {
                     return;
                 }
 
-                productGalleryMain.src = nextImage;
-                productGalleryMain.alt = nextAlt;
+                $productGalleryMain.attr('src', nextImage);
+                $productGalleryMain.attr('alt', nextAlt);
 
-                window.requestAnimationFrame(() => {
-                    productGalleryFrame?.classList.remove('is-switching');
+                window.requestAnimationFrame(function () {
+                    $productGalleryFrame.removeClass('is-switching');
                 });
             }, 120);
         };
 
-        nextGalleryImage.onerror = () => {
+        nextGalleryImage.onerror = function () {
             if (switchId === productGallerySwitchId) {
-                productGalleryFrame?.classList.remove('is-switching');
+                $productGalleryFrame.removeClass('is-switching');
             }
         };
 
         nextGalleryImage.src = nextImage;
     });
-});
 
-const getProfileCarouselStep = (panel) => {
-    const track = panel.querySelector('[data-profile-carousel]');
-    const card = track?.querySelector('.profile-product-card');
+    const getProfileCarouselStep = function ($panel) {
+        const $track = $panel.find('[data-profile-carousel]');
+        const $card = $track.find('.profile-product-card').first();
 
-    if (!track || !card) {
-        return panel.clientWidth;
-    }
+        if (!$track.length || !$card.length) {
+            return $panel[0].clientWidth;
+        }
 
-    const trackStyles = window.getComputedStyle(track);
-    const trackGap = Number.parseFloat(trackStyles.columnGap || trackStyles.gap) || 0;
+        const trackGap = parseFloat($track.css('columnGap')) || parseFloat($track.css('gap')) || 0;
 
-    return card.getBoundingClientRect().width + trackGap;
-};
+        return $card[0].getBoundingClientRect().width + trackGap;
+    };
 
-const moveProfileCarousel = (section, direction) => {
-    const panel = section.querySelector('[data-profile-carousel-panel]');
-    const toggle = section.querySelector('[data-product-toggle]');
+    const moveProfileCarousel = function ($section, direction) {
+        const $panel = $section.find('[data-profile-carousel-panel]');
+        const $toggle = $section.find('[data-product-toggle]');
 
-    if (!panel) {
-        return;
-    }
-
-    if (toggle?.getAttribute('aria-expanded') === 'false') {
-        toggle.click();
-    }
-
-    const maxScroll = Math.max(0, panel.scrollWidth - panel.clientWidth);
-
-    if (maxScroll <= 1) {
-        return;
-    }
-
-    const step = getProfileCarouselStep(panel);
-    const current = panel.scrollLeft;
-    let nextPosition = current + (step * direction);
-
-    if (direction > 0 && current >= maxScroll - 4) {
-        nextPosition = 0;
-    } else if (direction < 0 && current <= 4) {
-        nextPosition = maxScroll;
-    } else {
-        nextPosition = Math.max(0, Math.min(maxScroll, nextPosition));
-    }
-
-    panel.scrollTo({
-        left: nextPosition,
-        behavior: reducedMotionQuery?.matches ? 'auto' : 'smooth',
-    });
-};
-
-profileSections.forEach((section) => {
-    const previousButton = section.querySelector('[data-profile-carousel-prev]');
-    const nextButton = section.querySelector('[data-profile-carousel-next]');
-
-    previousButton?.addEventListener('click', () => {
-        moveProfileCarousel(section, -1);
-    });
-
-    nextButton?.addEventListener('click', () => {
-        moveProfileCarousel(section, 1);
-    });
-});
-
-document.addEventListener('click', (event) => {
-    const targetElement = event.target instanceof Element ? event.target : null;
-    const clickedFilter = targetElement
-        ? targetElement.closest('[data-filter-select]')
-        : null;
-
-    if (!clickedFilter) {
-        closeFilterSelects();
-    }
-
-    const clickedHeaderSearch = targetElement
-        ? targetElement.closest('[data-header-search]')
-        : null;
-
-    if (headerSearch && !clickedHeaderSearch && !headerSearchInput?.value) {
-        setHeaderSearchOpen(false);
-    }
-});
-
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-        closeFilterSelects();
-        setHeaderSearchOpen(false);
-    }
-});
-
-const productToggles = document.querySelectorAll('[data-product-toggle]');
-
-productToggles.forEach((button) => {
-    const content = document.getElementById(button.getAttribute('aria-controls'));
-
-    if (!content) {
-        return;
-    }
-
-    const isExpanded = button.getAttribute('aria-expanded') === 'true';
-
-    content.toggleAttribute('hidden', !isExpanded);
-    content.classList.toggle('is-open', isExpanded);
-    content.style.maxHeight = isExpanded ? 'none' : '0px';
-
-    button.addEventListener('click', () => {
-        const shouldOpen = button.getAttribute('aria-expanded') !== 'true';
-
-        button.setAttribute('aria-expanded', String(shouldOpen));
-
-        if (shouldOpen) {
-            content.hidden = false;
-            content.style.maxHeight = '0px';
-            content.classList.add('is-open');
-
-            window.requestAnimationFrame(() => {
-                content.style.maxHeight = `${content.scrollHeight}px`;
-            });
-
+        if (!$panel.length) {
             return;
         }
 
-        content.style.maxHeight = `${content.scrollHeight}px`;
+        if ($toggle.attr('aria-expanded') === 'false') {
+            $toggle.trigger('click');
+        }
 
-        window.requestAnimationFrame(() => {
-            content.classList.remove('is-open');
-            content.style.maxHeight = '0px';
-        });
-    });
+        const maxScroll = Math.max(0, $panel[0].scrollWidth - $panel[0].clientWidth);
 
-    content.addEventListener('transitionend', (event) => {
-        if (event.propertyName !== 'max-height') {
+        if (maxScroll <= 1) {
             return;
         }
 
-        const isOpen = button.getAttribute('aria-expanded') === 'true';
+        const step = getProfileCarouselStep($panel);
+        const current = $panel.scrollLeft();
+        let nextPosition = current + (step * direction);
 
-        if (isOpen) {
-            content.style.maxHeight = 'none';
+        if (direction > 0 && current >= maxScroll - 4) {
+            nextPosition = 0;
+        } else if (direction < 0 && current <= 4) {
+            nextPosition = maxScroll;
         } else {
-            content.hidden = true;
+            nextPosition = Math.max(0, Math.min(maxScroll, nextPosition));
         }
-    });
-});
 
-const brandStackImages = Array.from(document.querySelectorAll('[data-brand-stack]'));
-const brandSwitchers = document.querySelectorAll('[data-brand-trigger]');
-const brandItems = Array.from(document.querySelectorAll('[data-brand-item]'));
-const momentStack = brandStackImages[0]?.closest('.moment-stack');
-let activeBrandIndex = brandItems.findIndex((item) => item.classList.contains('is-active'));
-const brandMotionClasses = ['is-moving-up', 'is-moving-down', 'is-wrapping-up', 'is-wrapping-down'];
-
-if (activeBrandIndex < 0) {
-    activeBrandIndex = 0;
-}
-
-const getBrandSlot = (itemIndex, selectedIndex) => {
-    const total = brandItems.length;
-    const edge = Math.floor(total / 2);
-    let slot = itemIndex - selectedIndex;
-
-    if (slot > edge) {
-        slot -= total;
-    }
-
-    if (slot < -edge) {
-        slot += total;
-    }
-
-    return slot;
-};
-
-const getSlotTransform = (slot) => {
-    const transforms = {
-        '-2': 'calc(-50% - var(--brand-edge-gap))',
-        '-1': 'calc(-50% - var(--brand-step-gap))',
-        0: '-50%',
-        1: 'calc(-50% + var(--brand-step-gap))',
-        2: 'calc(-50% + var(--brand-edge-gap))',
-    };
-
-    return transforms[slot] || '-50%';
-};
-
-const getSlotOpacity = (slot) => {
-    const opacities = {
-        '-2': '0.86',
-        '-1': '0.9',
-        0: '1',
-        1: '0.9',
-        2: '0.86',
-    };
-
-    return opacities[slot] || '0.88';
-};
-
-const clearBrandMotion = (item) => {
-    item.classList.remove(...brandMotionClasses);
-    item.style.removeProperty('--brand-from-y');
-    item.style.removeProperty('--brand-from-opacity');
-};
-
-const applyBrandSlots = (selectedIndex, direction = 0) => {
-    brandItems.forEach(clearBrandMotion);
-
-    if (direction !== 0) {
-        brandItems.forEach((item) => {
-            void item.offsetWidth;
+        $panel[0].scrollTo({
+            left: nextPosition,
+            behavior: reducedMotionQuery?.matches ? 'auto' : 'smooth',
         });
-    }
-
-    brandItems.forEach((item, itemIndex) => {
-        const previousSlot = Number(item.dataset.slot || getBrandSlot(itemIndex, activeBrandIndex));
-        const nextSlot = getBrandSlot(itemIndex, selectedIndex);
-        const isWrappingUp = direction > 0 && nextSlot > previousSlot;
-        const isWrappingDown = direction < 0 && nextSlot < previousSlot;
-
-        if (direction !== 0) {
-            item.style.setProperty('--brand-from-y', getSlotTransform(previousSlot));
-            item.style.setProperty('--brand-from-opacity', getSlotOpacity(previousSlot));
-        }
-
-        item.dataset.slot = String(nextSlot);
-
-        if (isWrappingUp) {
-            item.classList.add('is-wrapping-up');
-        } else if (isWrappingDown) {
-            item.classList.add('is-wrapping-down');
-        } else if (direction > 0) {
-            item.classList.add('is-moving-up');
-        } else if (direction < 0) {
-            item.classList.add('is-moving-down');
-        }
-    });
-};
-
-applyBrandSlots(activeBrandIndex);
-
-const getBrandStack = (button) => brandStackImages.map((image) => {
-    const position = image.dataset.brandStack || '';
-    const key = position.charAt(0).toUpperCase() + position.slice(1);
-
-    return {
-        image,
-        src: button.dataset[`brand${key}Image`] || '',
-        alt: button.dataset[`brand${key}Alt`] || button.dataset.brandName || 'Selected brand image',
     };
-}).filter((item) => item.src);
 
-const preloadBrandStack = (items) => Promise.all(items.map((item) => new Promise((resolve) => {
-    const preload = new Image();
+    $profileSections.each(function () {
+        const $section = $(this);
+        const $previousButton = $section.find('[data-profile-carousel-prev]');
+        const $nextButton = $section.find('[data-profile-carousel-next]');
 
-    preload.onload = () => resolve(item);
-    preload.onerror = () => resolve(null);
-    preload.src = item.src;
-}))).then((results) => results.filter(Boolean));
+        $previousButton.on('click', function () {
+            moveProfileCarousel($section, -1);
+        });
 
-const stackExitMs = 240;
-const stackRevealMs = 760;
-let brandStackSwitchId = 0;
-
-const setActiveBrand = (selectedButton) => {
-    const selectedItem = selectedButton.closest('[data-brand-item]');
-    const selectedIndex = brandItems.indexOf(selectedItem);
-
-    if (selectedIndex < 0) {
-        return;
-    }
-
-    const selectedSlot = Number(selectedItem.dataset.slot || 0);
-    const direction = Math.sign(selectedSlot);
-
-    brandSwitchers.forEach((button) => {
-        const isSelected = button === selectedButton;
-        button.setAttribute('aria-pressed', String(isSelected));
-        button.closest('li')?.classList.toggle('is-active', isSelected);
+        $nextButton.on('click', function () {
+            moveProfileCarousel($section, 1);
+        });
     });
 
-    applyBrandSlots(selectedIndex, direction);
-    activeBrandIndex = selectedIndex;
+    $(document).on('click', function (event) {
+        const $clickedFilter = $(event.target).closest('[data-filter-select]');
 
-    const nextStack = getBrandStack(selectedButton);
-    const switchId = ++brandStackSwitchId;
-    const hasStackChange = nextStack.some((item) => item.image.getAttribute('src') !== item.src);
+        if (!$clickedFilter.length) {
+            closeFilterSelects();
+        }
 
-    if (!nextStack.length || !hasStackChange) {
-        momentStack?.classList.remove('is-switching', 'is-revealing');
-        return;
-    }
+        const $clickedHeaderSearch = $(event.target).closest('[data-header-search]');
 
-    preloadBrandStack(nextStack).then((loadedStack) => {
-        if (switchId !== brandStackSwitchId || !loadedStack.length) {
+        if ($headerSearch.length && !$clickedHeaderSearch.length && !$headerSearchInput.val()) {
+            setHeaderSearchOpen(false);
+        }
+    });
+
+    $(document).on('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeFilterSelects();
+            setHeaderSearchOpen(false);
+        }
+    });
+
+    const $productToggles = $('[data-product-toggle]');
+
+    $productToggles.each(function () {
+        const $button = $(this);
+        const $content = $('#' + $button.attr('aria-controls'));
+
+        if (!$content.length) {
             return;
         }
 
-        if (!momentStack) {
-            loadedStack.forEach((item) => {
-                item.image.src = item.src;
-                item.image.alt = item.alt;
-            });
-            return;
-        }
+        const isExpanded = $button.attr('aria-expanded') === 'true';
 
-        momentStack.classList.remove('is-revealing');
-        momentStack.classList.add('is-switching');
+        $content.prop('hidden', !isExpanded);
+        $content.toggleClass('is-open', isExpanded);
+        $content.css('maxHeight', isExpanded ? 'none' : '0px');
 
-        window.setTimeout(() => {
-            if (switchId !== brandStackSwitchId) {
+        $button.on('click', function () {
+            const shouldOpen = $button.attr('aria-expanded') !== 'true';
+
+            $button.attr('aria-expanded', String(shouldOpen));
+
+            if (shouldOpen) {
+                $content.prop('hidden', false);
+                $content.css('maxHeight', '0px');
+                $content.addClass('is-open');
+
+                window.requestAnimationFrame(function () {
+                    $content.css('maxHeight', $content[0].scrollHeight + 'px');
+                });
+
                 return;
             }
 
-            loadedStack.forEach((item) => {
-                item.image.src = item.src;
-                item.image.alt = item.alt;
-            });
+            $content.css('maxHeight', $content[0].scrollHeight + 'px');
 
-            window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(function () {
+                $content.removeClass('is-open');
+                $content.css('maxHeight', '0px');
+            });
+        });
+
+        $content.on('transitionend', function (event) {
+            if (event.originalEvent.propertyName !== 'max-height') {
+                return;
+            }
+
+            const isOpen = $button.attr('aria-expanded') === 'true';
+
+            if (isOpen) {
+                $content.css('maxHeight', 'none');
+            } else {
+                $content.prop('hidden', true);
+            }
+        });
+    });
+
+    const $brandStackImages = $('[data-brand-stack]');
+    const $brandSwitchers = $('[data-brand-trigger]');
+    const $brandItems = $('[data-brand-item]');
+    const $momentStack = $brandStackImages.first().closest('.moment-stack');
+    let activeBrandIndex = $brandItems.index($brandItems.filter('.is-active').first());
+    const brandMotionClasses = ['is-moving-up', 'is-moving-down', 'is-wrapping-up', 'is-wrapping-down'];
+
+    if (activeBrandIndex < 0) {
+        activeBrandIndex = 0;
+    }
+
+    const getBrandSlot = function (itemIndex, selectedIndex) {
+        const total = $brandItems.length;
+        const edge = Math.floor(total / 2);
+        let slot = itemIndex - selectedIndex;
+
+        if (slot > edge) {
+            slot -= total;
+        }
+
+        if (slot < -edge) {
+            slot += total;
+        }
+
+        return slot;
+    };
+
+    const getSlotTransform = function (slot) {
+        const transforms = {
+            '-2': 'calc(-50% - var(--brand-edge-gap))',
+            '-1': 'calc(-50% - var(--brand-step-gap))',
+            '0': '-50%',
+            '1': 'calc(-50% + var(--brand-step-gap))',
+            '2': 'calc(-50% + var(--brand-edge-gap))',
+        };
+
+        return transforms[slot] || '-50%';
+    };
+
+    const getSlotOpacity = function (slot) {
+        const opacities = {
+            '-2': '0.86',
+            '-1': '0.9',
+            '0': '1',
+            '1': '0.9',
+            '2': '0.86',
+        };
+
+        return opacities[slot] || '0.88';
+    };
+
+    const clearBrandMotion = function ($item) {
+        $item.removeClass(brandMotionClasses.join(' '));
+        $item[0].style.removeProperty('--brand-from-y');
+        $item[0].style.removeProperty('--brand-from-opacity');
+    };
+
+    const applyBrandSlots = function (selectedIndex, direction) {
+        direction = direction || 0;
+
+        $brandItems.each(function () {
+            clearBrandMotion($(this));
+        });
+
+        if (direction !== 0) {
+            $brandItems.each(function () {
+                void $(this)[0].offsetWidth;
+            });
+        }
+
+        $brandItems.each(function (itemIndex) {
+            const $item = $(this);
+            const previousSlot = Number($item.attr('data-slot') || getBrandSlot(itemIndex, activeBrandIndex));
+            const nextSlot = getBrandSlot(itemIndex, selectedIndex);
+            const isWrappingUp = direction > 0 && nextSlot > previousSlot;
+            const isWrappingDown = direction < 0 && nextSlot < previousSlot;
+
+            if (direction !== 0) {
+                $item[0].style.setProperty('--brand-from-y', getSlotTransform(previousSlot));
+                $item[0].style.setProperty('--brand-from-opacity', getSlotOpacity(previousSlot));
+            }
+
+            $item.attr('data-slot', String(nextSlot));
+
+            if (isWrappingUp) {
+                $item.addClass('is-wrapping-up');
+            } else if (isWrappingDown) {
+                $item.addClass('is-wrapping-down');
+            } else if (direction > 0) {
+                $item.addClass('is-moving-up');
+            } else if (direction < 0) {
+                $item.addClass('is-moving-down');
+            }
+        });
+    };
+
+    applyBrandSlots(activeBrandIndex);
+
+    const getBrandStack = function ($button) {
+        return $brandStackImages.map(function (index, image) {
+            const $image = $(image);
+            const position = $image.attr('data-brand-stack') || '';
+            const key = position.charAt(0).toUpperCase() + position.slice(1);
+
+            return {
+                image: image,
+                src: $button.attr('data-brand-' + key.toLowerCase() + '-image') || '',
+                alt: $button.attr('data-brand-' + key.toLowerCase() + '-alt') || $button.attr('data-brand-name') || 'Selected brand image',
+            };
+        }).get().filter(function (item) { return item.src; });
+    };
+
+    const preloadBrandStack = function (items) {
+        return Promise.all(items.map(function (item) {
+            return new Promise(function (resolve) {
+                const preload = new Image();
+
+                preload.onload = function () { resolve(item); };
+                preload.onerror = function () { resolve(null); };
+                preload.src = item.src;
+            });
+        })).then(function (results) {
+            return results.filter(Boolean);
+        });
+    };
+
+    const stackExitMs = 240;
+    const stackRevealMs = 760;
+    let brandStackSwitchId = 0;
+
+    const setActiveBrand = function ($selectedButton) {
+        const $selectedItem = $selectedButton.closest('[data-brand-item]');
+        const selectedIndex = $brandItems.index($selectedItem);
+
+        if (selectedIndex < 0) {
+            return;
+        }
+
+        const selectedSlot = Number($selectedItem.attr('data-slot') || 0);
+        const direction = Math.sign(selectedSlot);
+
+        $brandSwitchers.each(function () {
+            const $button = $(this);
+            const isSelected = $button[0] === $selectedButton[0];
+            $button.attr('aria-pressed', String(isSelected));
+            $button.closest('li').toggleClass('is-active', isSelected);
+        });
+
+        applyBrandSlots(selectedIndex, direction);
+        activeBrandIndex = selectedIndex;
+
+        const nextStack = getBrandStack($selectedButton);
+        const switchId = ++brandStackSwitchId;
+        const hasStackChange = nextStack.some(function (item) {
+            return $(item.image).attr('src') !== item.src;
+        });
+
+        if (!nextStack.length || !hasStackChange) {
+            $momentStack.removeClass('is-switching is-revealing');
+            return;
+        }
+
+        preloadBrandStack(nextStack).then(function (loadedStack) {
+            if (switchId !== brandStackSwitchId || !loadedStack.length) {
+                return;
+            }
+
+            if (!$momentStack.length) {
+                loadedStack.forEach(function (item) {
+                    $(item.image).attr('src', item.src);
+                    $(item.image).attr('alt', item.alt);
+                });
+                return;
+            }
+
+            $momentStack.removeClass('is-revealing');
+            $momentStack.addClass('is-switching');
+
+            window.setTimeout(function () {
                 if (switchId !== brandStackSwitchId) {
                     return;
                 }
 
-                momentStack.classList.remove('is-switching');
-                momentStack.classList.add('is-revealing');
+                loadedStack.forEach(function (item) {
+                    $(item.image).attr('src', item.src);
+                    $(item.image).attr('alt', item.alt);
+                });
 
-                window.setTimeout(() => {
-                    if (switchId === brandStackSwitchId) {
-                        momentStack.classList.remove('is-revealing');
+                window.requestAnimationFrame(function () {
+                    if (switchId !== brandStackSwitchId) {
+                        return;
                     }
-                }, stackRevealMs);
-            });
-        }, stackExitMs);
+
+                    $momentStack.removeClass('is-switching');
+                    $momentStack.addClass('is-revealing');
+
+                    window.setTimeout(function () {
+                        if (switchId === brandStackSwitchId) {
+                            $momentStack.removeClass('is-revealing');
+                        }
+                    }, stackRevealMs);
+                });
+            }, stackExitMs);
+        });
+    };
+
+    $brandSwitchers.on('click', function () {
+        setActiveBrand($(this));
     });
-};
 
-brandSwitchers.forEach((button) => {
-    button.addEventListener('click', () => setActiveBrand(button));
-});
+    const $editProfileModal = $('#edit-profile-modal');
+    const $editProfileOpeners = $('[data-edit-open]');
+    const $editProfileClosers = $('[data-edit-close]');
 
-const editProfileModal = document.getElementById('edit-profile-modal');
-const editProfileOpeners = document.querySelectorAll('[data-edit-open]');
-const editProfileClosers = document.querySelectorAll('[data-edit-close]');
+    const setEditProfileOpen = function (shouldOpen) {
+        if (!$editProfileModal.length) {
+            return;
+        }
 
-const setEditProfileOpen = (shouldOpen) => {
-    if (!editProfileModal) {
-        return;
-    }
+        $editProfileModal.toggleClass('is-open', shouldOpen);
+        $editProfileModal.attr('aria-hidden', String(!shouldOpen));
 
-    editProfileModal.classList.toggle('is-open', shouldOpen);
-    editProfileModal.setAttribute('aria-hidden', String(!shouldOpen));
+        if (shouldOpen) {
+            const $firstInput = $editProfileModal.find('.edit-form-input').first();
+            window.requestAnimationFrame(function () {
+                $firstInput.focus();
+            });
+        }
+    };
 
-    if (shouldOpen) {
-        const firstInput = editProfileModal.querySelector('.edit-form-input');
-        window.requestAnimationFrame(() => firstInput?.focus());
-    }
-};
-
-editProfileOpeners.forEach((button) => {
-    button.addEventListener('click', (event) => {
+    $editProfileOpeners.on('click', function (event) {
         event.preventDefault();
         setEditProfileOpen(true);
     });
-});
 
-editProfileClosers.forEach((button) => {
-    button.addEventListener('click', () => setEditProfileOpen(false));
-});
-
-editProfileModal?.addEventListener('click', (event) => {
-    if (event.target === editProfileModal) {
+    $editProfileClosers.on('click', function () {
         setEditProfileOpen(false);
-    }
-});
-
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && editProfileModal?.classList.contains('is-open')) {
-        setEditProfileOpen(false);
-    }
-});
-
-const editFileInput = document.getElementById('edit-profile-pic');
-const editFileText = document.getElementById('edit-file-text');
-
-if (editFileInput && editFileText) {
-    editFileInput.addEventListener('change', () => {
-        editFileText.textContent = editFileInput.files[0]?.name || 'Browser File';
     });
-}
 
-const shopHeroModel = document.querySelector('.shop-hero-model');
-
-if (shopHeroModel) {
-    let maxTranslate = window.innerWidth - shopHeroModel.clientWidth;
-    let ticking = false;
-
-    const updateShopHeroModel = () => {
-        const scrollY = window.scrollY;
-        const translateX = Math.min(scrollY * 1.5, maxTranslate);
-        const rotation = scrollY * 0.15;
-        shopHeroModel.style.transform = `translateX(${translateX}px) rotate(${rotation}deg)`;
-        ticking = false;
-    };
-
-    const recalcMaxTranslate = () => {
-        maxTranslate = Math.max(0, window.innerWidth - shopHeroModel.clientWidth);
-        updateShopHeroModel();
-    };
-
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            window.requestAnimationFrame(updateShopHeroModel);
-            ticking = true;
+    $editProfileModal.on('click', function (event) {
+        if (event.target === $editProfileModal[0]) {
+            setEditProfileOpen(false);
         }
-    }, { passive: true });
+    });
 
-    window.addEventListener('resize', recalcMaxTranslate);
-    recalcMaxTranslate();
-}
+    $(document).on('keydown', function (event) {
+        if (event.key === 'Escape' && $editProfileModal.hasClass('is-open')) {
+            setEditProfileOpen(false);
+        }
+    });
+
+    const $editFileInput = $('#edit-profile-pic');
+    const $editFileText = $('#edit-file-text');
+
+    if ($editFileInput.length && $editFileText.length) {
+        $editFileInput.on('change', function () {
+            const files = $editFileInput.prop('files');
+            $editFileText.text(files[0]?.name || 'Browser File');
+        });
+    }
+
+    const $shopHeroModel = $('.shop-hero-model');
+
+    if ($shopHeroModel.length) {
+        let maxTranslate = $(window).width() - $shopHeroModel[0].clientWidth;
+        let ticking = false;
+
+        const updateShopHeroModel = function () {
+            const scrollY = $(window).scrollTop();
+            const translateX = Math.min(scrollY * 1.5, maxTranslate);
+            const rotation = scrollY * 0.15;
+            $shopHeroModel.css('transform', 'translateX(' + translateX + 'px) rotate(' + rotation + 'deg)');
+            ticking = false;
+        };
+
+        const recalcMaxTranslate = function () {
+            maxTranslate = Math.max(0, $(window).width() - $shopHeroModel[0].clientWidth);
+            updateShopHeroModel();
+        };
+
+        $(window).on('scroll', function () {
+            if (!ticking) {
+                window.requestAnimationFrame(updateShopHeroModel);
+                ticking = true;
+            }
+        });
+
+        $(window).on('resize', recalcMaxTranslate);
+        recalcMaxTranslate();
+    }
+});

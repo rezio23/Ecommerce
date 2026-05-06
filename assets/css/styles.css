@@ -137,6 +137,26 @@ main {
     gap: 10px;
 }
 
+.nav-toggle {
+    display: none;
+}
+
+.nav-toggle-open {
+    display: block;
+}
+
+.nav-toggle-close {
+    display: none;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-open {
+    display: none;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-close {
+    display: block;
+}
+
 .header-search {
     position: relative;
     min-width: 42px;
@@ -2714,6 +2734,51 @@ body.shop-page {
         padding: 14px 18px;
     }
 
+    .nav-toggle {
+        display: grid;
+    }
+
+    .site-nav {
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 0;
+        right: 0;
+        z-index: 99;
+        flex-direction: column;
+        gap: 0;
+        padding: 10px 14px;
+        border: 2px solid var(--accent);
+        border-radius: 24px;
+        background: rgba(255, 250, 240, 0.96);
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px);
+        transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .site-nav.is-open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
+
+    .site-nav a {
+        padding: 12px 16px;
+        font-size: 0.88rem;
+        width: 100%;
+        text-align: center;
+        border-radius: 14px;
+        transition: background 180ms ease, color 180ms ease;
+    }
+
+    .site-nav a:hover,
+    .site-nav a.is-active {
+        background: var(--soft);
+    }
+
     .header-search.is-open .header-search-input,
     .header-search:focus-within .header-search-input {
         width: min(220px, calc(100vw - 300px));
@@ -2926,9 +2991,35 @@ body.shop-page {
 }
 
 @media (max-width: 560px) {
+    .site-header {
+        padding: 10px 12px;
+    }
+
+    .site-nav {
+        top: calc(100% + 8px);
+        padding: 8px 10px;
+        border-radius: 18px;
+    }
+
+    .site-nav a {
+        padding: 10px 12px;
+        font-size: 0.82rem;
+        border-radius: 10px;
+    }
+
+    .nav-toggle {
+        width: 36px;
+        height: 36px;
+    }
+
+    .nav-toggle svg {
+        width: 18px;
+        height: 18px;
+    }
+
     .site-footer {
         width: 100%;
-        padding: 30px 22px;
+        padding: 24px 18px;
     }
 
     .footer-groups {
@@ -2937,6 +3028,36 @@ body.shop-page {
 
     .footer-links--brands div {
         grid-template-columns: repeat(2, minmax(84px, 1fr));
+    }
+
+    .footer-brand p {
+        margin: 10px 0 24px;
+        font-size: 1.1rem;
+    }
+
+    .footer-socials {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .footer-social {
+        width: 36px;
+        height: 36px;
+    }
+
+    .footer-social img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .footer-group h2 {
+        font-size: 1.15rem;
+    }
+
+    .footer-group p,
+    .footer-links a {
+        font-size: 0.78rem;
+        line-height: 1.7;
     }
 
     .profile-main {
