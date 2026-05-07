@@ -141,7 +141,7 @@ $searchId = 'header-profile-search';
 $bagCount = 0;
 $activeButton = 'profile';
 $currentPage = 'shop';
-$searchTrigger = 'link';
+$searchTrigger = 'button';
 $rootPath = '../';
 $srcPath = '';
 ?>
@@ -177,7 +177,7 @@ $srcPath = '';
             <nav class="profile-footer-links" aria-label="Profile actions">
                 <a href="#">Term Condition</a>
                 <span aria-hidden="true"></span>
-                <a href="login.php">Logout</a>
+                <a href="login.php" data-logout>Logout</a>
             </nav>
         </aside>
 
@@ -241,5 +241,46 @@ $srcPath = '';
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/app.js?v=23"></script>
+    <div class="confirm-overlay" id="logout-confirm" aria-hidden="true">
+        <div class="confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="logout-confirm-title" aria-describedby="logout-confirm-desc">
+            <h2 id="logout-confirm-title">Log Out</h2>
+            <p id="logout-confirm-desc">Are you sure you want to log out?</p>
+            <div class="confirm-actions">
+                <button type="button" class="confirm-btn confirm-btn--cancel" data-logout-cancel>Cancel</button>
+                <a href="login.php" class="confirm-btn confirm-btn--confirm">Log Out</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const logoutLink = document.querySelector('[data-logout]');
+            const overlay = document.getElementById('logout-confirm');
+            const cancelBtn = document.querySelector('[data-logout-cancel]');
+
+            if (logoutLink && overlay) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    overlay.classList.add('is-open');
+                    overlay.setAttribute('aria-hidden', 'false');
+                    cancelBtn.focus();
+                });
+            }
+
+            if (cancelBtn && overlay) {
+                cancelBtn.addEventListener('click', function() {
+                    overlay.classList.remove('is-open');
+                    overlay.setAttribute('aria-hidden', 'true');
+                });
+            }
+
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    overlay.classList.remove('is-open');
+                    overlay.setAttribute('aria-hidden', 'true');
+                }
+            });
+        })();
+    </script>
 </body>
 </html>

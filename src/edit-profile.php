@@ -30,7 +30,7 @@ $searchId = 'header-edit-search';
 $bagCount = 0;
 $activeButton = 'profile';
 $currentPage = '';
-$searchTrigger = 'link';
+$searchTrigger = 'button';
 $rootPath = '../';
 $srcPath = '';
 ?>

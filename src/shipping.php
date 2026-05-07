@@ -54,7 +54,7 @@ $searchId = 'header-shipping-search';
 $bagCount = count($cartItems);
 $activeButton = '';
 $currentPage = 'shop';
-$searchTrigger = 'link';
+$searchTrigger = 'button';
 $rootPath = '../';
 $srcPath = '';
 ?>

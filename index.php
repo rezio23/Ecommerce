@@ -179,7 +179,7 @@ $products = [
         'name' => 'Graffiti Classic City Bag',
         'brand' => 'Balenciaga',
         'description' => 'Black and white leather city bag with signature hardware.',
-        'price' => 1595,
+        'price' => 2550,
         'tags' => ['Bag', 'Luxury', 'Popular'],
         'image' => 'https://mygemma.com/cdn/shop/articles/mygemma-WPD-Top-Blog-Image-48.png?v=1695913153',
     ],
@@ -198,7 +198,7 @@ $menProducts = [
         'name' => 'Classic-Fit Mesh Polo',
         'brand' => 'Polo Ralph Lauren',
         'description' => 'Breathable textured polo with a clean collar.',
-        'price' => 120,
+        'price' => 110,
         'tags' => ['Man', 'Classic', 'Polo'],
         'image' => 'https://i.gadgets360cdn.com/large/Untitled-design161-1766054573857.png',
     ],
@@ -219,12 +219,12 @@ $menProducts = [
         'image' => 'https://t4.ftcdn.net/jpg/05/23/51/15/360_F_523511500_1807EEj4w00yFC6bAVcn82amkEHnBmeg.jpg',
     ],
     [
-        'name' => 'Trail Running Jacket',
-        'brand' => 'Nike',
-        'description' => 'Light shell for cool forest runs.',
-        'price' => 125,
+        'name' => 'Elite FLR Jacket',
+        'brand' => 'Ciele Athletics',
+        'description' => 'Ultra-lightweight running shell with reflective details and weather-resistant finish.',
+        'price' => 400,
         'tags' => ['Man', 'Jacket', 'Sport'],
-        'image' => 'https://img.freepik.com/premium-photo/runner-golden-jacket-pauses-check-his-watch-sunlit-forest-path-breath_283470-13385.jpg',
+        'image' => 'https://upthereathletics.com/cdn/shop/files/ciele-running-mens-elite-flr-jacket-sable-2.jpg?v=1700521012&width=1100',
     ],
 ];
 
@@ -232,16 +232,16 @@ $womenProducts = [
     [
         'name' => 'Mesh Fabric Slingback Pumps',
         'brand' => 'Prada',
-        'description' => 'Pointed mesh pumps with triangle logo detail.',
+        'description' => 'Sheer polyamide mesh slingbacks with leather trim, pointed toe, and iconic screen-printed triangle logo.',
         'price' => 1270,
         'tags' => ['Woman', 'Shoes', 'Luxury'],
-        'image' => 'https://i.ebayimg.com/images/g/Q2AAAOSw~GpnWUfI/s-l1200.jpg',
+        'image' => 'https://m.media-amazon.com/images/I/71zGfaPOZ5L._AC_UY1000_.jpg',
     ],
     [
         'name' => 'No. 5 Eau Premiere',
         'brand' => 'Chanel',
         'description' => 'Light, airy floral version of the classic fragrance.',
-        'price' => 185,
+        'price' => 176,
         'tags' => ['Woman', 'Fragrance', 'Classic'],
         'image' => 'https://static.vecteezy.com/system/resources/previews/013/254/291/non_2x/ternopil-ukraine-september-2-2022-chanel-number-5-eau-premiere-worldwide-famous-french-perfume-bottle-among-other-perfumes-on-shiny-glitter-background-in-yellow-colors-free-photo.JPG',
     ],
@@ -249,17 +249,17 @@ $womenProducts = [
         'name' => 'Womens Jersey Polo Shirt',
         'brand' => 'Ralph Lauren',
         'description' => 'Cream cotton-blend polo with classic golf styling.',
-        'price' => 20,
+        'price' => 98,
         'tags' => ['Woman', 'Polo', 'Golf'],
         'image' => 'https://trendygolfusa.com/cdn/shop/files/LAUNCHES_HERO_7c49c26e-fc63-4418-a7d4-2d4b3d44ece2.jpg?v=1689281730',
     ],
     [
-        'name' => 'GG Marmont Medium Bag',
-        'brand' => 'Gucci',
-        'description' => 'Black chevron leather shoulder bag with Double G.',
+        'name' => 'Saint Laurent Loulou Bag',
+        'brand' => 'Saint Laurent',
+        'description' => 'Quilted leather shoulder bag with iconic YSL logo.',
         'price' => 2850,
         'tags' => ['Woman', 'Bag', 'Luxury'],
-        'image' => 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z3VjY2klMjBiYWd8ZW58MHx8MHx8fDA%3D',
+        'image' => 'https://www.aglaiamagazine.com/wp-content/uploads/2024/10/saint-laurent-loulou-bag.jpg',
     ],
 ];
 
@@ -303,7 +303,7 @@ $searchId = 'header-product-search';
 $bagCount = 0;
 $activeButton = '';
 $currentPage = 'home';
-$searchTrigger = 'link';
+$searchTrigger = 'button';
 $rootPath = '';
 $srcPath = 'src/';
 ?>
@@ -318,7 +318,7 @@ $srcPath = 'src/';
                 <div class="brand-badges" aria-label="Featured brands">
                     <?php foreach ($brandBadges as $badge): ?>
                         <span class="brand-badge" title="<?= htmlspecialchars($badge['name']); ?>">
-                            <img src="<?= htmlspecialchars($badge['logo']); ?>" alt="<?= htmlspecialchars($badge['abbr']); ?> logo">
+                            <img id="banner_main" src="<?= htmlspecialchars($badge['logo']); ?>" alt="<?= htmlspecialchars($badge['abbr']); ?> logo">
                         </span>
                     <?php endforeach; ?>
                     <a class="add-orbit" href="#shop" aria-label="Explore more brands">
@@ -332,7 +332,7 @@ $srcPath = 'src/';
             </figure>
 
             <div class="hero-sidecopy">
-                <p>Explore many types<br>of BRAND with the best<br>stylize design</p>
+                <p id="home_text">Explore many types<br>of BRAND with the best<br>stylize design</p>
                 <h2>Every<br><span>where -</span></h2>
             </div>
         </section>
@@ -482,6 +482,7 @@ $srcPath = 'src/';
                         <?php endforeach; ?>
                     </div>
                 </div>
+                
 
                 <?php foreach ($productAccordions as $key => $group): ?>
                     <?php $panelId = 'products-' . $key; ?>

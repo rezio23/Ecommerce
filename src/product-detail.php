@@ -111,7 +111,7 @@ $productCatalog = [
         'name' => 'Graffiti Classic City Bag',
         'brand' => 'Balenciaga',
         'description' => 'Black and white leather city bag with signature hardware.',
-        'price' => 1595,
+        'price' => 2550,
         'tags' => ['Bag', 'Luxury', 'Popular'],
         'rating' => '4.7',
         'badge' => 'Popular',
@@ -145,7 +145,7 @@ $productCatalog = [
         'name' => 'Classic-Fit Mesh Polo',
         'brand' => 'Polo Ralph Lauren',
         'description' => 'Breathable textured polo with a clean collar.',
-        'price' => 120,
+        'price' => 110,
         'tags' => ['Man', 'Classic', 'Polo'],
         'rating' => '4.6',
         'badge' => 'Essential',
@@ -186,16 +186,15 @@ $productCatalog = [
             'https://m.media-amazon.com/images/I/61tAjlzs6IL._AC_SY625_.jpg',
         ],
     ],
-    'trail-running-jacket' => [
-        'name' => 'Trail Running Jacket',
-        'brand' => 'Nike',
-        'description' => 'Light shell for cool forest runs.',
-        'price' => 125,
+    'elite-flr-jacket' => [
+        'name' => 'Elite FLR Jacket',
+        'brand' => 'Ciele Athletics',
+        'description' => 'Ultra-lightweight running shell with reflective details and weather-resistant finish.',
+        'price' => 400,
         'tags' => ['Man', 'Jacket', 'Sport'],
         'rating' => '4.6',
         'badge' => 'Lightweight',
         'gallery' => [
-            'https://img.freepik.com/premium-photo/runner-golden-jacket-pauses-check-his-watch-sunlit-forest-path-breath_283470-13385.jpg',
             'https://upthereathletics.com/cdn/shop/files/ciele-running-mens-elite-flr-jacket-sable-2.jpg?v=1700521012&width=1100',
             'https://huckberry.imgix.net/spree/products/730690/original/85947_Ciele_Athletics_Lightweight_Performance_Waterproof_Jacket_Sable_01.jpg?auto=format%2C%20compress&crop=top&fit=fill&cs=tinysrgb&ar=4%3A5&fill=solid&fill-color=FFFFFF&ixlib=react-9.8.1',
         ],
@@ -203,20 +202,23 @@ $productCatalog = [
     'mesh-fabric-slingback-pumps' => [
         'name' => 'Mesh Fabric Slingback Pumps',
         'brand' => 'Prada',
-        'description' => 'Pointed mesh pumps with triangle logo detail.',
+        'description' => 'Sheer polyamide mesh slingbacks with leather trim, pointed toe, and iconic screen-printed triangle logo. 75mm varnished heel with leather sole.',
         'price' => 1270,
         'tags' => ['Woman', 'Shoes', 'Luxury'],
         'rating' => '4.8',
         'badge' => 'Luxury',
         'gallery' => [
-            'https://i.ebayimg.com/images/g/Q2AAAOSw~GpnWUfI/s-l1200.jpg',
+            'https://thecaistore.com/cdn/shop/files/Frame766-1_2.jpg?v=1773425776',
+            'https://m.media-amazon.com/images/I/61wrEtE+ECL._AC_UY1000_.jpg',
+            'https://m.media-amazon.com/images/I/51BAUpChJXL._SY625_.jpg',
+            'https://m.media-amazon.com/images/I/51g9kYTzU3L._SY625_.jpg'
         ],
     ],
     'no-5-eau-premiere' => [
         'name' => 'No. 5 Eau Premiere',
         'brand' => 'Chanel',
         'description' => 'Light, airy floral version of the classic fragrance.',
-        'price' => 185,
+        'price' => 176,
         'tags' => ['Woman', 'Fragrance', 'Classic'],
         'rating' => '4.7',
         'badge' => 'Classic',
@@ -230,7 +232,7 @@ $productCatalog = [
         'name' => 'Womens Jersey Polo Shirt',
         'brand' => 'Ralph Lauren',
         'description' => 'Cream cotton-blend polo with classic golf styling.',
-        'price' => 20,
+        'price' => 98,
         'tags' => ['Woman', 'Polo', 'Golf'],
         'rating' => '4.4',
         'badge' => 'Everyday',
@@ -238,34 +240,34 @@ $productCatalog = [
             'https://trendygolfusa.com/cdn/shop/files/LAUNCHES_HERO_7c49c26e-fc63-4418-a7d4-2d4b3d44ece2.jpg?v=1689281730',
         ],
     ],
-    'gg-marmont-medium-bag' => [
-        'name' => 'GG Marmont Medium Bag',
-        'brand' => 'Gucci',
-        'description' => 'Black chevron leather shoulder bag with Double G.',
+    'saint-laurent-loulou-bag' => [
+        'name' => 'Saint Laurent Loulou Bag',
+        'brand' => 'Saint Laurent',
+        'description' => 'Quilted leather shoulder bag with iconic YSL logo.',
         'price' => 2850,
         'tags' => ['Woman', 'Bag', 'Luxury'],
         'rating' => '4.8',
         'badge' => 'Luxury',
         'gallery' => [
-            'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z3VjY2klMjBiYWd8ZW58MHx8MHx8fDA%3D',
-            'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?fm=jpg&q=70&w=1800&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?fm=jpg&q=80&w=1200&auto=format&fit=crop',
+            'https://www.aglaiamagazine.com/wp-content/uploads/2024/10/saint-laurent-loulou-bag.jpg',
+            'https://cdn.salla.sa/RvPxw/204b1f02-6dd2-4df1-81bc-03fbcde78954-1000x940.5756731662-m9Z38QicOfdx9D1en34rD9emuk9cS3fAFbBUeh6N.jpg',
+            'https://cdn1.jolicloset.com/imgr/full/2022/06/543147-1/yves-saint-laurent-envelope-large-white-quilted-leather-hand-bag-handbags.jpg',
         ],
     ],
     'cortez-leather-sneaker' => [
         'name' => 'Cortez Leather Sneaker',
         'brand' => 'Nike',
         'description' => 'Low-profile leather runner with retro contrast.',
-        'price' => 90,
+        'price' => 95,
         'tags' => ['Woman', 'Sneaker', 'Sport'],
         'rating' => '4.6',
         'badge' => 'Retro',
         'gallery' => [
-            'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80',
-            'https://static.nike.com/a/images/t_PDP_1728_v1/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/734a4eb2-bcb0-467e-b43f-76c471be16e5/W%2BNIKE%2BCORTEZ.png',
-            'https://static.nike.com/a/images/t_PDP_1728_v1/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/d82a66ff-38f2-45b7-b22a-e9080adca623/W%2BNIKE%2BCORTEZ.png',
-            'https://static.nike.com/a/images/t_PDP_1728_v1/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/2a766a36-07ba-49e8-921b-3f259960744a/W%2BNIKE%2BCORTEZ.png',
-            'https://static.nike.com/a/images/t_PDP_1728_v1/u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/909b9a87-9c5a-4617-85cc-e3eec53fbc18/W%2BNIKE%2BCORTEZ.png',
+            'https://runnerexpert.com/wp-content/uploads/2024/10/Navrh-bez-nazvu-70-e1730150800370.jpg',
+            'https://runnerexpert.com/wp-content/uploads/2024/10/IMG_20241028_090341-min-2048x1532.jpg',
+            'https://runnerexpert.com/wp-content/uploads/2024/10/Navrh-bez-nazvu-71-e1730239397236.jpg',
+            'https://runnerexpert.com/wp-content/uploads/2024/10/Navrh-bez-nazvu-74-768x575.jpg',
+            'https://runnerexpert.com/wp-content/uploads/2024/10/IMG_20241028_090428-600x449.jpg',
         ],
     ],
     'la-femme-intense' => [
@@ -285,26 +287,29 @@ $productCatalog = [
         'name' => 'Quilted Chain Mini Bag',
         'brand' => 'Gucci',
         'description' => 'Compact quilted bag with polished chain detail.',
-        'price' => 1980,
+        'price' => 1550,
         'tags' => ['Woman', 'Bag', 'Luxury'],
         'rating' => '4.7',
         'badge' => 'Luxury',
         'gallery' => [
-            'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=1200&q=80',
-            'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=900&q=70',
-            'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=700&q=80',
+            'https://media.gucci.com/style/DarkGray_Center_0_0_490x490/1746636343/841290_AAFAX_1000_003_100_0000_Light-GG-Marmont-mini-shoulder-bag.jpg',
+            'https://media.gucci.com/style/DarkGray_Center_0_0_490x490/1744217146/841290_AAFAX_1000_001_055_0000_Light-GG-Marmont-mini-shoulder-bag.jpg',
+            'https://media.gucci.com/style/DarkGray_Center_0_0_490x490/1744217147/841290_AAFAX_1000_002_055_0000_Light-GG-Marmont-mini-shoulder-bag.jpg',
         ],
     ],
-    'performance-half-zip-jacket' => [
-        'name' => 'Performance Half-Zip Jacket',
-        'brand' => 'Puma',
-        'description' => 'Light training layer for warmups and city runs.',
-        'price' => 95,
-        'tags' => ['Man', 'Jacket', 'Sport'],
+    'ac-milan-off-white-fourth-kit' => [
+        'name' => 'AC Milan x Off-White Fourth Kit',
+        'brand' => 'Puma x Off-White',
+        'description' => 'Limited-edition fourth kit celebrating Black History Month with Pan-African colors and Off-White arrow print.',
+        'price' => 130,
+        'tags' => ['Man', 'Sport', 'Limited'],
         'rating' => '4.5',
-        'badge' => 'Training',
+        'badge' => 'Limited',
         'gallery' => [
-            'https://images.unsplash.com/photo-1523381294911-8d3cead13475?auto=format&fit=crop&w=1200&q=80',
+            'https://wwd.com/wp-content/uploads/2025/02/25SS_PR_TS_Football_ACM-Off-White_Combined_Group_1759_16x9_1920x1080px.jpg?w=800',
+            'https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_600,h_600/global/783001/01/dt01/fnd/PNA/fmt/png/AC-MILAN-x-OFF-WHITE%E2%84%A2-Replica-Men',
+            'https://productimages.footy.com/67b105b5415744813e3f1119/0/3840.webp?q=75',
+            'https://www.voetbalshop.nl/media/blog/post/2613/20250213-tekst-breedte-PUMA-ACMilan-OffWhite-1.jpg'
         ],
     ],
 ];
@@ -367,7 +372,7 @@ $searchId = 'header-product-search';
 $bagCount = 0;
 $activeButton = '';
 $currentPage = 'shop';
-$searchTrigger = 'link';
+$searchTrigger = 'button';
 $rootPath = '../';
 $srcPath = '';
 ?>

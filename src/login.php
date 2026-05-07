@@ -20,7 +20,7 @@ $searchId = 'header-login-search';
 $bagCount = 0;
 $activeButton = 'account';
 $currentPage = '';
-$searchTrigger = 'link';
+$searchTrigger = 'button';
 $rootPath = '../';
 $srcPath = '';
 ?>

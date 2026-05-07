@@ -41,7 +41,7 @@ $searchId = 'header-cart-search';
 $bagCount = count($cartItems);
 $activeButton = 'bag';
 $currentPage = 'shop';
-$searchTrigger = 'link';
+$searchTrigger = 'button';
 $rootPath = '../';
 $srcPath = '';
 ?>

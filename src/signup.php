@@ -20,7 +20,7 @@ $searchId = 'header-signup-search';
 $bagCount = 0;
 $activeButton = '';
 $currentPage = '';
-$searchTrigger = 'link';
+$searchTrigger = 'button';
 $rootPath = '../';
 $srcPath = '';
 ?>
