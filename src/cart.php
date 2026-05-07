@@ -43,20 +43,22 @@ $srcPath = '';
             <a href="#" class="cart-help-link">Help Center</a>
         </div>
 
-        <div class="cart-table-wrap">
-            <div class="cart-table-header">
-                <span>Product</span>
-                <span>Unit Price</span>
-                <span>Quantity</span>
-                <span>Total</span>
+        <?php if (empty($cartItems)): ?>
+            <div class="cart-empty">
+                <i data-lucide="shopping-bag" aria-hidden="true"></i>
+                <h2>Your cart is empty</h2>
+                <p>Looks like you haven't added anything to your cart yet.</p>
+                <a href="shop.php" class="cart-checkout-btn">Continue Shopping</a>
             </div>
-
-            <?php if (empty($cartItems)): ?>
-                <div class="cart-empty" style="padding: 2rem; text-align: center;">
-                    <p>Your cart is empty.</p>
-                    <a href="shop.php" class="cart-checkout-btn" style="margin-top: 1rem; display: inline-block;">Continue Shopping</a>
+        <?php else: ?>
+            <div class="cart-table-wrap">
+                <div class="cart-table-header">
+                    <span>Product</span>
+                    <span>Unit Price</span>
+                    <span>Quantity</span>
+                    <span>Total</span>
                 </div>
-            <?php else: ?>
+
                 <?php foreach ($cartItems as $slug => $item): ?>
                     <div class="cart-table-row">
                         <div class="cart-product-cell">
@@ -84,10 +86,8 @@ $srcPath = '';
                         <div class="cart-total-cell">$ <?= number_format($item['price'] * $item['quantity'], 2); ?></div>
                     </div>
                 <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
+            </div>
 
-        <?php if (!empty($cartItems)): ?>
             <div class="cart-summary">
                 <hr class="cart-summary-line">
                 <div class="cart-subtotal">

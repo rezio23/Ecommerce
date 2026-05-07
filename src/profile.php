@@ -229,7 +229,7 @@ $srcPath = '';
             </div>
 
             <nav class="profile-footer-links" aria-label="Profile actions">
-                <a href="#">Term Condition</a>
+                <a href="terms.php">Terms &amp; Conditions</a>
                 <span aria-hidden="true"></span>
                 <a href="logout.php" data-logout>Logout</a>
             </nav>
