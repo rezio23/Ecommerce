@@ -1,0 +1,228 @@
+<?php
+
+require_once __DIR__ . '/env.php';
+
+// Load environment variables from project root
+$envPath = realpath(__DIR__ . '/../../.env');
+if ($envPath && file_exists($envPath)) {
+    loadEnv($envPath);
+}
+
+// =====================
+// Security Headers
+// =====================
+function setSecurityHeaders(): void
+{
+    header('X-Frame-Options: DENY');
+    header('X-Content-Type-Options: nosniff');
+    header('Referrer-Policy: strict-origin-when-cross-origin');
+    header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://code.jquery.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src * data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';");
+    header('X-XSS-Protection: 1; mode=block');
+    header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
+}
+
+// =====================
+// Session Security
+// =====================
+function startSecureSession(): void
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        $sessionName = env('SESSION_NAME', 'the_ds_session');
+        session_name($sessionName);
+
+        $secure = filter_var(env('SESSION_SECURE', 'false'), FILTER_VALIDATE_BOOL);
+        $httponly = filter_var(env('SESSION_HTTPONLY', 'true'), FILTER_VALIDATE_BOOL);
+        $samesite = env('SESSION_SAMESITE', 'Strict');
+
+        $cookieParams = [
+            'lifetime' => 0,
+            'path' => '/',
+            'domain' => '',
+            'secure' => $secure,
+            'httponly' => $httponly,
+            'samesite' => $samesite,
+        ];
+
+        if (PHP_VERSION_ID >= 70300) {
+            session_set_cookie_params($cookieParams);
+        } else {
+            session_set_cookie_params(
+                $cookieParams['lifetime'],
+                $cookieParams['path'],
+                $cookieParams['domain'],
+                $cookieParams['secure'],
+                $cookieParams['httponly']
+            );
+        }
+
+        session_start();
+
+        if (empty($_SESSION['initiated'])) {
+            session_regenerate_id(true);
+            $_SESSION['initiated'] = true;
+            $_SESSION['ip'] = $_SERVER['REMOTE_ADDR'] ?? '';
+            $_SESSION['user_agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        }
+
+        // Session validation
+        $currentIp = $_SERVER['REMOTE_ADDR'] ?? '';
+        $currentUa = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        if (($_SESSION['ip'] ?? '') !== $currentIp || ($_SESSION['user_agent'] ?? '') !== $currentUa) {
+            session_destroy();
+            session_start();
+            session_regenerate_id(true);
+            $_SESSION['initiated'] = true;
+            $_SESSION['ip'] = $currentIp;
+            $_SESSION['user_agent'] = $currentUa;
+        }
+    }
+}
+
+// =====================
+// CSRF Protection
+// =====================
+function generateCsrfToken(): string
+{
+    startSecureSession();
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function getCsrfToken(): string
+{
+    return generateCsrfToken();
+}
+
+function validateCsrfToken(?string $token): bool
+{
+    startSecureSession();
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], (string) $token);
+}
+
+function csrfField(): string
+{
+    $token = htmlspecialchars(getCsrfToken(), ENT_QUOTES, 'UTF-8');
+    return '<input type="hidden" name="csrf_token" value="' . $token . '">';
+}
+
+function requireCsrf(): void
+{
+    $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!validateCsrfToken($token)) {
+        http_response_code(403);
+        exit('Invalid or missing CSRF token.');
+    }
+}
+
+// =====================
+// Input Sanitization
+// =====================
+function sanitizeInput(?string $value): string
+{
+    if ($value === null) {
+        return '';
+    }
+    $value = trim($value);
+    $value = stripslashes($value);
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+}
+
+function getGet(string $key, string $default = ''): string
+{
+    $value = $_GET[$key] ?? $default;
+    return sanitizeInput(is_array($value) ? '' : (string) $value);
+}
+
+function getPost(string $key, string $default = ''): string
+{
+    $value = $_POST[$key] ?? $default;
+    return sanitizeInput(is_array($value) ? '' : (string) $value);
+}
+
+function getPostArray(string $key): array
+{
+    $value = $_POST[$key] ?? [];
+    return is_array($value) ? $value : [];
+}
+
+function validateEmail(string $email): bool
+{
+    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+}
+
+// =====================
+// File Upload Security
+// =====================
+function validateFileUpload(array $file, array $allowedMimeTypes, int $maxBytes): array
+{
+    $result = ['ok' => false, 'error' => '', 'path' => ''];
+
+    if (empty($file['tmp_name']) || $file['error'] !== UPLOAD_ERR_OK) {
+        $result['error'] = 'Upload failed or no file provided.';
+        return $result;
+    }
+
+    if ($file['size'] > $maxBytes) {
+        $result['error'] = 'File is too large.';
+        return $result;
+    }
+
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($file['tmp_name']);
+
+    if (!in_array($mime, $allowedMimeTypes, true)) {
+        $result['error'] = 'Invalid file type.';
+        return $result;
+    }
+
+    // Verify image dimensions if it's an image
+    if (str_starts_with($mime, 'image/')) {
+        $dims = getimagesize($file['tmp_name']);
+        if ($dims === false) {
+            $result['error'] = 'Invalid image file.';
+            return $result;
+        }
+    }
+
+    $ext = pathinfo((string) $file['name'], PATHINFO_EXTENSION);
+    $safeName = bin2hex(random_bytes(16)) . '.' . strtolower($ext);
+    $uploadDir = realpath(__DIR__ . '/../../uploads') ?: __DIR__ . '/../../uploads';
+
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0750, true);
+    }
+
+    $target = $uploadDir . DIRECTORY_SEPARATOR . $safeName;
+
+    if (!move_uploaded_file($file['tmp_name'], $target)) {
+        $result['error'] = 'Failed to save file.';
+        return $result;
+    }
+
+    chmod($target, 0640);
+    $result['ok'] = true;
+    $result['path'] = $target;
+    $result['name'] = $safeName;
+    return $result;
+}
+
+// =====================
+// Error Handling
+// =====================
+function safeErrorHandler(): void
+{
+    $debug = filter_var(env('APP_DEBUG', 'false'), FILTER_VALIDATE_BOOL);
+    if (!$debug) {
+        ini_set('display_errors', '0');
+        ini_set('log_errors', '1');
+        error_reporting(E_ALL);
+    }
+}
+
+// =====================
+// Initialize
+// =====================
+setSecurityHeaders();
+safeErrorHandler();

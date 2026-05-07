@@ -1,5 +1,7 @@
 <?php
 
+require 'includes/security.php';
+
 $profileUser = [
     'name' => 'Vichhean Sombath',
     'handle' => '@sombath123',
@@ -41,6 +43,7 @@ $srcPath = '';
             <h1>Edit Personal Detail</h1>
             <hr class="edit-form-divider">
             <form class="edit-form" action="profile.php" method="post" enctype="multipart/form-data">
+                <?= csrfField(); ?>
                 <div class="edit-form-group">
                     <label class="edit-form-label" for="edit-full-name">Full name</label>
                     <input class="edit-form-input" id="edit-full-name" name="full_name" type="text" value="<?= htmlspecialchars($profileUser['name']); ?>" placeholder="e.g. John Smith">

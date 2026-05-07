@@ -1,4 +1,5 @@
 <?php
+require 'includes/security.php';
 
 $cartItems = [
     [

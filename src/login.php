@@ -1,4 +1,5 @@
 <?php
+require 'includes/security.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,6 +32,7 @@ $srcPath = '';
             <h1>Log In</h1>
             <hr class="edit-form-divider">
             <form class="auth-form" action="profile.php" method="post">
+                <?= csrfField(); ?>
                 <div class="edit-form-group">
                     <label class="edit-form-label" for="login-email">Email</label>
                     <input class="edit-form-input" id="login-email" name="email" type="email" placeholder="e.g. sombath@gmail.com" required>

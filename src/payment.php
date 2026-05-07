@@ -1,4 +1,5 @@
 <?php
+require 'includes/security.php';
 $cartItems = [
     [
         'name' => 'Paradigme Eau de Parfum',
@@ -81,7 +82,7 @@ $srcPath = '';
                 <div id="panel-khqr" class="payment-tab-panel is-active" role="tabpanel" aria-labelledby="tab-khqr">
                     <div class="payment-khqr">
                         <div class="payment-khqr-qr">
-                            <img src="<?= $qrUrl; ?>" alt="KHQR payment code for <?= number_format($total, 2); ?> USD">
+                            <img src="<?= htmlspecialchars($qrUrl); ?>" alt="KHQR payment code for <?= number_format($total, 2); ?> USD">
                         </div>
                         <p class="payment-khqr-instruction">Scan this QR code with your Bakong or banking app to complete payment.</p>
                         <div class="payment-khqr-meta">
@@ -93,6 +94,7 @@ $srcPath = '';
 
                 <div id="panel-card" class="payment-tab-panel" role="tabpanel" aria-labelledby="tab-card" hidden>
                     <form action="payment.php" method="post" class="payment-card-form" autocomplete="off">
+                        <?= csrfField(); ?>
                         <div class="payment-form-group payment-form-group--wide">
                             <label for="card-number">Card Number</label>
                             <input type="text" id="card-number" name="card_number" placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric">

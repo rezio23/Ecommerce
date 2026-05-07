@@ -1,4 +1,5 @@
 <?php
+require 'includes/security.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,6 +32,7 @@ $srcPath = '';
             <h1>Sign Up</h1>
             <hr class="edit-form-divider">
             <form class="auth-form" action="login.php" method="post">
+                <?= csrfField(); ?>
                 <div class="edit-form-group">
                     <label class="edit-form-label" for="signup-full-name">Full name</label>
                     <input class="edit-form-input" id="signup-full-name" name="full_name" type="text" placeholder="e.g. John Smith" required>

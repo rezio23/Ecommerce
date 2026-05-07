@@ -327,6 +327,24 @@ $(function () {
         }
     }
 
+    const categoryParam = urlParams.get('category');
+
+    if (categoryParam && $groupFilters.length) {
+        const $matchingGroupButton = $groupFilters.filter('[data-filter-value="' + categoryParam + '"]').first();
+
+        if ($matchingGroupButton.length) {
+            selectedProductGroup = categoryParam;
+
+            $groupFilters.each(function () {
+                const $item = $(this);
+                const isSelected = $item[0] === $matchingGroupButton[0];
+
+                $item.toggleClass('is-active', isSelected);
+                $item.attr('aria-pressed', String(isSelected));
+            });
+        }
+    }
+
     applyProductFilters({ keepPage: true });
 
     $searchInputs.on('input', function (event) {

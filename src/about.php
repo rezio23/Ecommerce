@@ -1,4 +1,5 @@
 <?php
+require 'includes/security.php';
 $aboutStats = [
     ['value' => '120+', 'label' => 'Premium Brands'],
     ['value' => '50K', 'label' => 'Happy Customers'],

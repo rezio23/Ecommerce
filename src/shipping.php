@@ -1,5 +1,7 @@
 <?php
 
+require 'includes/security.php';
+
 $cartItems = [
     [
         'name' => 'Paradigme Eau de Parfum',
@@ -76,6 +78,7 @@ $srcPath = '';
             <section class="shipping-form-card" aria-label="Shipping details">
                 <h2 class="shipping-card-title">Shipping Detail</h2>
                 <form action="payment.php" method="post" class="shipping-form">
+                    <?= csrfField(); ?>
                     <div class="shipping-form-row">
                         <div class="shipping-form-group">
                             <label for="ship-full-name">Full name</label>

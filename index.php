@@ -1,5 +1,28 @@
 <?php
 
+require 'src/includes/security.php';
+require 'src/includes/db.php';
+
+$stmt = $pdo->query('SELECT * FROM products ORDER BY id');
+$allProducts = [];
+
+while ($row = $stmt->fetch()) {
+    $row['tags'] = array_map('trim', explode(',', $row['tags'] ?? ''));
+    $allProducts[] = $row;
+}
+
+$products = array_values(array_filter($allProducts, function ($p) {
+    return in_array('Popular', $p['tags'], true);
+}));
+
+$menProducts = array_values(array_filter($allProducts, function ($p) {
+    return in_array('Man', $p['tags'], true);
+}));
+
+$womenProducts = array_values(array_filter($allProducts, function ($p) {
+    return in_array('Woman', $p['tags'], true);
+}));
+
 $brandBadges = [
     [
         'name' => 'polo',
@@ -158,110 +181,6 @@ $categoryCards = [
     ],
 ];
 
-$products = [
-    [
-        'name' => 'Blazer Mid Premium',
-        'brand' => 'Nike',
-        'description' => 'Layered high-top sneaker with a vintage edge.',
-        'price' => 110,
-        'tags' => ['Man', 'Sneaker', 'Popular'],
-        'image' => 'https://www.creativeboom.com/upload/articles/34/34fc53c4c1a50ddea6bbb35a25186d2f4bf17262_944.jpg',
-    ],
-    [
-        'name' => 'Paradigme Eau de Parfum',
-        'brand' => 'Prada',
-        'description' => 'Ambery woody fragrance in a refillable bottle.',
-        'price' => 165,
-        'tags' => ['Man', 'Fragrance', 'Popular'],
-        'image' => 'https://cosmeticsbusiness.com/article-image-alias/spider-man-s-tom-holland-swings-into-prada.jpg',
-    ],
-    [
-        'name' => 'Graffiti Classic City Bag',
-        'brand' => 'Balenciaga',
-        'description' => 'Black and white leather city bag with signature hardware.',
-        'price' => 2550,
-        'tags' => ['Bag', 'Luxury', 'Popular'],
-        'image' => 'https://mygemma.com/cdn/shop/articles/mygemma-WPD-Top-Blog-Image-48.png?v=1695913153',
-    ],
-    [
-        'name' => 'Polo Blue Parfum',
-        'brand' => 'Ralph Lauren',
-        'description' => 'Woody fresh parfum with smoky vetiver notes.',
-        'price' => 148,
-        'tags' => ['Man', 'Fragrance', 'Popular'],
-        'image' => 'https://i.ytimg.com/vi/kQmjVsaXiKg/maxresdefault.jpg',
-    ],
-];
-
-$menProducts = [
-    [
-        'name' => 'Classic-Fit Mesh Polo',
-        'brand' => 'Polo Ralph Lauren',
-        'description' => 'Breathable textured polo with a clean collar.',
-        'price' => 110,
-        'tags' => ['Man', 'Classic', 'Polo'],
-        'image' => 'https://i.gadgets360cdn.com/large/Untitled-design161-1766054573857.png',
-    ],
-    [
-        'name' => 'Air Max 90 Off-White',
-        'brand' => 'Nike x Off-White',
-        'description' => 'Deconstructed sneaker from The Ten collection.',
-        'price' => 160,
-        'tags' => ['Man', 'Sneaker', 'Streetwear'],
-        'image' => 'https://i.ytimg.com/vi/lA_DF1wLEkQ/maxresdefault.jpg',
-    ],
-    [
-        'name' => 'Rebound V6 Low Sneakers',
-        'brand' => 'Puma',
-        'description' => 'Low-cut court sneaker with a perforated toe.',
-        'price' => 70,
-        'tags' => ['Man', 'Sneaker', 'Sport'],
-        'image' => 'https://t4.ftcdn.net/jpg/05/23/51/15/360_F_523511500_1807EEj4w00yFC6bAVcn82amkEHnBmeg.jpg',
-    ],
-    [
-        'name' => 'Elite FLR Jacket',
-        'brand' => 'Ciele Athletics',
-        'description' => 'Ultra-lightweight running shell with reflective details and weather-resistant finish.',
-        'price' => 400,
-        'tags' => ['Man', 'Jacket', 'Sport'],
-        'image' => 'https://upthereathletics.com/cdn/shop/files/ciele-running-mens-elite-flr-jacket-sable-2.jpg?v=1700521012&width=1100',
-    ],
-];
-
-$womenProducts = [
-    [
-        'name' => 'Mesh Fabric Slingback Pumps',
-        'brand' => 'Prada',
-        'description' => 'Sheer polyamide mesh slingbacks with leather trim, pointed toe, and iconic screen-printed triangle logo.',
-        'price' => 1270,
-        'tags' => ['Woman', 'Shoes', 'Luxury'],
-        'image' => 'https://m.media-amazon.com/images/I/71zGfaPOZ5L._AC_UY1000_.jpg',
-    ],
-    [
-        'name' => 'No. 5 Eau Premiere',
-        'brand' => 'Chanel',
-        'description' => 'Light, airy floral version of the classic fragrance.',
-        'price' => 176,
-        'tags' => ['Woman', 'Fragrance', 'Classic'],
-        'image' => 'https://static.vecteezy.com/system/resources/previews/013/254/291/non_2x/ternopil-ukraine-september-2-2022-chanel-number-5-eau-premiere-worldwide-famous-french-perfume-bottle-among-other-perfumes-on-shiny-glitter-background-in-yellow-colors-free-photo.JPG',
-    ],
-    [
-        'name' => 'Womens Jersey Polo Shirt',
-        'brand' => 'Ralph Lauren',
-        'description' => 'Cream cotton-blend polo with classic golf styling.',
-        'price' => 98,
-        'tags' => ['Woman', 'Polo', 'Golf'],
-        'image' => 'https://trendygolfusa.com/cdn/shop/files/LAUNCHES_HERO_7c49c26e-fc63-4418-a7d4-2d4b3d44ece2.jpg?v=1689281730',
-    ],
-    [
-        'name' => 'Saint Laurent Loulou Bag',
-        'brand' => 'Saint Laurent',
-        'description' => 'Quilted leather shoulder bag with iconic YSL logo.',
-        'price' => 2850,
-        'tags' => ['Woman', 'Bag', 'Luxury'],
-        'image' => 'https://www.aglaiamagazine.com/wp-content/uploads/2024/10/saint-laurent-loulou-bag.jpg',
-    ],
-];
 
 $productAccordions = [
     'man' => [
@@ -281,6 +200,23 @@ function getProductDetailHref(array $product): string
     $slug = trim((string) preg_replace('/[^a-z0-9]+/', '-', strtolower($product['name'])), '-');
 
     return 'src/product-detail.php?product=' . rawurlencode($slug);
+}
+
+function getCategoryHref(string $label): string
+{
+    $map = [
+        'Perfume' => 'perfumes',
+        'Clothes' => 'clothes',
+        'Bag' => 'bags',
+        'Accessories' => 'accessories',
+        'Premium' => 'premium',
+    ];
+
+    if (isset($map[$label])) {
+        return 'src/shop.php?category=' . $map[$label] . '#shop-grid';
+    }
+
+    return 'src/shop.php#shop-grid';
 }
 ?>
 <!DOCTYPE html>
@@ -412,7 +348,7 @@ $srcPath = 'src/';
             <div class="category-board">
                 <?php foreach ($categoryCards as $card): ?>
                     <article class="category-card <?= htmlspecialchars($card['class']); ?>">
-                        <a href="#new" aria-label="Shop <?= htmlspecialchars($card['label']); ?>">
+                        <a href="<?= htmlspecialchars(getCategoryHref($card['label'])); ?>" aria-label="Shop <?= htmlspecialchars($card['label']); ?>">
                             <img src="<?= htmlspecialchars($card['image']); ?>" alt="<?= htmlspecialchars($card['label']); ?> fashion category">
                             <span class="category-title"><?= htmlspecialchars($card['label']); ?></span>
                             <span class="category-brand"><?= htmlspecialchars($card['brand']); ?></span>
