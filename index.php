@@ -26,16 +26,16 @@ $brandRanking = [
         'count' => 48,
         'stack' => [
             'left' => [
-                'image' => 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=500&q=80',
-                'alt' => 'Layered streetwear outfit detail',
+                'image' => 'https://www.stylerave.com/wp-content/uploads/2025/05/balenciaga-le-city-bag-ezgif.com-avif-to-jpg-converter-1.jpg',
+                'alt' => 'Balenciaga Le City bag Spring 2026',
             ],
             'center' => [
-                'image' => 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=560&q=85',
-                'alt' => 'Balenciaga inspired black streetwear look',
+                'image' => 'https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2026%2F02%2F17%2Fpierpaolo-piccioli-debut-balenciaga-heart-and-body-campaign-hudson-williams-winona-ryder-harris-dickinson-001.jpg?q=75&w=1200&cbr=1&fit=max',
+                'alt' => 'Balenciaga Heart and Body Spring 2026 campaign',
             ],
             'right' => [
-                'image' => 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=500&q=80',
-                'alt' => 'Premium folded fashion pieces',
+                'image' => 'https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2026%2F03%2F16%2Fbalenciaga-radar-sneaker-ballerina-release-info.jpg?q=75&w=1200&cbr=1&fit=max',
+                'alt' => 'Balenciaga Radar sneaker 2026',
             ],
         ],
     ],
@@ -44,16 +44,16 @@ $brandRanking = [
         'count' => 12,
         'stack' => [
             'left' => [
-                'image' => 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=500&q=80',
-                'alt' => 'Luxury sunglasses accessory detail',
+                'image' => 'https://images.squarespace-cdn.com/content/v1/59b2777f49fc2b50d073cb2b/1772522023035-35BKTMVFZURWQ4MDOIH6/1000247973.jpg',
+                'alt' => 'Gucci FW26 Primavera runway look',
             ],
             'center' => [
-                'image' => 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=560&q=85',
-                'alt' => 'Gucci inspired premium handbag styling',
+                'image' => 'https://images.squarespace-cdn.com/content/v1/59b2777f49fc2b50d073cb2b/1772522023236-M1OSFIRE8G768JV986J6/1000247976.jpg',
+                'alt' => 'Gucci Fall 2026 collection by Demna',
             ],
             'right' => [
-                'image' => 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=500&q=80',
-                'alt' => 'Structured designer handbag',
+                'image' => 'https://images.squarespace-cdn.com/content/v1/59b2777f49fc2b50d073cb2b/1772522026051-6O4AVQSF4K4Y9ZYT95ZC/1000247979.jpg',
+                'alt' => 'Gucci FW26 runway detail',
             ],
         ],
     ],
@@ -62,16 +62,16 @@ $brandRanking = [
         'count' => 48,
         'stack' => [
             'left' => [
-                'image' => 'https://images.unsplash.com/photo-1516826957135-700dedea698c?auto=format&fit=crop&w=500&q=80',
-                'alt' => 'Athletic black outfit styling',
+                'image' => 'https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2026%2F03%2F10%2Fnike-air-liquid-max-announcement-info-1.jpg?q=75&w=1200&cbr=1&fit=max',
+                'alt' => 'Nike Air Liquid Max 2026 product',
             ],
             'center' => [
-                'image' => 'https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=560&q=85',
-                'alt' => 'Nike black puffer jacket outfit',
+                'image' => 'https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2026%2F03%2F10%2Fnike-air-liquid-max-announcement-info-3.jpg?q=75&w=1200&cbr=1&fit=max',
+                'alt' => 'Nike Air Liquid Max lifestyle 2026',
             ],
             'right' => [
-                'image' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80',
-                'alt' => 'Sport sneaker product closeup',
+                'image' => 'https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2026%2F03%2F10%2Fnike-air-liquid-max-announcement-info-5.jpg?q=75&w=1200&cbr=1&fit=max',
+                'alt' => 'Nike Air Liquid Max detail 2026',
             ],
         ],
         'active' => true,
@@ -81,16 +81,16 @@ $brandRanking = [
         'count' => 32,
         'stack' => [
             'left' => [
-                'image' => 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=500&q=80',
-                'alt' => 'Classic folded wardrobe essentials',
+                'image' => 'https://images.pexels.com/photos/16048133/pexels-photo-16048133.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+                'alt' => 'Polo Ralph Lauren style model',
             ],
             'center' => [
-                'image' => 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=560&q=85',
-                'alt' => 'Polo inspired fragrance bottle',
+                'image' => 'https://images.pexels.com/photos/7270145/pexels-photo-7270145.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+                'alt' => 'Preppy polo fashion portrait',
             ],
             'right' => [
-                'image' => 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=500&q=80',
-                'alt' => 'Premium fragrance bottle detail',
+                'image' => 'https://trendygolfusa.com/cdn/shop/files/LAUNCHES_HERO_7c49c26e-fc63-4418-a7d4-2d4b3d44ece2.jpg?v=1689281730',
+                'alt' => 'Ralph Lauren golf lifestyle',
             ],
         ],
     ],
@@ -99,16 +99,16 @@ $brandRanking = [
         'count' => 48,
         'stack' => [
             'left' => [
-                'image' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80',
-                'alt' => 'Sport sneaker product angle',
+                'image' => 'https://justfreshkicks.com/wp-content/uploads/2026/04/wales-bonner-adidas-summer-2026-collection-release-date.jpg',
+                'alt' => 'Adidas Wales Bonner SS26 collection',
             ],
             'center' => [
-                'image' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=560&q=85',
-                'alt' => 'Adidas inspired sneaker in rose color',
+                'image' => 'https://justfreshkicks.com/wp-content/uploads/2026/05/adistar-control-5-PR-scaled.jpg',
+                'alt' => 'Adidas Adistar Control 5 2026',
             ],
             'right' => [
-                'image' => 'https://images.unsplash.com/photo-1516826957135-700dedea698c?auto=format&fit=crop&w=500&q=80',
-                'alt' => 'Sporty fashion outfit styling',
+                'image' => 'https://justfreshkicks.com/wp-content/uploads/2026/05/adidas-bw-run-set-scaled.jpg',
+                'alt' => 'Adidas BW Run 2026',
             ],
         ],
     ],
@@ -355,7 +355,7 @@ $srcPath = 'src/';
                     <img class="stack-img stack-img--center" data-brand-stack="center" src="<?= htmlspecialchars($activeBrand['stack']['center']['image']); ?>" alt="<?= htmlspecialchars($activeBrand['stack']['center']['alt']); ?>">
                     <img class="stack-img stack-img--right" data-brand-stack="right" src="<?= htmlspecialchars($activeBrand['stack']['right']['image']); ?>" alt="<?= htmlspecialchars($activeBrand['stack']['right']['alt']); ?>">
                 </div>
-                <a class="outline-cta" href="src/shop.php">
+                <a class="outline-cta" href="src/shop.php?brand=<?= htmlspecialchars(strtolower($activeBrand['name']) === 'polo' ? 'ralph-lauren' : strtolower($activeBrand['name'])); ?>#brand_selector" data-see-product>
                     See Product
                     <i data-lucide="arrow-right"></i>
                 </a>
@@ -369,6 +369,7 @@ $srcPath = 'src/';
                                 type="button"
                                 data-brand-trigger
                                 data-brand-name="<?= htmlspecialchars($brand['name']); ?>"
+                                data-brand-filter="<?= htmlspecialchars(strtolower($brand['name']) === 'polo' ? 'ralph-lauren' : strtolower($brand['name'])); ?>"
                                 data-brand-left-image="<?= htmlspecialchars($brand['stack']['left']['image']); ?>"
                                 data-brand-left-alt="<?= htmlspecialchars($brand['stack']['left']['alt']); ?>"
                                 data-brand-center-image="<?= htmlspecialchars($brand['stack']['center']['image']); ?>"
@@ -482,7 +483,7 @@ $srcPath = 'src/';
                         <?php endforeach; ?>
                     </div>
                 </div>
-                
+
 
                 <?php foreach ($productAccordions as $key => $group): ?>
                     <?php $panelId = 'products-' . $key; ?>

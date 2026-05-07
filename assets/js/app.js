@@ -301,6 +301,32 @@ $(function () {
         }, productPageExitMs);
     });
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const brandParam = urlParams.get('brand');
+
+    if (brandParam && $brandFilter.length) {
+        const $matchingOption = $filterOptions.filter('[data-filter-value="' + brandParam + '"]').first();
+
+        if ($matchingOption.length) {
+            const $select = $matchingOption.closest('[data-filter-select]');
+            const $toggle = $select.find('[data-filter-toggle]');
+            const $currentLabel = $toggle.find('[data-filter-current]');
+
+            $select.find('[data-filter-option]').each(function () {
+                const $item = $(this);
+                const isSelected = $item[0] === $matchingOption[0];
+                $item.toggleClass('is-selected', isSelected);
+                $item.attr('aria-selected', String(isSelected));
+            });
+
+            $toggle.attr('data-filter-value', brandParam);
+
+            if ($currentLabel.length) {
+                $currentLabel.text($matchingOption.text().trim());
+            }
+        }
+    }
+
     applyProductFilters({ keepPage: true });
 
     $searchInputs.on('input', function (event) {
@@ -621,6 +647,7 @@ $(function () {
     const $brandSwitchers = $('[data-brand-trigger]');
     const $brandItems = $('[data-brand-item]');
     const $momentStack = $brandStackImages.first().closest('.moment-stack');
+    const $seeProductLink = $('[data-see-product]');
     let activeBrandIndex = $brandItems.index($brandItems.filter('.is-active').first());
     const brandMotionClasses = ['is-moving-up', 'is-moving-down', 'is-wrapping-up', 'is-wrapping-down'];
 
@@ -767,6 +794,11 @@ $(function () {
 
         applyBrandSlots(selectedIndex, direction);
         activeBrandIndex = selectedIndex;
+
+        if ($seeProductLink.length) {
+            const brandFilter = $selectedButton.attr('data-brand-filter') || '';
+            $seeProductLink.attr('href', 'src/shop.php?brand=' + encodeURIComponent(brandFilter) + '#brand_selector');
+        }
 
         const nextStack = getBrandStack($selectedButton);
         const switchId = ++brandStackSwitchId;

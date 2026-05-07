@@ -287,17 +287,17 @@ $productCatalog = [
         'name' => 'Quilted Chain Mini Bag',
         'brand' => 'Gucci',
         'description' => 'Compact quilted bag with polished chain detail.',
-        'price' => 1550,
+        'price' => 1980,
         'tags' => ['Woman', 'Bag', 'Luxury'],
         'rating' => '4.7',
         'badge' => 'Luxury',
         'gallery' => [
-            'https://media.gucci.com/style/DarkGray_Center_0_0_490x490/1746636343/841290_AAFAX_1000_003_100_0000_Light-GG-Marmont-mini-shoulder-bag.jpg',
-            'https://media.gucci.com/style/DarkGray_Center_0_0_490x490/1744217146/841290_AAFAX_1000_001_055_0000_Light-GG-Marmont-mini-shoulder-bag.jpg',
-            'https://media.gucci.com/style/DarkGray_Center_0_0_490x490/1744217147/841290_AAFAX_1000_002_055_0000_Light-GG-Marmont-mini-shoulder-bag.jpg',
+            'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=900&q=70',
+            'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=700&q=80',
         ],
     ],
-    'ac-milan-off-white-fourth-kit' => [
+    'ac-milan-x-off-white-fourth-kit' => [
         'name' => 'AC Milan x Off-White Fourth Kit',
         'brand' => 'Puma x Off-White',
         'description' => 'Limited-edition fourth kit celebrating Black History Month with Pan-African colors and Off-White arrow print.',

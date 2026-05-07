@@ -12,7 +12,7 @@ $srcPath = $srcPath ?? '';
 $navItems = [
     ['label' => 'Home', 'href' => $rootPath . 'index.php#home_text', 'active' => $currentPage === 'home'],
     ['label' => 'Shop', 'href' => $srcPath . 'shop.php', 'active' => $currentPage === 'shop'],
-    ['label' => 'About', 'href' => $rootPath . 'index.php#about', 'active' => $currentPage === 'about'],
+    ['label' => 'About', 'href' => $srcPath . 'about.php', 'active' => $currentPage === 'about'],
     ['label' => 'New', 'href' => $rootPath . 'index.php#new', 'active' => $currentPage === 'new'],
 ];
 

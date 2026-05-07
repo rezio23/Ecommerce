@@ -117,9 +117,9 @@ $shopProducts = [
         'name' => 'Quilted Chain Mini Bag',
         'brand' => 'Gucci',
         'description' => 'Compact quilted bag with polished chain detail.',
-        'price' => 1550,
+        'price' => 1980,
         'tags' => ['Woman', 'Bag', 'Luxury'],
-        'image' => 'https://media.gucci.com/style/DarkGray_Center_0_0_490x490/1746636343/841290_AAFAX_1000_003_100_0000_Light-GG-Marmont-mini-shoulder-bag.jpg',
+        'image' => 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=1200&q=80',
     ],
     [
         'name' => 'AC Milan x Off-White Fourth Kit',
@@ -140,6 +140,7 @@ $shopBrandOptions = [
     ['label' => 'Puma', 'value' => 'puma'],
     ['label' => 'Chanel', 'value' => 'chanel'],
     ['label' => 'Gucci', 'value' => 'gucci'],
+    ['label' => 'Adidas', 'value' => 'adidas'],
 ];
 
 $shopAudienceOptions = [
@@ -162,6 +163,7 @@ function getShopBrandFilter(string $brand): string
         'nike' => 'nike',
         'prada' => 'prada',
         'puma' => 'puma',
+        'adidas' => 'adidas',
     ];
 
     foreach ($brandMap as $needle => $value) {
@@ -359,7 +361,7 @@ $srcPath = '';
 
                     <div class="shop-selectors" aria-label="Shop filters">
                         <div class="shop-select-control" data-filter-select>
-                            <span class="shop-select-control__label">Brand</span>
+                            <span id="brand_selector" class="shop-select-control__label">Brand</span>
                             <button
                                 class="shop-select-toggle"
                                 type="button"
