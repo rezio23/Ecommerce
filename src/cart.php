@@ -1,25 +1,8 @@
 <?php
 require 'includes/security.php';
+startSecureSession();
 
-$cartItems = [
-    [
-        'name' => 'Paradigme Eau de Parfum',
-        'brand' => 'Prada',
-        'size' => '150ml',
-        'price' => 19.99,
-        'quantity' => 1,
-        'image' => 'https://cosmeticsbusiness.com/article-image-alias/spider-man-s-tom-holland-swings-into-prada.jpg',
-    ],
-    [
-        'name' => 'Paradigme Eau de Parfum',
-        'brand' => 'Prada',
-        'size' => '150ml',
-        'price' => 19.99,
-        'quantity' => 1,
-        'image' => 'https://perfumeuae.com/wp-content/uploads/2025/08/para-1.jpg',
-    ],
-];
-
+$cartItems = $_SESSION['cart'] ?? [];
 $subtotal = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $cartItems));
 ?>
 <!DOCTYPE html>
@@ -34,12 +17,12 @@ $subtotal = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'],
     <link rel="stylesheet" href="../assets/css/styles.css?v=93">
 </head>
 <body class="cart-page">
-    
+
 
 <?php
 $headerId = 'cart-top';
 $searchId = 'header-cart-search';
-$bagCount = count($cartItems);
+$bagCount = array_sum(array_column($cartItems, 'quantity'));
 $activeButton = 'bag';
 $currentPage = 'shop';
 $searchTrigger = 'button';
@@ -68,60 +51,59 @@ $srcPath = '';
                 <span>Total</span>
             </div>
 
-            <?php foreach ($cartItems as $index => $item): ?>
-                <div class="cart-table-row <?= $index % 2 === 0 ? 'cart-table-row--even' : 'cart-table-row--odd'; ?>">
-                    <div class="cart-product-cell">
-                        <img src="<?= htmlspecialchars($item['image']); ?>" alt="<?= htmlspecialchars($item['name']); ?>">
-                        <div class="cart-product-meta">
-                            <strong><?= htmlspecialchars($item['name']); ?></strong>
-                            <span>Size: <?= htmlspecialchars($item['size']); ?></span>
-                        </div>
-                    </div>
-                    <div class="cart-price-cell">$ <?= number_format($item['price'], 2); ?></div>
-                    <div class="cart-quantity-cell">
-                        <div class="cart-qty-control">
-                            <button type="button" class="cart-qty-btn" data-cart-qty="-1" aria-label="Decrease quantity">
-                                <i data-lucide="minus" aria-hidden="true"></i>
-                            </button>
-                            <span class="cart-qty-value"><?= (int) $item['quantity']; ?></span>
-                            <button type="button" class="cart-qty-btn" data-cart-qty="1" aria-label="Increase quantity">
-                                <i data-lucide="plus" aria-hidden="true"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="cart-total-cell">$ <?= number_format($item['price'] * $item['quantity'], 2); ?></div>
+            <?php if (empty($cartItems)): ?>
+                <div class="cart-empty" style="padding: 2rem; text-align: center;">
+                    <p>Your cart is empty.</p>
+                    <a href="shop.php" class="cart-checkout-btn" style="margin-top: 1rem; display: inline-block;">Continue Shopping</a>
                 </div>
-            <?php endforeach; ?>
+            <?php else: ?>
+                <?php foreach ($cartItems as $slug => $item): ?>
+                    <div class="cart-table-row">
+                        <div class="cart-product-cell">
+                            <img src="<?= htmlspecialchars($item['image']); ?>" alt="<?= htmlspecialchars($item['name']); ?>">
+                            <div class="cart-product-meta">
+                                <strong><?= htmlspecialchars($item['name']); ?></strong>
+                                <span>Size: <?= htmlspecialchars($item['size']); ?></span>
+                            </div>
+                        </div>
+                        <div class="cart-price-cell">$ <?= number_format($item['price'], 2); ?></div>
+                        <div class="cart-quantity-cell">
+                            <form action="cart-action.php" method="post" class="cart-qty-control">
+                                <?= csrfField(); ?>
+                                <input type="hidden" name="action" value="update">
+                                <input type="hidden" name="slug" value="<?= htmlspecialchars($slug); ?>">
+                                <button type="submit" class="cart-qty-btn" name="quantity" value="<?= max(0, $item['quantity'] - 1); ?>" aria-label="Decrease quantity">
+                                    <i data-lucide="minus" aria-hidden="true"></i>
+                                </button>
+                                <span class="cart-qty-value"><?= (int) $item['quantity']; ?></span>
+                                <button type="submit" class="cart-qty-btn" name="quantity" value="<?= $item['quantity'] + 1; ?>" aria-label="Increase quantity">
+                                    <i data-lucide="plus" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="cart-total-cell">$ <?= number_format($item['price'] * $item['quantity'], 2); ?></div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
 
-        <div class="cart-summary">
-            <hr class="cart-summary-line">
-            <div class="cart-subtotal">
-                <span>Sub Total:</span>
-                <strong>$ <?= number_format($subtotal, 2); ?></strong>
+        <?php if (!empty($cartItems)): ?>
+            <div class="cart-summary">
+                <hr class="cart-summary-line">
+                <div class="cart-subtotal">
+                    <span>Sub Total:</span>
+                    <strong>$ <?= number_format($subtotal, 2); ?></strong>
+                </div>
+                <a href="shipping.php" class="cart-checkout-btn">Go to Checkout</a>
             </div>
-            <a href="shipping.php" class="cart-checkout-btn">Go to Checkout</a>
-        </div>
+        <?php endif; ?>
     </main>
 
-    
+
 
 <?php include 'includes/footer.php'; ?>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/app.js?v=23"></script>
-    <script>
-        document.querySelectorAll('[data-cart-qty]').forEach((btn) => {
-            btn.addEventListener('click', () => {
-                const row = btn.closest('.cart-table-row');
-                const valueEl = row?.querySelector('.cart-qty-value');
-                if (!valueEl) return;
-                let qty = parseInt(valueEl.textContent, 10) || 0;
-                const delta = parseInt(btn.dataset.cartQty, 10) || 0;
-                qty = Math.max(1, qty + delta);
-                valueEl.textContent = String(qty);
-            });
-        });
-    </script>
 </body>
 </html>

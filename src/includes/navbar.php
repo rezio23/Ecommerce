@@ -1,8 +1,16 @@
 <?php
+require_once __DIR__ . '/security.php';
+startSecureSession();
+
+$isLoggedIn = isset($_SESSION['user_id']);
+$userName = $_SESSION['user_name'] ?? '';
+$cart = $_SESSION['cart'] ?? [];
+$cartCount = array_sum(array_column($cart, 'quantity'));
+
 $currentPage = $currentPage ?? '';
 $headerId = $headerId ?? '';
 $searchId = $searchId ?? 'header-product-search';
-$bagCount = $bagCount ?? 0;
+$bagCount = $cartCount;
 $activeButton = $activeButton ?? '';
 $searchTrigger = ($searchTrigger ?? 'button') === 'button' ? 'button' : 'link';
 
@@ -16,9 +24,15 @@ $navItems = [
     ['label' => 'New', 'href' => $rootPath . 'index.php#new', 'active' => $currentPage === 'new'],
 ];
 
-$accountLink = $activeButton === 'profile' ? ($srcPath . 'profile.php') : ($srcPath . 'login.php');
-$accountLabel = $activeButton === 'profile' ? 'Account profile' : 'Account login';
-$accountTitle = $activeButton === 'profile' ? 'Account' : 'Account';
+if ($isLoggedIn) {
+    $accountLink = $srcPath . 'profile.php';
+    $accountLabel = 'Account profile';
+    $accountTitle = $userName ?: 'Account';
+} else {
+    $accountLink = $srcPath . 'login.php';
+    $accountLabel = 'Account login';
+    $accountTitle = 'Account';
+}
 ?>
 <header class="site-header" id="<?= htmlspecialchars($headerId); ?>">
     <a class="brand-mark" href="<?= $rootPath; ?>index.php#home" aria-label="The DS home">the DS</a>

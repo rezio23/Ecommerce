@@ -1,15 +1,74 @@
 <?php
 
 require 'includes/security.php';
+startSecureSession();
+require 'includes/db.php';
+
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+$userId = (int) $_SESSION['user_id'];
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
+
+    $fullName = getPost('full_name');
+    $gender = getPost('gender');
+    $address = getPost('address');
+    $phone = getPost('phone');
+
+    $avatar = null;
+    if (!empty($_FILES['profile_picture']['tmp_name'])) {
+        $result = validateFileUpload($_FILES['profile_picture'], ['image/jpeg', 'image/png', 'image/gif', 'image/webp'], 2 * 1024 * 1024);
+        if ($result['ok']) {
+            $avatar = 'uploads/' . $result['name'];
+        } else {
+            $errors[] = $result['error'];
+        }
+    }
+
+    if (empty($errors)) {
+        if ($avatar) {
+            $stmt = $pdo->prepare('UPDATE users SET full_name = :full_name, gender = :gender, address = :address, phone = :phone, avatar = :avatar WHERE id = :id');
+            $stmt->execute([
+                ':full_name' => $fullName,
+                ':gender' => $gender,
+                ':address' => $address,
+                ':phone' => $phone,
+                ':avatar' => $avatar,
+                ':id' => $userId,
+            ]);
+        } else {
+            $stmt = $pdo->prepare('UPDATE users SET full_name = :full_name, gender = :gender, address = :address, phone = :phone WHERE id = :id');
+            $stmt->execute([
+                ':full_name' => $fullName,
+                ':gender' => $gender,
+                ':address' => $address,
+                ':phone' => $phone,
+                ':id' => $userId,
+            ]);
+        }
+        $_SESSION['user_name'] = $fullName;
+        header('Location: profile.php');
+        exit;
+    }
+}
+
+$stmt = $pdo->prepare('SELECT * FROM users WHERE id = :id');
+$stmt->execute([':id' => $userId]);
+$dbUser = $stmt->fetch();
 
 $profileUser = [
-    'name' => 'Vichhean Sombath',
-    'handle' => '@sombath123',
-    'email' => 'sombath@gmail.com',
-    'phone' => 'Unknown',
-    'gender' => 'Hidden',
-    'location' => 'Sen Sok, Phnom Penh, Cambodia',
-    'avatar' => 'https://i1.sndcdn.com/avatars-tDQKBExQks6cE0zh-HO3N7Q-t240x240.jpg',
+    'name' => $dbUser['full_name'] ?? 'User',
+    'handle' => '@' . strtolower(preg_replace('/[^a-z0-9]/', '', (string) $dbUser['full_name'])),
+    'email' => $dbUser['email'] ?? '',
+    'phone' => $dbUser['phone'] ?: 'Unknown',
+    'gender' => $dbUser['gender'] ?: 'Hidden',
+    'location' => $dbUser['address'] ?: 'Unknown',
+    'avatar' => $dbUser['avatar'] ?: 'https://i1.sndcdn.com/avatars-tDQKBExQks6cE0zh-HO3N7Q-t240x240.jpg',
 ];
 ?>
 <!DOCTYPE html>

@@ -430,6 +430,7 @@ $(function () {
 
         const selectedSize = $activeButton.attr('data-size-value') || $activeButton.text().trim();
         $group.attr('data-selected-size', selectedSize);
+        $('#detail-cart-size').val(selectedSize);
 
         $group.find('[data-product-size-option]').each(function () {
             const $button = $(this);
@@ -459,6 +460,13 @@ $(function () {
 
             setActiveProductSize($button);
         });
+    });
+
+    $('.detail-cart-form').on('submit', function () {
+        const selectedSize = $('[data-product-size-group]').attr('data-selected-size');
+        if (selectedSize) {
+            $('#detail-cart-size').val(selectedSize);
+        }
     });
 
     const setActiveProductGalleryThumb = function ($activeButton) {

@@ -1,6 +1,7 @@
 <?php
 
 require 'includes/security.php';
+startSecureSession();
 require 'includes/db.php';
 
 function getProductSlug(string $name): string
@@ -96,6 +97,13 @@ $product['category'] = getProductCategory($product);
 $product['sizes'] = getProductSizes($product);
 $product['active_size'] = getDefaultActiveSize($product, $product['sizes']);
 
+$isFavorited = false;
+if (isset($_SESSION['user_id']) && !empty($product['id'])) {
+    $favCheck = $pdo->prepare('SELECT id FROM favorites WHERE user_id = :user_id AND product_id = :product_id');
+    $favCheck->execute([':user_id' => (int) $_SESSION['user_id'], ':product_id' => (int) $product['id']]);
+    $isFavorited = (bool) $favCheck->fetch();
+}
+
 $productGallery = array_map(
     fn (string $image): array => [
         'image' => $image,
@@ -133,7 +141,7 @@ $activeGallery = $productGallery[0];
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/styles.css?v=89">
+    <link rel="stylesheet" href="../assets/css/styles.css?v=97">
 </head>
 <body class="product-detail-page">
     
@@ -189,10 +197,20 @@ $srcPath = '';
                 </div>
 
                 <div class="product-detail-actions">
-                    <button class="product-primary-button" type="button" data-add-to-cart>
-                        <span>Add to Cart</span>
-                    </button>
-                    <button class="product-secondary-button" type="button">Favorite</button>
+                    <form action="cart-action.php" method="post" class="detail-cart-form" style="display:inline;">
+                        <?= csrfField(); ?>
+                        <input type="hidden" name="action" value="add">
+                        <input type="hidden" name="slug" value="<?= htmlspecialchars($product['slug'] ?? ''); ?>">
+                        <input type="hidden" name="size" value="<?= htmlspecialchars($product['active_size']); ?>" id="detail-cart-size">
+                        <button class="product-primary-button" type="submit" data-add-to-cart>
+                            <span>Add to Cart</span>
+                        </button>
+                    </form>
+                    <form action="favorite-action.php" method="post" style="display:inline;">
+                        <?= csrfField(); ?>
+                        <input type="hidden" name="product_id" value="<?= (int) ($product['id'] ?? 0); ?>">
+                        <button class="product-secondary-button" type="submit"><?= $isFavorited ? 'Unfavorite' : 'Favorite'; ?></button>
+                    </form>
                 </div>
             </div>
 
@@ -244,6 +262,6 @@ $srcPath = '';
 <?php include 'includes/footer.php'; ?>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="../assets/js/app.js?v=22"></script>
+    <script src="../assets/js/app.js?v=24"></script>
 </body>
 </html>

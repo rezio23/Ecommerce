@@ -1,32 +1,92 @@
 <?php
 require 'includes/security.php';
-$cartItems = [
-    [
-        'name' => 'Paradigme Eau de Parfum',
-        'brand' => 'Prada',
-        'size' => '150ml',
-        'price' => 19.99,
-        'quantity' => 1,
-        'image' => 'https://cosmeticsbusiness.com/article-image-alias/spider-man-s-tom-holland-swings-into-prada.jpg',
-    ],
-    [
-        'name' => 'Paradigme Eau de Parfum',
-        'brand' => 'Prada',
-        'size' => '150ml',
-        'price' => 19.99,
-        'quantity' => 1,
-        'image' => 'https://perfumeuae.com/wp-content/uploads/2025/08/para-1.jpg',
-    ],
-];
+startSecureSession();
+require 'includes/db.php';
+
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+$userId = (int) $_SESSION['user_id'];
+$errors = [];
+
+$cartItems = $_SESSION['cart'] ?? [];
+if (empty($cartItems)) {
+    header('Location: cart.php');
+    exit;
+}
+
+$shippingInfo = $_SESSION['shipping'] ?? null;
+if (!$shippingInfo) {
+    header('Location: shipping.php');
+    exit;
+}
 
 $subtotal = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $cartItems));
-$shipping = 2.99;
+$shippingCost = (float) ($shippingInfo['shipping_cost'] ?? 2.99);
 $taxRate = 0.018;
 $taxes = round($subtotal * $taxRate, 2);
-$total = $subtotal + $shipping + $taxes;
+$total = $subtotal + $shippingCost + $taxes;
 
 $qrData = 'KHQR|theDS|' . number_format($total, 2) . '|USD';
 $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' . urlencode($qrData);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
+
+    $cardNumber = trim((string) getPost('card_number'));
+    $cardExpiry = trim((string) getPost('card_expiry'));
+    $cardCvc = trim((string) getPost('card_cvc'));
+    $cardName = trim((string) getPost('card_name'));
+
+    $hasCardFields = $cardNumber !== '' || $cardExpiry !== '' || $cardCvc !== '' || $cardName !== '';
+    $paymentMethod = $hasCardFields ? 'debit_card' : 'khqr';
+
+    if ($paymentMethod === 'debit_card') {
+        if ($cardNumber === '') $errors[] = 'Card number is required.';
+        if ($cardExpiry === '') $errors[] = 'Expiry date is required.';
+        if ($cardCvc === '') $errors[] = 'CVC is required.';
+        if ($cardName === '') $errors[] = 'Cardholder name is required.';
+    }
+
+    if (empty($errors)) {
+        $fullAddress = $shippingInfo['address_1'];
+        if (!empty($shippingInfo['address_2'])) {
+            $fullAddress .= ', ' . $shippingInfo['address_2'];
+        }
+
+        $orderStmt = $pdo->prepare('INSERT INTO orders (user_id, total, status, shipping_name, shipping_phone, shipping_address, shipping_postal, shipping_email, shipping_mode, created_at) VALUES (:user_id, :total, :status, :shipping_name, :shipping_phone, :shipping_address, :shipping_postal, :shipping_email, :shipping_mode, NOW())');
+        $orderStmt->execute([
+            ':user_id' => $userId,
+            ':total' => $total,
+            ':status' => 'pending',
+            ':shipping_name' => $shippingInfo['full_name'],
+            ':shipping_phone' => $shippingInfo['phone'],
+            ':shipping_address' => $fullAddress,
+            ':shipping_postal' => $shippingInfo['postal_code'],
+            ':shipping_email' => $shippingInfo['email'],
+            ':shipping_mode' => $shippingInfo['shipping_mode'] ?? 'standard',
+        ]);
+        $orderId = (int) $pdo->lastInsertId();
+
+        $itemStmt = $pdo->prepare('INSERT INTO order_items (order_id, product_name, product_brand, product_price, quantity, size, created_at) VALUES (:order_id, :product_name, :product_brand, :product_price, :quantity, :size, NOW())');
+        foreach ($cartItems as $item) {
+            $itemStmt->execute([
+                ':order_id' => $orderId,
+                ':product_name' => $item['name'],
+                ':product_brand' => $item['brand'],
+                ':product_price' => $item['price'],
+                ':quantity' => $item['quantity'],
+                ':size' => $item['size'] ?? 'One Size',
+            ]);
+        }
+
+        unset($_SESSION['cart'], $_SESSION['shipping']);
+        header('Location: profile.php?ordered=1');
+        exit;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,7 +104,7 @@ $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' . urle
 <?php
 $headerId = 'payment-top';
 $searchId = 'header-payment-search';
-$bagCount = count($cartItems);
+$bagCount = array_sum(array_column($cartItems, 'quantity'));
 $activeButton = '';
 $currentPage = 'shop';
 $searchTrigger = 'button';
@@ -65,112 +125,122 @@ $srcPath = '';
         <a href="#" class="payment-help-link">Help Center</a>
     </div>
 
-    <div class="payment-layout">
-        <section class="payment-form-card" aria-label="Payment details">
-            <h2 class="payment-card-title">Payment Method</h2>
+    <?php if (!empty($errors)): ?>
+        <div class="form-errors" style="max-width: 800px; margin: 1rem auto; color: #c00; background: #ffeaea; padding: 1rem; border-radius: 8px;">
+            <?php foreach ($errors as $error): ?>
+                <p><?= htmlspecialchars($error); ?></p>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 
-            <div class="payment-step-tabs" role="tablist" aria-label="Payment methods">
-                <button type="button" class="payment-step-tab is-active" role="tab" aria-selected="true" aria-controls="panel-khqr" id="tab-khqr">
-                    KHQR
-                </button>
-                <button type="button" class="payment-step-tab" role="tab" aria-selected="false" aria-controls="panel-card" id="tab-card" tabindex="-1">
-                    Debit Card
-                </button>
-            </div>
+    <form action="payment.php" method="post" class="payment-layout-form" id="payment-form" autocomplete="off">
+        <?= csrfField(); ?>
+        <div class="payment-layout">
+            <section class="payment-form-card" aria-label="Payment details">
+                <h2 class="payment-card-title">Payment Method</h2>
 
-            <div class="payment-tab-panels">
-                <div id="panel-khqr" class="payment-tab-panel is-active" role="tabpanel" aria-labelledby="tab-khqr">
-                    <div class="payment-khqr">
-                        <div class="payment-khqr-qr">
-                            <img src="<?= htmlspecialchars($qrUrl); ?>" alt="KHQR payment code for <?= number_format($total, 2); ?> USD">
+                <div class="payment-step-tabs" role="tablist" aria-label="Payment methods">
+                    <button type="button" class="payment-step-tab is-active" role="tab" aria-selected="true" aria-controls="panel-khqr" id="tab-khqr">
+                        KHQR
+                    </button>
+                    <button type="button" class="payment-step-tab" role="tab" aria-selected="false" aria-controls="panel-card" id="tab-card" tabindex="-1">
+                        Debit Card
+                    </button>
+                </div>
+
+                <div class="payment-tab-panels">
+                    <div id="panel-khqr" class="payment-tab-panel is-active" role="tabpanel" aria-labelledby="tab-khqr">
+                        <div class="payment-khqr">
+                            <div class="payment-khqr-qr">
+                                <img src="<?= htmlspecialchars($qrUrl); ?>" alt="KHQR payment code for <?= number_format($total, 2); ?> USD">
+                            </div>
+                            <p class="payment-khqr-instruction">Scan this QR code with your Bakong or banking app to complete payment.</p>
+                            <div class="payment-khqr-meta">
+                                <span>Merchant: <strong>the DS</strong></span>
+                                <span>Amount: <strong>$ <?= number_format($total, 2); ?></strong></span>
+                            </div>
                         </div>
-                        <p class="payment-khqr-instruction">Scan this QR code with your Bakong or banking app to complete payment.</p>
-                        <div class="payment-khqr-meta">
-                            <span>Merchant: <strong>the DS</strong></span>
-                            <span>Amount: <strong>$ <?= number_format($total, 2); ?></strong></span>
+                    </div>
+
+                    <div id="panel-card" class="payment-tab-panel" role="tabpanel" aria-labelledby="tab-card" hidden>
+                        <div class="payment-card-form">
+                            <div class="payment-form-group payment-form-group--wide">
+                                <label for="card-number">Card Number</label>
+                                <input type="text" id="card-number" name="card_number" placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric">
+                            </div>
+
+                            <div class="payment-form-row">
+                                <div class="payment-form-group">
+                                    <label for="card-expiry">Expiry Date</label>
+                                    <input type="text" id="card-expiry" name="card_expiry" placeholder="MM / YY" maxlength="7" inputmode="numeric">
+                                </div>
+                                <div class="payment-form-group">
+                                    <label for="card-cvc">CVC</label>
+                                    <input type="text" id="card-cvc" name="card_cvc" placeholder="123" maxlength="4" inputmode="numeric">
+                                </div>
+                            </div>
+
+                            <div class="payment-form-group payment-form-group--wide">
+                                <label for="card-name">Cardholder Name</label>
+                                <input type="text" id="card-name" name="card_name" placeholder="Name on card">
+                            </div>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <div id="panel-card" class="payment-tab-panel" role="tabpanel" aria-labelledby="tab-card" hidden>
-                    <form action="payment.php" method="post" class="payment-card-form" autocomplete="off">
-                        <?= csrfField(); ?>
-                        <div class="payment-form-group payment-form-group--wide">
-                            <label for="card-number">Card Number</label>
-                            <input type="text" id="card-number" name="card_number" placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric">
-                        </div>
-
-                        <div class="payment-form-row">
-                            <div class="payment-form-group">
-                                <label for="card-expiry">Expiry Date</label>
-                                <input type="text" id="card-expiry" name="card_expiry" placeholder="MM / YY" maxlength="7" inputmode="numeric">
+            <aside class="payment-summary-card" aria-label="Order summary">
+                <h2 class="payment-card-title">Cart</h2>
+                <div class="payment-cart-items">
+                    <?php foreach (array_values($cartItems) as $index => $item): ?>
+                        <div class="payment-cart-item">
+                            <div class="payment-cart-thumb">
+                                <img src="<?= htmlspecialchars($item['image']); ?>" alt="<?= htmlspecialchars($item['name']); ?>">
+                                <span class="payment-cart-badge"><?= $index + 1; ?></span>
                             </div>
-                            <div class="payment-form-group">
-                                <label for="card-cvc">CVC</label>
-                                <input type="text" id="card-cvc" name="card_cvc" placeholder="123" maxlength="4" inputmode="numeric">
+                            <div class="payment-cart-info">
+                                <strong><?= htmlspecialchars($item['name']); ?></strong>
+                                <span>Quantity: <?= (int) $item['quantity']; ?></span>
+                                <span class="payment-cart-size">Size: <?= htmlspecialchars($item['size'] ?? 'One Size'); ?></span>
                             </div>
+                            <span class="payment-cart-price">$ <?= number_format($item['price'], 2); ?></span>
                         </div>
-
-                        <div class="payment-form-group payment-form-group--wide">
-                            <label for="card-name">Cardholder Name</label>
-                            <input type="text" id="card-name" name="card_name" placeholder="Name on card">
-                        </div>
-                    </form>
+                    <?php endforeach; ?>
                 </div>
-            </div>
-        </section>
 
-        <aside class="payment-summary-card" aria-label="Order summary">
-            <h2 class="payment-card-title">Cart</h2>
-            <div class="payment-cart-items">
-                <?php foreach ($cartItems as $index => $item): ?>
-                    <div class="payment-cart-item">
-                        <div class="payment-cart-thumb">
-                            <img src="<?= htmlspecialchars($item['image']); ?>" alt="<?= htmlspecialchars($item['name']); ?>">
-                            <span class="payment-cart-badge"><?= $index + 1; ?></span>
-                        </div>
-                        <div class="payment-cart-info">
-                            <strong><?= htmlspecialchars($item['name']); ?></strong>
-                            <span>Quantity: <?= (int) $item['quantity']; ?></span>
-                            <span class="payment-cart-size">Size: <?= htmlspecialchars($item['size']); ?></span>
-                        </div>
-                        <span class="payment-cart-price">$ <?= number_format($item['price'], 2); ?></span>
+                <div class="payment-promo">
+                    <input type="text" placeholder="Apply Promo Code" aria-label="Promo code">
+                    <button type="button">Apply</button>
+                </div>
+
+                <hr class="payment-divider">
+
+                <dl class="payment-costs">
+                    <div>
+                        <dt>Subtotal</dt>
+                        <dd>$ <?= number_format($subtotal, 2); ?></dd>
                     </div>
-                <?php endforeach; ?>
-            </div>
+                    <div>
+                        <dt>Shipping</dt>
+                        <dd>$ <?= number_format($shippingCost, 2); ?></dd>
+                    </div>
+                    <div>
+                        <dt>Taxes (1.8%)</dt>
+                        <dd>$ <?= number_format($taxes, 2); ?></dd>
+                    </div>
+                </dl>
 
-            <div class="payment-promo">
-                <input type="text" placeholder="Apply Promo Code" aria-label="Promo code">
-                <button type="button">Apply</button>
-            </div>
+                <hr class="payment-divider">
 
-            <hr class="payment-divider">
-
-            <dl class="payment-costs">
-                <div>
-                    <dt>Subtotal</dt>
-                    <dd>$ <?= number_format($subtotal, 2); ?></dd>
+                <div class="payment-total">
+                    <span>Total</span>
+                    <strong>$ <?= number_format($total, 2); ?></strong>
                 </div>
-                <div>
-                    <dt>Shipping</dt>
-                    <dd>$ <?= number_format($shipping, 2); ?></dd>
-                </div>
-                <div>
-                    <dt>Taxes (1.8%)</dt>
-                    <dd>$ <?= number_format($taxes, 2); ?></dd>
-                </div>
-            </dl>
 
-            <hr class="payment-divider">
-
-            <div class="payment-total">
-                <span>Total</span>
-                <strong>$ <?= number_format($total, 2); ?></strong>
-            </div>
-
-            <button type="button" class="payment-checkout-btn">Place Order</button>
-        </aside>
-    </div>
+                <button type="submit" class="payment-checkout-btn">Place Order</button>
+            </aside>
+        </div>
+    </form>
 </main>
 
 <?php include 'includes/footer.php'; ?>

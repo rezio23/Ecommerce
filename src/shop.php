@@ -149,10 +149,15 @@ function renderShopProductCard(array $product, bool $filterable = true): void
         <?php endif; ?>
         <div class="product-actions">
             <strong>$<?= number_format($product['price'], 2); ?></strong>
-            <button class="cart-button" type="button" data-add-to-cart>
-                <span>Add to Cart</span>
-                <i data-lucide="arrow-right"></i>
-            </button>
+            <form action="cart-action.php" method="post" style="display:inline;">
+                <?= csrfField(); ?>
+                <input type="hidden" name="action" value="add">
+                <input type="hidden" name="slug" value="<?= htmlspecialchars($product['slug'] ?? getProductSlug($product['name'])); ?>">
+                <button class="cart-button" type="submit" data-add-to-cart>
+                    <span>Add to Cart</span>
+                    <i data-lucide="arrow-right"></i>
+                </button>
+            </form>
         </div>
     </article>
     <?php

@@ -1,5 +1,50 @@
 <?php
 require 'includes/security.php';
+require 'includes/db.php';
+
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
+
+    $fullName = getPost('full_name');
+    $email = getPost('email');
+    $password = $_POST['password'] ?? '';
+    $confirmPassword = $_POST['confirm_password'] ?? '';
+
+    if (strlen($fullName) < 2) {
+        $errors[] = 'Full name must be at least 2 characters.';
+    }
+    if (!validateEmail($email)) {
+        $errors[] = 'Please enter a valid email address.';
+    }
+    if (strlen($password) < 6) {
+        $errors[] = 'Password must be at least 6 characters.';
+    }
+    if ($password !== $confirmPassword) {
+        $errors[] = 'Passwords do not match.';
+    }
+
+    if (empty($errors)) {
+        $check = $pdo->prepare('SELECT id FROM users WHERE email = :email');
+        $check->execute([':email' => $email]);
+        if ($check->fetch()) {
+            $errors[] = 'An account with this email already exists.';
+        }
+    }
+
+    if (empty($errors)) {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $pdo->prepare('INSERT INTO users (full_name, email, password_hash) VALUES (:full_name, :email, :password_hash)');
+        $stmt->execute([
+            ':full_name' => $fullName,
+            ':email' => $email,
+            ':password_hash' => $hash,
+        ]);
+        header('Location: login.php?registered=1');
+        exit;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,8 +76,15 @@ $srcPath = '';
         <div class="auth-card">
             <h1>Sign Up</h1>
             <hr class="edit-form-divider">
-            <form class="auth-form" action="login.php" method="post">
+            <form class="auth-form" action="signup.php" method="post">
                 <?= csrfField(); ?>
+                <?php if (!empty($errors)): ?>
+                    <div class="auth-errors" style="color: #e63946; margin-bottom: 1rem; font-size: 0.9rem;">
+                        <?php foreach ($errors as $error): ?>
+                            <p style="margin: 0.25rem 0;"><?= htmlspecialchars($error); ?></p>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
                 <div class="edit-form-group">
                     <label class="edit-form-label" for="signup-full-name">Full name</label>
                     <input class="edit-form-input" id="signup-full-name" name="full_name" type="text" placeholder="e.g. John Smith" required>

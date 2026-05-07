@@ -1,5 +1,40 @@
 <?php
 require 'includes/security.php';
+require 'includes/db.php';
+
+$errors = [];
+$registered = isset($_GET['registered']);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
+
+    $email = getPost('email');
+    $password = $_POST['password'] ?? '';
+
+    if (!validateEmail($email)) {
+        $errors[] = 'Please enter a valid email address.';
+    }
+    if (strlen($password) === 0) {
+        $errors[] = 'Please enter your password.';
+    }
+
+    if (empty($errors)) {
+        $stmt = $pdo->prepare('SELECT id, full_name, email, password_hash FROM users WHERE email = :email');
+        $stmt->execute([':email' => $email]);
+        $user = $stmt->fetch();
+
+        if ($user && password_verify($password, $user['password_hash'])) {
+            startSecureSession();
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['full_name'];
+            $_SESSION['user_email'] = $user['email'];
+            header('Location: ../index.php');
+            exit;
+        } else {
+            $errors[] = 'Invalid email or password.';
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,8 +66,18 @@ $srcPath = '';
         <div class="auth-card">
             <h1>Log In</h1>
             <hr class="edit-form-divider">
-            <form class="auth-form" action="profile.php" method="post">
+            <form class="auth-form" action="login.php" method="post">
                 <?= csrfField(); ?>
+                <?php if ($registered): ?>
+                    <div class="auth-success" style="color: #2a9d8f; margin-bottom: 1rem; font-size: 0.9rem;">Account created successfully. Please log in.</div>
+                <?php endif; ?>
+                <?php if (!empty($errors)): ?>
+                    <div class="auth-errors" style="color: #e63946; margin-bottom: 1rem; font-size: 0.9rem;">
+                        <?php foreach ($errors as $error): ?>
+                            <p style="margin: 0.25rem 0;"><?= htmlspecialchars($error); ?></p>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
                 <div class="edit-form-group">
                     <label class="edit-form-label" for="login-email">Email</label>
                     <input class="edit-form-input" id="login-email" name="email" type="email" placeholder="e.g. sombath@gmail.com" required>

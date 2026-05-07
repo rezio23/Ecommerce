@@ -1,72 +1,120 @@
 <?php
 require 'includes/security.php';
+startSecureSession();
+require 'includes/db.php';
+
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+$userId = (int) $_SESSION['user_id'];
+$ordered = isset($_GET['ordered']);
+
+$stmt = $pdo->prepare('SELECT * FROM users WHERE id = :id');
+$stmt->execute([':id' => $userId]);
+$dbUser = $stmt->fetch();
+
+if (!$dbUser) {
+    header('Location: logout.php');
+    exit;
+}
 
 $profileUser = [
-    'name' => 'Vichhean Sombath',
-    'handle' => '@sombath123',
-    'email' => 'sombath@gmail.com',
-    'phone' => 'Unknown',
-    'gender' => 'Hidden',
-    'location' => 'Sen Sok, Phnom Penh, Cambodia',
-    'avatar' => 'https://i1.sndcdn.com/avatars-tDQKBExQks6cE0zh-HO3N7Q-t240x240.jpg',
+    'name' => $dbUser['full_name'] ?? 'User',
+    'handle' => '@' . strtolower(preg_replace('/[^a-z0-9]/', '', (string) $dbUser['full_name'])),
+    'email' => $dbUser['email'] ?? '',
+    'phone' => $dbUser['phone'] ?: 'Unknown',
+    'gender' => $dbUser['gender'] ?: 'Hidden',
+    'location' => $dbUser['address'] ?: 'Unknown',
+    'avatar' => $dbUser['avatar'] ?: 'https://i1.sndcdn.com/avatars-tDQKBExQks6cE0zh-HO3N7Q-t240x240.jpg',
 ];
 
-$profileProducts = [
-    [
-        'name' => 'Paradigme Eau de Parfum',
-        'brand' => 'Prada',
-        'description' => 'Ambery woody fragrance in a refillable bottle.',
-        'price' => 19.99,
-        'image' => 'https://cosmeticsbusiness.com/article-image-alias/spider-man-s-tom-holland-swings-into-prada.jpg',
-        'href' => 'product-detail.php?product=paradigme-eau-de-parfum',
-    ],
-    [
-        'name' => 'Paradigme Eau de Parfum',
-        'brand' => 'Prada',
-        'description' => 'Ambery woody fragrance in a refillable bottle.',
-        'price' => 19.99,
-        'image' => 'https://perfumeuae.com/wp-content/uploads/2025/08/para-1.jpg',
-        'href' => 'product-detail.php?product=paradigme-eau-de-parfum',
-    ],
-    [
-        'name' => 'Paradigme Eau de Parfum',
-        'brand' => 'Prada',
-        'description' => 'Ambery woody fragrance in a refillable bottle.',
-        'price' => 19.99,
-        'image' => 'https://tb-static.uber.com/prod/image-proc/processed_images/f2ee7468b6c1bf9e73326764b691e585/b4665c191b34baf3d0e0fa45dfdd3d1d.jpeg',
-        'href' => 'product-detail.php?product=paradigme-eau-de-parfum',
-    ],
-    [
-        'name' => 'Paradigme Eau de Parfum',
-        'brand' => 'Prada',
-        'description' => 'Ambery woody fragrance in a refillable bottle.',
-        'price' => 19.99,
-        'image' => 'https://profumerialanza.com/cdn/shop/files/prada_paradigme_eau_de_parfum_img1.jpg?v=1769518444&width=900',
-        'href' => 'product-detail.php?product=paradigme-eau-de-parfum',
-    ],
-    [
-        'name' => 'Paradigme Eau de Parfum',
-        'brand' => 'Prada',
-        'description' => 'Ambery woody fragrance in a refillable bottle.',
-        'price' => 19.99,
-        'image' => 'https://www.prada-beauty.com/on/demandware.static/-/Sites-prada-us-Library/default/dw3cab6365/images/plp/pushes/nav-flyout/NAV-FRAG-PARADIGME.jpg',
-        'href' => 'product-detail.php?product=paradigme-eau-de-parfum',
-    ],
-    [
-        'name' => 'Paradigme Eau de Parfum',
-        'brand' => 'Prada',
-        'description' => 'Ambery woody fragrance in a refillable bottle.',
-        'price' => 19.99,
-        'image' => 'https://cosmeticsbusiness.com/article-image-alias/spider-man-s-tom-holland-swings-into-prada.jpg',
-        'href' => 'product-detail.php?product=paradigme-eau-de-parfum',
-    ],
-];
+$favStmt = $pdo->prepare('SELECT p.* FROM products p JOIN favorites f ON p.id = f.product_id WHERE f.user_id = :user_id ORDER BY f.created_at DESC');
+$favStmt->execute([':user_id' => $userId]);
+$favoriteProducts = [];
+while ($row = $favStmt->fetch()) {
+    $slug = $row['slug'] ?? trim((string) preg_replace('/[^a-z0-9]+/', '-', strtolower($row['name'])), '-');
+    $favoriteProducts[] = [
+        'id' => $row['id'],
+        'name' => $row['name'],
+        'brand' => $row['brand'],
+        'description' => $row['description'],
+        'price' => (float) $row['price'],
+        'image' => $row['image'],
+        'href' => 'product-detail.php?product=' . rawurlencode($slug),
+    ];
+}
 
-$orderProducts = $profileProducts;
-$favoriteProducts = array_reverse($profileProducts);
+if (empty($favoriteProducts)) {
+    $favoriteProducts = [
+        [
+            'empty' => true,
+            'icon' => 'heart',
+            'name' => 'No favorites yet',
+            'brand' => '',
+            'description' => 'Save your favorite items here for quick access.',
+            'price' => 0,
+            'image' => '',
+            'href' => 'shop.php',
+        ],
+    ];
+}
+
+$orderStmt = $pdo->prepare('SELECT o.*, oi.product_name, oi.product_brand, oi.product_price, oi.quantity, oi.size FROM orders o LEFT JOIN order_items oi ON o.id = oi.order_id WHERE o.user_id = :user_id ORDER BY o.created_at DESC');
+$orderStmt->execute([':user_id' => $userId]);
+$orderProducts = [];
+$seenOrders = [];
+while ($row = $orderStmt->fetch()) {
+    $orderId = $row['id'];
+    if (!isset($seenOrders[$orderId])) {
+        $seenOrders[$orderId] = true;
+        $orderProducts[] = [
+            'name' => $row['product_name'] ?? 'Order #' . $orderId,
+            'brand' => $row['product_brand'] ?? 'The DS',
+            'description' => 'Order total: $' . number_format((float) $row['total'], 2) . ' | Status: ' . ucfirst($row['status']),
+            'price' => (float) ($row['product_price'] ?? 0),
+            'image' => 'https://cosmeticsbusiness.com/article-image-alias/spider-man-s-tom-holland-swings-into-prada.jpg',
+            'href' => 'shop.php',
+        ];
+    }
+}
+
+if (empty($orderProducts)) {
+    $orderProducts = [
+        [
+            'empty' => true,
+            'icon' => 'shopping-bag',
+            'name' => 'No orders yet',
+            'brand' => '',
+            'description' => 'Browse the shop and add items to your cart to place your first order.',
+            'price' => 0,
+            'image' => '',
+            'href' => 'shop.php',
+        ],
+    ];
+}
 
 function renderProfileProductCard(array $product): void
 {
+    if (!empty($product['empty'])) {
+        ?>
+        <article class="profile-product-card profile-product-card--empty">
+            <a class="profile-product-image" href="<?= htmlspecialchars($product['href']); ?>" style="display:flex;align-items:center;justify-content:center;background:#f8f8f8;">
+                <i data-lucide="<?= htmlspecialchars($product['icon'] ?? 'shopping-bag'); ?>" style="width:48px;height:48px;color:#aaa;"></i>
+            </a>
+            <div class="profile-product-meta">
+                <p></p>
+                <strong></strong>
+            </div>
+            <h3>
+                <a href="<?= htmlspecialchars($product['href']); ?>"><?= htmlspecialchars($product['name']); ?></a>
+            </h3>
+            <p class="profile-product-copy"><?= htmlspecialchars($product['description']); ?></p>
+        </article>
+        <?php
+        return;
+    }
     ?>
     <article class="profile-product-card">
         <a class="profile-product-image" href="<?= htmlspecialchars($product['href']); ?>" aria-label="View <?= htmlspecialchars($product['name']); ?>">
@@ -149,6 +197,11 @@ $srcPath = '';
 
 <?php include 'includes/navbar.php'; ?>
 <main class="profile-main">
+    <?php if ($ordered): ?>
+        <div class="form-success" style="grid-column: 1 / -1; max-width: 800px; margin: 0 auto 1rem; color: #070; background: #eaffea; padding: 1rem; border-radius: 8px; text-align: center;">
+            <p>Your order has been placed successfully!</p>
+        </div>
+    <?php endif; ?>
         <aside class="profile-sidebar" aria-label="Profile summary">
             <div class="profile-card">
                 <img class="profile-avatar" src="<?= htmlspecialchars($profileUser['avatar']); ?>" alt="<?= htmlspecialchars($profileUser['name']); ?>">
@@ -178,7 +231,7 @@ $srcPath = '';
             <nav class="profile-footer-links" aria-label="Profile actions">
                 <a href="#">Term Condition</a>
                 <span aria-hidden="true"></span>
-                <a href="login.php" data-logout>Logout</a>
+                <a href="logout.php" data-logout>Logout</a>
             </nav>
         </aside>
 
