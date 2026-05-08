@@ -383,7 +383,7 @@ $srcPath = 'src/';
 
                 <div class="product-panel-content product-panel-content--popular" id="products-popular" data-product-content>
                     <div class="product-grid">
-                        <?php foreach ($products as $product): ?>
+                        <?php foreach (array_slice($products, 0, 4) as $product): ?>
                             <?php $productTags = $product['tags'] ?? []; ?>
                             <?php $productTagText = implode(' ', $productTags); ?>
                             <?php $productHref = getProductDetailHref($product); ?>
@@ -440,7 +440,7 @@ $srcPath = 'src/';
                     </button>
                     <div class="product-panel-content" id="<?= htmlspecialchars($panelId); ?>" data-product-content hidden>
                         <div class="product-grid product-grid--nested">
-                            <?php foreach ($group['products'] as $product): ?>
+                            <?php foreach (array_slice($group['products'], 0, 4) as $product): ?>
                                 <?php $productTags = $product['tags'] ?? []; ?>
                                 <?php $productTagText = implode(' ', $productTags); ?>
                                 <?php $productHref = getProductDetailHref($product); ?>

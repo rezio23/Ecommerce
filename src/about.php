@@ -74,17 +74,9 @@ $srcPath = '';
 
 <?php include 'includes/navbar.php'; ?>
 <main class="about-main">
-    <div class="about-header-row">
-        <nav class="about-breadcrumb" aria-label="Breadcrumb">
-            <a href="../index.php#home">Home</a>
-            <span>/</span>
-            <span aria-current="page">About</span>
-        </nav>
-    </div>
-
     <section class="about-hero" aria-labelledby="about-hero-heading">
         <div class="about-hero-copy">
-            <p class="pixel-note">/Our Story</p>
+            <p class="pixel-note"><span>Home / About /</span> Our Story</p>
             <h1 id="about-hero-heading">The DS —<br><span>Curated Luxury</span></h1>
             <p class="about-hero-lead">Born from a passion for premium fashion and authentic streetwear, The DS brings the world's most coveted brands to your doorstep.</p>
             <a href="shop.php" class="about-hero-cta">
@@ -93,7 +85,7 @@ $srcPath = '';
             </a>
         </div>
         <figure class="about-hero-model">
-            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80" alt="Luxury fashion boutique interior">
+            <img src="https://static.vecteezy.com/system/resources/thumbnails/065/332/667/small/dynamic-athletic-footwear-design-with-fiery-energy-free-png.png" alt="Luxury fashion boutique interior">
         </figure>
     </section>
 

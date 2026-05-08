@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/db.php';
 startSecureSession();
+tryAutoLogin($pdo);
 
 $isLoggedIn = isset($_SESSION['user_id']);
 $userName = $_SESSION['user_name'] ?? '';
@@ -52,7 +54,10 @@ if ($isLoggedIn) {
 
     <div class="header-actions" aria-label="Store actions">
         <div class="header-search" data-header-search>
-            <input class="header-search-input" id="<?= htmlspecialchars($searchId); ?>" data-product-search type="search" placeholder="Search products..." aria-label="Search products" autocomplete="off" tabindex="-1" aria-hidden="true">
+            <div class="header-search-field">
+                <input class="header-search-input" id="<?= htmlspecialchars($searchId); ?>" data-product-search type="search" placeholder="Search products..." aria-label="Search products" autocomplete="off" tabindex="-1" aria-hidden="true">
+                <div class="header-search-results" data-header-search-results hidden></div>
+            </div>
             <?php if ($searchTrigger === 'button'): ?>
                 <button class="icon-button search-trigger" type="button" aria-label="Open search" aria-controls="<?= htmlspecialchars($searchId); ?>" aria-expanded="false" title="Search">
                     <i data-lucide="search"></i>

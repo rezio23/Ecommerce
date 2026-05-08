@@ -21,6 +21,20 @@ function setSecurityHeaders(): void
     header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
 }
 
+function getCookieParams(): array
+{
+    $secure = filter_var(env('SESSION_SECURE', 'false'), FILTER_VALIDATE_BOOL);
+    $httponly = filter_var(env('SESSION_HTTPONLY', 'true'), FILTER_VALIDATE_BOOL);
+    $samesite = env('SESSION_SAMESITE', 'Strict');
+    return [
+        'path' => '/',
+        'domain' => '',
+        'secure' => $secure,
+        'httponly' => $httponly,
+        'samesite' => $samesite,
+    ];
+}
+
 // =====================
 // Session Security
 // =====================
@@ -76,6 +90,81 @@ function startSecureSession(): void
             $_SESSION['user_agent'] = $currentUa;
         }
     }
+}
+
+function createRememberToken(PDO $pdo, int $userId): void
+{
+    $selector = bin2hex(random_bytes(16));
+    $validator = bin2hex(random_bytes(32));
+    $tokenHash = hash('sha256', $validator);
+    $expires = date('Y-m-d H:i:s', time() + 30 * 24 * 60 * 60);
+
+    $stmt = $pdo->prepare('INSERT INTO remember_tokens (user_id, selector, token_hash, expires_at) VALUES (:user_id, :selector, :token_hash, :expires_at)');
+    $stmt->execute([
+        ':user_id' => $userId,
+        ':selector' => $selector,
+        ':token_hash' => $tokenHash,
+        ':expires_at' => $expires,
+    ]);
+
+    $cookieValue = $selector . ':' . $validator;
+    $params = getCookieParams();
+    setcookie('remember_me', $cookieValue, [
+        'expires' => time() + 30 * 24 * 60 * 60,
+        'path' => $params['path'],
+        'domain' => $params['domain'],
+        'secure' => $params['secure'],
+        'httponly' => $params['httponly'],
+        'samesite' => $params['samesite'],
+    ]);
+}
+
+function clearRememberToken(PDO $pdo, string $selector): void
+{
+    $stmt = $pdo->prepare('DELETE FROM remember_tokens WHERE selector = :selector');
+    $stmt->execute([':selector' => $selector]);
+}
+
+function tryAutoLogin(PDO $pdo): void
+{
+    if (isset($_SESSION['user_id'])) {
+        return;
+    }
+
+    $cookie = $_COOKIE['remember_me'] ?? '';
+    if (empty($cookie) || strpos($cookie, ':') === false) {
+        return;
+    }
+
+    [$selector, $validator] = explode(':', $cookie, 2);
+    if (empty($selector) || empty($validator)) {
+        return;
+    }
+
+    $stmt = $pdo->prepare('SELECT t.*, u.full_name, u.email FROM remember_tokens t JOIN users u ON t.user_id = u.id WHERE t.selector = :selector AND t.expires_at > NOW()');
+    $stmt->execute([':selector' => $selector]);
+    $row = $stmt->fetch();
+
+    if (!$row) {
+        $params = getCookieParams();
+        setcookie('remember_me', '', [
+            'expires' => time() - 3600,
+            'path' => $params['path'],
+            'domain' => $params['domain'],
+            'secure' => $params['secure'],
+            'httponly' => $params['httponly'],
+            'samesite' => $params['samesite'],
+        ]);
+        return;
+    }
+
+    if (!hash_equals($row['token_hash'], hash('sha256', $validator))) {
+        return;
+    }
+
+    $_SESSION['user_id'] = $row['user_id'];
+    $_SESSION['user_name'] = $row['full_name'];
+    $_SESSION['user_email'] = $row['email'];
 }
 
 // =====================

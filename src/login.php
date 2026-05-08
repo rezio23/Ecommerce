@@ -28,6 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['full_name'];
             $_SESSION['user_email'] = $user['email'];
+            if (!empty($_POST['remember_me'])) {
+                createRememberToken($pdo, $user['id']);
+            }
             header('Location: ../index.php');
             exit;
         } else {
@@ -85,6 +88,10 @@ $srcPath = '';
                 <div class="edit-form-group">
                     <label class="edit-form-label" for="login-password">Password</label>
                     <input class="edit-form-input" id="login-password" name="password" type="password" placeholder="Enter your password" required>
+                </div>
+                <div class="edit-form-group" style="display:flex; flex-direction:row; align-items:center; gap:0.5rem; margin-top:0.25rem;">
+                    <input type="checkbox" id="remember-me" name="remember_me" value="1" style="width:auto; cursor:pointer;">
+                    <label for="remember-me" style="margin:0; font-size:0.9rem; color:#666; cursor:pointer;">Remember me</label>
                 </div>
                 <div class="edit-form-actions">
                     <button type="submit" class="edit-form-button edit-form-button--submit edit-form-button--full">Log In</button>
