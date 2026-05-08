@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
         $orderId = (int) $pdo->lastInsertId();
 
-        $itemStmt = $pdo->prepare('INSERT INTO order_items (order_id, product_name, product_brand, product_price, quantity, size, created_at) VALUES (:order_id, :product_name, :product_brand, :product_price, :quantity, :size, NOW())');
+        $itemStmt = $pdo->prepare('INSERT INTO order_items (order_id, product_name, product_brand, product_price, quantity, size, product_image, created_at) VALUES (:order_id, :product_name, :product_brand, :product_price, :quantity, :size, :product_image, NOW())');
         foreach ($cartItems as $item) {
             $itemStmt->execute([
                 ':order_id' => $orderId,
@@ -79,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':product_price' => $item['price'],
                 ':quantity' => $item['quantity'],
                 ':size' => $item['size'] ?? 'One Size',
+                ':product_image' => $item['image'] ?? '',
             ]);
         }
 

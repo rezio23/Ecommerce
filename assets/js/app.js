@@ -542,6 +542,19 @@ $(function () {
             $button.toggleClass('is-active', isActive);
             $button.attr('aria-pressed', String(isActive));
         });
+
+        const multiplier = Number($activeButton.attr('data-size-multiplier')) || 1;
+        const $price = $('.product-detail-price');
+        const basePrice = Number($price.attr('data-base-price'));
+
+        if ($price.length && Number.isFinite(basePrice) && multiplier !== 1) {
+            const newPrice = basePrice * multiplier;
+            $price.attr('data-size-price', newPrice.toFixed(2));
+            $price.text('$ ' + newPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        } else if ($price.length && Number.isFinite(basePrice)) {
+            $price.attr('data-size-price', basePrice.toFixed(2));
+            $price.text('$ ' + basePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
     };
 
     $productSizeGroups.each(function () {

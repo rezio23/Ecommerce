@@ -10,6 +10,53 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = (int) $_SESSION['user_id'];
 $ordered = isset($_GET['ordered']);
+$editErrors = [];
+$editSuccess = false;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCsrf();
+
+    $fullName = getPost('full_name');
+    $gender = getPost('gender');
+    $address = getPost('address');
+    $phone = getPost('phone');
+
+    $avatar = null;
+    if (!empty($_FILES['profile_picture']['tmp_name'])) {
+        $result = validateFileUpload($_FILES['profile_picture'], ['image/jpeg', 'image/png', 'image/gif', 'image/webp'], 2 * 1024 * 1024);
+        if ($result['ok']) {
+            $avatar = 'uploads/' . $result['name'];
+        } else {
+            $editErrors[] = $result['error'];
+        }
+    }
+
+    if (empty($editErrors)) {
+        if ($avatar) {
+            $stmt = $pdo->prepare('UPDATE users SET full_name = :full_name, gender = :gender, address = :address, phone = :phone, avatar = :avatar WHERE id = :id');
+            $stmt->execute([
+                ':full_name' => $fullName,
+                ':gender' => $gender,
+                ':address' => $address,
+                ':phone' => $phone,
+                ':avatar' => $avatar,
+                ':id' => $userId,
+            ]);
+        } else {
+            $stmt = $pdo->prepare('UPDATE users SET full_name = :full_name, gender = :gender, address = :address, phone = :phone WHERE id = :id');
+            $stmt->execute([
+                ':full_name' => $fullName,
+                ':gender' => $gender,
+                ':address' => $address,
+                ':phone' => $phone,
+                ':id' => $userId,
+            ]);
+        }
+        $_SESSION['user_name'] = $fullName;
+        header('Location: profile.php');
+        exit;
+    }
+}
 
 $stmt = $pdo->prepare('SELECT * FROM users WHERE id = :id');
 $stmt->execute([':id' => $userId]);
@@ -61,7 +108,7 @@ if (empty($favoriteProducts)) {
     ];
 }
 
-$orderStmt = $pdo->prepare('SELECT o.*, oi.product_name, oi.product_brand, oi.product_price, oi.quantity, oi.size FROM orders o LEFT JOIN order_items oi ON o.id = oi.order_id WHERE o.user_id = :user_id ORDER BY o.created_at DESC');
+$orderStmt = $pdo->prepare('SELECT o.*, oi.product_name, oi.product_brand, oi.product_price, oi.quantity, oi.size, oi.product_image FROM orders o LEFT JOIN order_items oi ON o.id = oi.order_id WHERE o.user_id = :user_id ORDER BY o.created_at DESC');
 $orderStmt->execute([':user_id' => $userId]);
 $orderProducts = [];
 $seenOrders = [];
@@ -74,7 +121,7 @@ while ($row = $orderStmt->fetch()) {
             'brand' => $row['product_brand'] ?? 'The DS',
             'description' => 'Order total: $' . number_format((float) $row['total'], 2) . ' | Status: ' . ucfirst($row['status']),
             'price' => (float) ($row['product_price'] ?? 0),
-            'image' => 'https://cosmeticsbusiness.com/article-image-alias/spider-man-s-tom-holland-swings-into-prada.jpg',
+            'image' => $row['product_image'] ?? '',
             'href' => 'shop.php',
         ];
     }
@@ -118,7 +165,13 @@ function renderProfileProductCard(array $product): void
     ?>
     <article class="profile-product-card">
         <a class="profile-product-image" href="<?= htmlspecialchars($product['href']); ?>" aria-label="View <?= htmlspecialchars($product['name']); ?>">
-            <img src="<?= htmlspecialchars($product['image']); ?>" alt="<?= htmlspecialchars($product['name']); ?>">
+            <?php if (!empty($product['image'])): ?>
+                <img src="<?= htmlspecialchars($product['image']); ?>" alt="<?= htmlspecialchars($product['name']); ?>">
+            <?php else: ?>
+                <div style="display:flex;align-items:center;justify-content:center;background:#f8f8f8;height:100%;">
+                    <i data-lucide="shopping-bag" style="width:48px;height:48px;color:#aaa;"></i>
+                </div>
+            <?php endif; ?>
         </a>
         <div class="profile-product-meta">
             <p><?= htmlspecialchars($product['brand']); ?></p>
@@ -251,8 +304,15 @@ $srcPath = '';
             </button>
             <h2 id="edit-profile-title">Edit Personal Detail</h2>
             <hr class="edit-form-divider">
-            <form class="edit-form" action="profile.php" method="post">
+            <form class="edit-form" action="profile.php" method="post" enctype="multipart/form-data">
                 <?= csrfField(); ?>
+                <?php if (!empty($editErrors)): ?>
+                    <div class="auth-errors" style="color: #e63946; margin-bottom: 1rem; font-size: 0.9rem;">
+                        <?php foreach ($editErrors as $error): ?>
+                            <p style="margin: 0.25rem 0;"><?= htmlspecialchars($error); ?></p>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
                 <div class="edit-form-group">
                     <label class="edit-form-label" for="edit-full-name">Full name</label>
                     <input class="edit-form-input" id="edit-full-name" name="full_name" type="text" value="<?= htmlspecialchars($profileUser['name']); ?>" placeholder="e.g. John Smith">

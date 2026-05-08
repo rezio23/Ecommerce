@@ -79,6 +79,37 @@ function getDefaultActiveSize(array $product, array $sizes): string
     return 'M';
 }
 
+function getSizePriceMultiplier(string $size): float
+{
+    $fragranceMap = [
+        '30ML' => 0.50,
+        '50ML' => 0.70,
+        '90ML' => 0.90,
+        '100ML' => 1.00,
+        '150ML' => 1.30,
+        'Refill' => 0.60,
+    ];
+
+    $bagMap = [
+        'Mini' => 0.70,
+        'Small' => 0.85,
+        'Medium' => 1.00,
+        'Large' => 1.20,
+        'XL' => 1.40,
+        'One Size' => 1.00,
+    ];
+
+    if (isset($fragranceMap[$size])) {
+        return $fragranceMap[$size];
+    }
+
+    if (isset($bagMap[$size])) {
+        return $bagMap[$size];
+    }
+
+    return 1.00;
+}
+
 $stmt = $pdo->query('SELECT * FROM products ORDER BY id');
 $productCatalog = [];
 
@@ -219,7 +250,7 @@ $srcPath = '';
                 <h1 id="product-title"><?= htmlspecialchars($product['name']); ?></h1>
                 <p class="product-detail-description"><?= htmlspecialchars($product['description']); ?></p>
                 <p class="product-detail-category"><?= htmlspecialchars($product['category']); ?></p>
-                <p class="product-detail-price">$ <?= number_format($product['price'], 2); ?></p>
+                <p class="product-detail-price" data-base-price="<?= (float) $product['price']; ?>" data-size-price="<?= number_format((float) $product['price'] * getSizePriceMultiplier($product['active_size']), 2); ?>">$ <?= number_format((float) $product['price'] * getSizePriceMultiplier($product['active_size']), 2); ?></p>
 
                 <section class="product-option-group" aria-labelledby="product-size-title">
                     <h2 id="product-size-title">Size</h2>
@@ -230,6 +261,7 @@ $srcPath = '';
                                 type="button"
                                 data-product-size-option
                                 data-size-value="<?= htmlspecialchars($size); ?>"
+                                data-size-multiplier="<?= getSizePriceMultiplier($size); ?>"
                                 aria-pressed="<?= $size === $product['active_size'] ? 'true' : 'false'; ?>"
                             >
                                 <?= htmlspecialchars($size); ?>
