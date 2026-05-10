@@ -45,9 +45,11 @@ $srcPath = $srcPath ?? '';
         </nav>
         <nav class="footer-group footer-links" aria-label="Footer shop links">
             <h2>Shop</h2>
-            <a href="<?= $srcPath; ?>shop.php#shop-grid">Clothes</a>
-            <a href="<?= $srcPath; ?>shop.php#shop-grid">Perfumes</a>
-            <a href="<?= $srcPath; ?>shop.php#shop-grid">Accessories</a>
+            <a href="<?= $srcPath; ?>shop.php?category=clothes#shop-grid">Clothes</a>
+            <a href="<?= $srcPath; ?>shop.php?category=perfumes#shop-grid">Perfumes</a>
+            <a href="<?= $srcPath; ?>shop.php?category=accessories#shop-grid">Accessories</a>
+            <a href="<?= $srcPath; ?>shop.php?category=bags#shop-grid">Bag</a>
+            <a href="<?= $srcPath; ?>shop.php?category=sneakers#shop-grid">Sneakers</a>
         </nav>
         <nav class="footer-group footer-links footer-links--brands" aria-label="Footer brand links">
             <h2>Brand</h2>

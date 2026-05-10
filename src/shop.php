@@ -106,6 +106,21 @@ function getShopFilterGroups(array $product): string
     return implode(' ', array_values(array_unique($groups)));
 }
 
+function getCategoryHref(string $label): string
+{
+    $map = [
+        'Perfumes' => 'perfumes',
+        'Clothes' => 'clothes',
+        'Accessories' => 'accessories',
+    ];
+
+    if (isset($map[$label])) {
+        return 'shop.php?category=' . $map[$label] . '#shop-grid';
+    }
+
+    return 'shop.php#shop-grid';
+}
+
 function getProductDetailHref(array $product): string
 {
     $slug = trim((string) preg_replace('/[^a-z0-9]+/', '-', strtolower($product['name'])), '-');
@@ -181,6 +196,24 @@ $shopHighlights = [
     ],
 ];
 
+$shopCategoryCards = [
+    [
+        'label' => 'Clothes',
+        'brand' => 'Nike',
+        'image' => 'https://static.nike.com/a/images/f_auto,cs_srgb/w_1536,c_limit/5feaa9c2-a959-4986-872a-54ab79f32485/nike-lookbook.jpg',
+    ],
+    [
+        'label' => 'Perfumes',
+        'brand' => 'Prada',
+        'image' => 'https://static.wixstatic.com/media/7187d3_912f04d78e424ab98bd1bf0decaa5c72~mv2.png/v1/fill/w_560,h_746,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/7187d3_912f04d78e424ab98bd1bf0decaa5c72~mv2.png',
+    ],
+    [
+        'label' => 'Accessories',
+        'brand' => 'Gucci',
+        'image' => 'https://www.net-a-porter.com/variants/images/46376663162894040/ou/w2000_q60.jpg',
+    ],
+];
+
 $shopProductsPerPage = 8;
 $shopPageCount = max(1, (int) ceil(count($shopProducts) / $shopProductsPerPage));
 ?>
@@ -226,6 +259,26 @@ $srcPath = '';
             <div class="section-heading shop-collection__heading">
                 <p class="pixel-note">Curated premium pieces<br>ready for checkout.</p>
             </div>
+
+            <section class="shop-categories" aria-labelledby="shop-categories-heading">
+                <div class="section-heading shop-categories__heading">
+                    <div>
+                        <h2 id="shop-categories-heading">Browse by Category</h2>
+                        <p>Jump into the collection.</p>
+                    </div>
+                </div>
+                <div class="shop-category-board">
+                    <?php foreach ($shopCategoryCards as $card): ?>
+                        <article class="category-card">
+                            <a href="<?= htmlspecialchars(getCategoryHref($card['label'])); ?>" aria-label="Shop <?= htmlspecialchars($card['label']); ?>">
+                                <img src="<?= htmlspecialchars($card['image']); ?>" alt="<?= htmlspecialchars($card['label']); ?> fashion category">
+                                <span class="category-title"><?= htmlspecialchars($card['label']); ?></span>
+                                <span class="category-brand"><?= htmlspecialchars($card['brand']); ?></span>
+                            </a>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </section>
 
             <section class="shop-catalog" id="shop-grid" aria-labelledby="catalog-heading">
                 <div class="shop-catalog__heading">
