@@ -40,7 +40,7 @@ $srcPath = '';
                 <span>/</span>
                 <span aria-current="page">Cart</span>
             </nav>
-            <a href="#" class="cart-help-link">Help Center</a>
+            <a href="help-center.php" class="cart-help-link">Help Center</a>
         </div>
 
         <?php if (empty($cartItems)): ?>

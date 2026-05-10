@@ -107,7 +107,7 @@ $srcPath = '';
             <span>/</span>
             <span>Payment</span>
         </nav>
-        <a href="#" class="shipping-help-link">Help Center</a>
+        <a href="help-center.php" class="shipping-help-link">Help Center</a>
     </div>
 
     <?php if (!empty($errors)): ?>

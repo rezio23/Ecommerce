@@ -62,8 +62,9 @@ $srcPath = $srcPath ?? '';
                 <a href="<?= $srcPath; ?>shop.php#shop-grid">Nike</a>
             </div>
         </nav>
-        <nav class="footer-group footer-links" aria-label="Footer legal links">
-            <h2>Legal</h2>
+        <nav class="footer-group footer-links" aria-label="Footer support links">
+            <h2>Support</h2>
+            <a href="<?= $srcPath; ?>help-center.php">Help Center</a>
             <a href="<?= $srcPath; ?>terms.php">Terms &amp; Conditions</a>
         </nav>
     </div>
