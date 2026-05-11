@@ -1436,7 +1436,7 @@ main {
 }
 
 body.shop-page {
-    padding-top: 94px;
+    padding-top: clamp(108px, 7vw, 124px);
 }
 
 .shop-page .site-header {
@@ -1452,9 +1452,9 @@ body.shop-page {
 .shop-hero {
     position: relative;
     width: min(var(--page-max), 100%);
-    min-height: 720px;
+    min-height: clamp(460px, 38vw, 620px);
     margin: 0 auto;
-    padding: clamp(58px, 5.2vw, 92px) var(--page-gutter) 0;
+    padding: clamp(28px, 3vw, 44px) var(--page-gutter) 0;
     display: grid;
     grid-template-columns: minmax(320px, 520px) minmax(300px, 1fr);
     gap: clamp(24px, 4vw, 64px);
@@ -1465,7 +1465,7 @@ body.shop-page {
 .shop-hero-copy {
     position: relative;
     z-index: 2;
-    padding-top: clamp(116px, 9vw, 156px);
+    padding-top: clamp(72px, 6vw, 104px);
     order: 2;
     text-align: right;
 }
@@ -1473,7 +1473,7 @@ body.shop-page {
 .shop-hero-copy .pixel-note {
     position: absolute;
     left: 0;
-    bottom: clamp(34px, 4vw, 58px);
+    bottom: clamp(28px, 3vw, 44px);
     text-align: left;
 }
 
@@ -1502,13 +1502,13 @@ body.shop-page {
 
 .shop-hero-model {
     position: relative;
-    top: clamp(24px, 3.4vw, 54px);
-    z-index: 1;
+    top: 0;
+    z-index: 10;
     align-self: center;
     justify-self: center;
     width: min(520px, 100%);
-    height: clamp(540px, 42vw, 610px);
-    margin: 36px 0 28px;
+    height: clamp(430px, 34vw, 540px);
+    margin: 18px 0 22px;
     order: 1;
 }
 
@@ -2820,6 +2820,10 @@ body.shop-page {
 }
 
 @media (max-width: 860px) {
+    body.shop-page {
+        padding-top: 128px;
+    }
+
     body {
         padding-top: 128px;
     }
@@ -5292,7 +5296,7 @@ body.shop-page {
 .about-main {
     width: min(var(--page-max), 100%);
     margin: 0 auto;
-    padding: clamp(110px, 10vw, 130px) var(--page-gutter) clamp(82px, 7vw, 120px);
+    padding: clamp(34px, 3.4vw, 54px) var(--page-gutter) clamp(82px, 7vw, 120px);
 }
 
 .about-header-row {
@@ -5395,7 +5399,7 @@ body.shop-page {
     margin-left: 15%;
     margin-top: 5%;
     object-fit: cover;
-    transform: translate3d(var(--hero-scroll-x), var(--hero-scroll-y), 0) rotate(calc(-30deg + var(--hero-scroll-rotate))) scale(var(--hero-scroll-scale));
+    transform: translate3d(var(--hero-scroll-x), var(--hero-scroll-y), 0) rotate(calc(-30deg + var(--hero-scroll-rotate))) scale(var(--hero-scroll-scale)) scaleX(-1);
     transform-origin: center;
     will-change: transform;
 }
@@ -5964,20 +5968,21 @@ body.shop-page {
 .help-main {
     width: min(var(--page-max), 100%);
     margin: 0 auto;
-    padding: clamp(48px, 5vw, 72px) var(--page-gutter) clamp(82px, 7vw, 120px);
+    padding: clamp(34px, 3.4vw, 54px) var(--page-gutter) clamp(82px, 7vw, 120px);
 }
 
 /* ===== Hero ===== */
 .help-hero {
+    min-height: clamp(430px, 34vw, 560px);
     display: grid;
     grid-template-columns: minmax(300px, 540px) minmax(280px, 1fr);
     gap: clamp(28px, 4vw, 64px);
     align-items: start;
-    margin-bottom: clamp(48px, 6vw, 80px);
+    margin-bottom: clamp(26px, 3vw, 48px);
 }
 
 .help-hero-copy {
-    padding-top: clamp(56px, 5vw, 88px);
+    padding-top: clamp(42px, 4vw, 72px);
 }
 
 .help-hero-copy .pixel-note {
@@ -6041,22 +6046,41 @@ body.shop-page {
     --hero-scroll-y: 0px;
     --hero-scroll-rotate: 0deg;
     --hero-scroll-scale: 1;
+    --help-hero-image-x: clamp(-64px, -3.2vw, -34px);
+    --help-hero-image-y: clamp(-74px, -4.2vw, -44px);
+    width: min(520px, 100%);
+    height: clamp(380px, 30vw, 500px);
     margin: 0;
     display: grid;
-    place-items: start center;
+    place-items: center;
+    justify-self: end;
+    align-self: start;
     border-radius: 16px;
     overflow: visible;
-    aspect-ratio: 4 / 3;
 }
 
 .help-hero-model img {
-    width: 85%;
-    height: 85%;
+    /* width: min(100%, 580px);
+    height: auto;
+    max-height: clamp(300px, 24vw, 430px); */
+    height: 100%;
+    width: 100%;
+    margin-top: clamp(8px, 1.8vw, 30px);
+    margin-left: 5%;
     object-fit: contain;
-    rotate: calc(-30deg);
-    transform: translate3d(var(--hero-scroll-x), var(--hero-scroll-y), 0) scaleX(-1) rotate(calc(-20deg + var(--hero-scroll-rotate))) scale(var(--hero-scroll-scale));
+    transform: translate3d(calc(var(--help-hero-image-x) + var(--hero-scroll-x)), calc(var(--help-hero-image-y) + var(--hero-scroll-y)), 0) scaleX(1) rotate(calc(-20deg + var(--hero-scroll-rotate))) scale(var(--hero-scroll-scale));
     transform-origin: center;
+    rotate: calc(20deg);
     will-change: transform;
+}
+
+.help-brand-ticker {
+    height: clamp(58px, 4.2vw, 72px);
+    margin: 0 calc(var(--page-gutter) * -1) clamp(44px, 4.6vw, 76px);
+}
+
+.help-brand-ticker .brand-track span {
+    font-size: clamp(1rem, 1.3vw, 1.45rem);
 }
 
 /* ===== Contact Cards ===== */
@@ -6662,11 +6686,24 @@ body.shop-page {
     }
 
     .help-hero {
+        min-height: 0;
         grid-template-columns: 1fr;
     }
 
     .help-hero-copy {
         padding-top: 0;
+    }
+
+    .help-hero-model {
+        --help-hero-image-x: 0px;
+        --help-hero-image-y: 0px;
+        width: min(420px, 100%);
+        justify-self: center;
+    }
+
+    .help-brand-ticker {
+        margin-inline: -28px;
+        margin-bottom: 44px;
     }
 
 
@@ -6700,6 +6737,10 @@ body.shop-page {
 }
 
 @media (max-width: 560px) {
+    .help-brand-ticker {
+        margin-inline: -18px;
+    }
+
     .help-contact-grid {
         grid-template-columns: 1fr;
     }

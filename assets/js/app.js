@@ -1088,4 +1088,65 @@ $(function () {
         $(window).on('resize', recalcMaxTranslate);
         recalcMaxTranslate();
     }
+
+    const $pageHeroModels = $('.about-hero-model, .help-hero-model');
+
+    if ($pageHeroModels.length) {
+        let pageHeroTicking = false;
+
+        const clampHeroMotion = function (value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        };
+
+        const resetPageHeroMotion = function () {
+            $pageHeroModels.css({
+                '--hero-scroll-x': '0px',
+                '--hero-scroll-y': '0px',
+                '--hero-scroll-rotate': '0deg',
+                '--hero-scroll-scale': '1',
+            });
+        };
+
+        const updatePageHeroMotion = function () {
+            if (reducedMotionQuery?.matches) {
+                resetPageHeroMotion();
+                pageHeroTicking = false;
+                return;
+            }
+
+            const scrollY = $(window).scrollTop();
+            const progress = clampHeroMotion(scrollY / 520, 0, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            const translateY = -68 * ease;
+            const translateX = 24 * ease;
+            const rotation = 5 * ease;
+            const scale = 1 + (0.055 * ease);
+
+            $pageHeroModels.each(function () {
+                $(this).css({
+                    '--hero-scroll-x': translateX.toFixed(1) + 'px',
+                    '--hero-scroll-y': translateY.toFixed(1) + 'px',
+                    '--hero-scroll-rotate': rotation.toFixed(2) + 'deg',
+                    '--hero-scroll-scale': scale.toFixed(3),
+                });
+            });
+
+            pageHeroTicking = false;
+        };
+
+        const requestPageHeroMotion = function () {
+            if (!pageHeroTicking) {
+                window.requestAnimationFrame(updatePageHeroMotion);
+                pageHeroTicking = true;
+            }
+        };
+
+        $(window).on('scroll resize', requestPageHeroMotion);
+
+        if (reducedMotionQuery?.addEventListener) {
+            reducedMotionQuery.addEventListener('change', requestPageHeroMotion);
+        }
+
+        updatePageHeroMotion();
+    }
 });

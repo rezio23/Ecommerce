@@ -28,6 +28,8 @@ $helpFaqs = [
         'answer' => 'You can reach us via email at thedaservice@store.com or by phone at +855 112 233. Our team is based in Phnom Penh, Cambodia. You can also use the AI chat below for instant answers.',
     ],
 ];
+
+$helpTickerBrands = ['POLO', 'BALENCIAGA', 'ADIDAS', 'NIKE', 'PUMA', 'GUCCI', 'PRADA', 'CHANEL'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,7 +40,7 @@ $helpFaqs = [
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/styles.css?v=100">
+    <link rel="stylesheet" href="../assets/css/styles.css?v=109">
 </head>
 <body class="help-page">
 
@@ -66,8 +68,18 @@ $srcPath = '';
             </a>
         </div>
         <figure class="help-hero-model">
-            <img src="https://static.vecteezy.com/system/resources/thumbnails/060/178/330/small/bold-neon-geometric-designs-pop-on-these-black-nike-high-tops-the-purple-laces-and-orange-accents-add-a-vibrant-90s-vibe-a-stylish-and-energetic-sneaker-free-png.png" alt="Customer support illustration">
+            <img src="https://parkaccess.com.ph/cdn/shop/files/AURORA_FD2596-602_PHSLH000-2000.png?v=1770200188" alt="Customer support illustration">
         </figure>
+    </section>
+
+    <section class="brand-ticker help-brand-ticker" aria-label="Featured brands">
+        <div class="brand-track">
+            <?php for ($i = 0; $i < 4; $i++): ?>
+                <?php foreach ($helpTickerBrands as $brand): ?>
+                    <span><?= htmlspecialchars($brand); ?></span>
+                <?php endforeach; ?>
+            <?php endfor; ?>
+        </div>
     </section>
 
     <section class="help-contact" aria-label="Contact options">
@@ -202,7 +214,7 @@ $srcPath = '';
 <?php include 'includes/footer.php'; ?>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="../assets/js/app.js?v=23"></script>
+<script src="../assets/js/app.js?v=26"></script>
 <script>
 (function () {
     var $form = $('[data-help-chat-form]');

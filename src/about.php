@@ -34,16 +34,22 @@ $aboutTeam = [
     [
         'name' => 'Vichhean Sombath',
         'role' => 'Founder & CEO',
+        'focus' => 'Brand vision',
+        'summary' => 'Sets the standard for authentic drops, premium sourcing, and the overall DS experience.',
         'image' => 'https://i1.sndcdn.com/avatars-tDQKBExQks6cE0zh-HO3N7Q-t240x240.jpg',
     ],
     [
         'name' => 'Creative Director',
         'role' => 'Head of Curation',
+        'focus' => 'Product curation',
+        'summary' => 'Builds collections around standout silhouettes, seasonal trends, and everyday wearability.',
         'image' => 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
     ],
     [
         'name' => 'Operations Lead',
         'role' => 'Logistics & Fulfillment',
+        'focus' => 'Order flow',
+        'summary' => 'Keeps orders moving smoothly from verification to packing, delivery, and support follow-up.',
         'image' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
     ],
 ];
@@ -57,7 +63,7 @@ $aboutTeam = [
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/styles.css?v=97">
+    <link rel="stylesheet" href="../assets/css/styles.css?v=103">
 </head>
 <body class="about-page">
 
@@ -85,7 +91,7 @@ $srcPath = '';
             </a>
         </div>
         <figure class="about-hero-model">
-            <img src="https://static.vecteezy.com/system/resources/thumbnails/065/332/667/small/dynamic-athletic-footwear-design-with-fiery-energy-free-png.png" alt="Luxury fashion boutique interior">
+            <img src="https://sidekicks.co.uk/cdn/shop/files/1486671_00_png.png?v=1739380980" alt="Luxury fashion boutique interior">
         </figure>
     </section>
 
@@ -120,13 +126,25 @@ $srcPath = '';
     </section>
 
     <section class="about-team" aria-labelledby="about-team-heading">
-        <h2 id="about-team-heading">Meet the Team</h2>
+        <div class="about-team-header">
+            <p class="pixel-note"><span>Inside DS /</span> People</p>
+            <h2 id="about-team-heading">Meet the Team</h2>
+            <p>The people keeping each drop curated, verified, packed, and moving.</p>
+        </div>
         <div class="about-team-grid">
             <?php foreach ($aboutTeam as $member): ?>
                 <article class="about-team-card">
-                    <img src="<?= htmlspecialchars($member['image']); ?>" alt="<?= htmlspecialchars($member['name']); ?>">
-                    <h3><?= htmlspecialchars($member['name']); ?></h3>
-                    <p><?= htmlspecialchars($member['role']); ?></p>
+                    <div class="about-team-card__top">
+                        <span class="about-team-card__avatar">
+                            <img src="<?= htmlspecialchars($member['image']); ?>" alt="<?= htmlspecialchars($member['name']); ?>">
+                        </span>
+                        <span class="about-team-card__focus"><?= htmlspecialchars($member['focus']); ?></span>
+                    </div>
+                    <div class="about-team-card__body">
+                        <p class="about-team-card__role"><?= htmlspecialchars($member['role']); ?></p>
+                        <h3><?= htmlspecialchars($member['name']); ?></h3>
+                        <p class="about-team-card__summary"><?= htmlspecialchars($member['summary']); ?></p>
+                    </div>
                 </article>
             <?php endforeach; ?>
         </div>
@@ -141,6 +159,6 @@ $srcPath = '';
 <?php include 'includes/footer.php'; ?>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="../assets/js/app.js?v=23"></script>
+<script src="../assets/js/app.js?v=26"></script>
 </body>
 </html>

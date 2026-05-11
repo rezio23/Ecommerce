@@ -106,21 +106,6 @@ function getShopFilterGroups(array $product): string
     return implode(' ', array_values(array_unique($groups)));
 }
 
-function getCategoryHref(string $label): string
-{
-    $map = [
-        'Perfumes' => 'perfumes',
-        'Clothes' => 'clothes',
-        'Accessories' => 'accessories',
-    ];
-
-    if (isset($map[$label])) {
-        return 'shop.php?category=' . $map[$label] . '#shop-grid';
-    }
-
-    return 'shop.php#shop-grid';
-}
-
 function getProductDetailHref(array $product): string
 {
     $slug = trim((string) preg_replace('/[^a-z0-9]+/', '-', strtolower($product['name'])), '-');
@@ -145,8 +130,8 @@ function renderShopProductCard(array $product, bool $filterable = true): void
             htmlspecialchars(getShopFilterGroups($product))
         );
     }
-    ?>
-    <article class="product-card"<?= $dataAttributes; ?>>
+?>
+    <article class="product-card" <?= $dataAttributes; ?>>
         <a class="product-image" href="<?= htmlspecialchars($productHref); ?>" aria-label="View <?= htmlspecialchars($product['name']); ?>">
             <img src="<?= htmlspecialchars($product['image']); ?>" alt="<?= htmlspecialchars($product['name']); ?>">
         </a>
@@ -175,7 +160,7 @@ function renderShopProductCard(array $product, bool $filterable = true): void
             </form>
         </div>
     </article>
-    <?php
+<?php
 }
 
 $shopHighlights = [
@@ -196,29 +181,14 @@ $shopHighlights = [
     ],
 ];
 
-$shopCategoryCards = [
-    [
-        'label' => 'Clothes',
-        'brand' => 'Nike',
-        'image' => 'https://static.nike.com/a/images/f_auto,cs_srgb/w_1536,c_limit/5feaa9c2-a959-4986-872a-54ab79f32485/nike-lookbook.jpg',
-    ],
-    [
-        'label' => 'Perfumes',
-        'brand' => 'Prada',
-        'image' => 'https://static.wixstatic.com/media/7187d3_912f04d78e424ab98bd1bf0decaa5c72~mv2.png/v1/fill/w_560,h_746,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/7187d3_912f04d78e424ab98bd1bf0decaa5c72~mv2.png',
-    ],
-    [
-        'label' => 'Accessories',
-        'brand' => 'Gucci',
-        'image' => 'https://www.net-a-porter.com/variants/images/46376663162894040/ou/w2000_q60.jpg',
-    ],
-];
-
 $shopProductsPerPage = 8;
+
+$featureLine = ['PREMIUM FABRIC', 'MODERN LIFESTYLE', 'FABRIC QUALITY', 'TIMELESS CUTS', 'CLASSIC AND COMFORT'];
 $shopPageCount = max(1, (int) ceil(count($shopProducts) / $shopProductsPerPage));
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -226,24 +196,25 @@ $shopPageCount = max(1, (int) ceil(count($shopProducts) / $shopProductsPerPage))
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/styles.css?v=89">
+    <link rel="stylesheet" href="../assets/css/styles.css?v=94">
 </head>
+
 <body class="shop-page">
-    
 
-<?php
-$headerId = 'shop-top';
-$searchId = 'header-product-search';
-$bagCount = 0;
-$activeButton = '';
-$currentPage = 'shop';
-$searchTrigger = 'button';
-$rootPath = '../';
-$srcPath = '';
-?>
 
-<?php include 'includes/navbar.php'; ?>
-<main class="shop-main">
+    <?php
+    $headerId = 'shop-top';
+    $searchId = 'header-product-search';
+    $bagCount = 0;
+    $activeButton = '';
+    $currentPage = 'shop';
+    $searchTrigger = 'button';
+    $rootPath = '../';
+    $srcPath = '';
+    ?>
+
+    <?php include 'includes/navbar.php'; ?>
+    <main class="shop-main">
         <section class="shop-hero" aria-label="Luxury fragrance shop banner">
             <figure class="shop-hero-model">
                 <img src="https://www.pngall.com/wp-content/uploads/13/Nike-Shoes-Air-Max-PNG-Images.png" alt="Nike Air Max shoes">
@@ -252,35 +223,23 @@ $srcPath = '';
             <div class="shop-hero-copy">
                 <p class="pixel-note">/2026 Collection<br>New Arrivals</p>
                 <h1>Shop the<br><span>- Best Brands</span></h1>
+                <p class="hero-subtitle">Curated premium pieces<br>ready for checkout.</p>
             </div>
         </section>
 
         <section class="shop-collection" aria-labelledby="shop-heading">
-            <div class="section-heading shop-collection__heading">
-                <p class="pixel-note">Curated premium pieces<br>ready for checkout.</p>
-            </div>
-
-            <section class="shop-categories" aria-labelledby="shop-categories-heading">
-                <div class="section-heading shop-categories__heading">
-                    <div>
-                        <h2 id="shop-categories-heading">Browse by Category</h2>
-                        <p>Jump into the collection.</p>
-                    </div>
-                </div>
-                <div class="shop-category-board">
-                    <?php foreach ($shopCategoryCards as $card): ?>
-                        <article class="category-card">
-                            <a href="<?= htmlspecialchars(getCategoryHref($card['label'])); ?>" aria-label="Shop <?= htmlspecialchars($card['label']); ?>">
-                                <img src="<?= htmlspecialchars($card['image']); ?>" alt="<?= htmlspecialchars($card['label']); ?> fashion category">
-                                <span class="category-title"><?= htmlspecialchars($card['label']); ?></span>
-                                <span class="category-brand"><?= htmlspecialchars($card['brand']); ?></span>
-                            </a>
-                        </article>
-                    <?php endforeach; ?>
-                </div>
-            </section>
 
             <section class="shop-catalog" id="shop-grid" aria-labelledby="catalog-heading">
+
+                <section class="feature-ribbon" aria-label="Store quality highlights">
+                    <div class="feature-track">
+                        <?php for ($i = 0; $i < 4; $i++): ?>
+                            <?php foreach ($featureLine as $feature): ?>
+                                <span><?= htmlspecialchars($feature); ?></span>
+                            <?php endforeach; ?>
+                        <?php endfor; ?>
+                    </div>
+                </section>
                 <div class="shop-catalog__heading">
                     <div>
                         <h2 id="catalog-heading">All Products</h2>
@@ -318,8 +277,7 @@ $srcPath = '';
                                 data-filter-value=""
                                 aria-haspopup="listbox"
                                 aria-expanded="false"
-                                aria-controls="shop-brand-list"
-                            >
+                                aria-controls="shop-brand-list">
                                 <span data-filter-current>All brands</span>
                                 <i data-lucide="chevron-down"></i>
                             </button>
@@ -331,8 +289,7 @@ $srcPath = '';
                                         role="option"
                                         aria-selected="<?= $index === 0 ? 'true' : 'false'; ?>"
                                         data-filter-option
-                                        data-filter-value="<?= htmlspecialchars($option['value']); ?>"
-                                    >
+                                        data-filter-value="<?= htmlspecialchars($option['value']); ?>">
                                         <?= htmlspecialchars($option['label']); ?>
                                     </button>
                                 <?php endforeach; ?>
@@ -348,8 +305,7 @@ $srcPath = '';
                                 data-filter-value=""
                                 aria-haspopup="listbox"
                                 aria-expanded="false"
-                                aria-controls="shop-audience-list"
-                            >
+                                aria-controls="shop-audience-list">
                                 <span data-filter-current>All</span>
                                 <i data-lucide="chevron-down"></i>
                             </button>
@@ -361,8 +317,7 @@ $srcPath = '';
                                         role="option"
                                         aria-selected="<?= $index === 0 ? 'true' : 'false'; ?>"
                                         data-filter-option
-                                        data-filter-value="<?= htmlspecialchars($option['value']); ?>"
-                                    >
+                                        data-filter-value="<?= htmlspecialchars($option['value']); ?>">
                                         <?= htmlspecialchars($option['label']); ?>
                                     </button>
                                 <?php endforeach; ?>
@@ -382,16 +337,14 @@ $srcPath = '';
                     data-shop-pagination
                     data-page-size="<?= $shopProductsPerPage; ?>"
                     aria-label="Product pages"
-                    <?= $shopPageCount <= 1 ? 'hidden' : ''; ?>
-                >
+                    <?= $shopPageCount <= 1 ? 'hidden' : ''; ?>>
                     <?php for ($page = 1; $page <= $shopPageCount; $page++): ?>
                         <button
                             class="<?= $page === 1 ? 'is-active' : ''; ?>"
                             type="button"
                             data-product-page="<?= $page; ?>"
                             aria-label="Show product page <?= $page; ?>"
-                            <?= $page === 1 ? 'aria-current="page"' : ''; ?>
-                        >
+                            <?= $page === 1 ? 'aria-current="page"' : ''; ?>>
                             <?= $page; ?>
                         </button>
                     <?php endfor; ?>
@@ -413,11 +366,12 @@ $srcPath = '';
         </section>
     </main>
 
-    
 
-<?php include 'includes/footer.php'; ?>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <?php include 'includes/footer.php'; ?>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/app.js?v=22"></script>
 </body>
+
 </html>
