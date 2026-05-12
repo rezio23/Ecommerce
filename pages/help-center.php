@@ -1,5 +1,5 @@
 <?php
-require 'includes/security.php';
+require '../includes/security.php';
 startSecureSession();
 
 $helpFaqs = [
@@ -55,7 +55,7 @@ $rootPath = '../';
 $srcPath = '';
 ?>
 
-<?php include 'includes/navbar.php'; ?>
+<?php include '../includes/navbar.php'; ?>
 <main class="help-main">
     <section class="help-hero" aria-labelledby="help-hero-heading">
         <div class="help-hero-copy">
@@ -211,7 +211,7 @@ $srcPath = '';
     </section>
 </main>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="../assets/js/app.js?v=26"></script>

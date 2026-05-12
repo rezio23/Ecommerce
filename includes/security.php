@@ -3,7 +3,7 @@
 require_once __DIR__ . '/env.php';
 
 // Load environment variables from project root
-$envPath = realpath(__DIR__ . '/../../.env');
+$envPath = realpath(__DIR__ . '/../.env');
 if ($envPath && file_exists($envPath)) {
     loadEnv($envPath);
 }
@@ -277,7 +277,7 @@ function validateFileUpload(array $file, array $allowedMimeTypes, int $maxBytes)
 
     $ext = pathinfo((string) $file['name'], PATHINFO_EXTENSION);
     $safeName = bin2hex(random_bytes(16)) . '.' . strtolower($ext);
-    $uploadDir = realpath(__DIR__ . '/../../uploads') ?: __DIR__ . '/../../uploads';
+    $uploadDir = realpath(__DIR__ . '/../uploads') ?: __DIR__ . '/../uploads';
 
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0750, true);

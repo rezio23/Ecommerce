@@ -1,7 +1,7 @@
 <?php
 
-require 'includes/security.php';
-require 'includes/db.php';
+require '../includes/security.php';
+require '../includes/db.php';
 
 $stmt = $pdo->query('SELECT * FROM products ORDER BY id');
 $shopProducts = [];
@@ -213,7 +213,7 @@ $shopPageCount = max(1, (int) ceil(count($shopProducts) / $shopProductsPerPage))
     $srcPath = '';
     ?>
 
-    <?php include 'includes/navbar.php'; ?>
+    <?php include '../includes/navbar.php'; ?>
     <main class="shop-main">
         <section class="shop-hero" aria-label="Luxury fragrance shop banner">
             <figure class="shop-hero-model">
@@ -368,7 +368,7 @@ $shopPageCount = max(1, (int) ceil(count($shopProducts) / $shopProductsPerPage))
 
 
 
-    <?php include 'includes/footer.php'; ?>
+    <?php include '../includes/footer.php'; ?>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/app.js?v=22"></script>

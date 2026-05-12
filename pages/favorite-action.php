@@ -1,6 +1,6 @@
 <?php
 
-require 'includes/security.php';
+require '../includes/security.php';
 startSecureSession();
 
 if (!isset($_SESSION['user_id'])) {
@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 requireCsrf();
-require 'includes/db.php';
+require '../includes/db.php';
 
 $productId = (int) getPost('product_id');
 $userId = (int) $_SESSION['user_id'];

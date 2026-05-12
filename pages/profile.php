@@ -1,7 +1,7 @@
 <?php
-require 'includes/security.php';
+require '../includes/security.php';
 startSecureSession();
-require 'includes/db.php';
+require '../includes/db.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
@@ -248,7 +248,7 @@ $rootPath = '../';
 $srcPath = '';
 ?>
 
-<?php include 'includes/navbar.php'; ?>
+<?php include '../includes/navbar.php'; ?>
 <main class="profile-main">
     <?php if ($ordered): ?>
         <div class="form-success" style="grid-column: 1 / -1; max-width: 800px; margin: 0 auto 1rem; color: #070; background: #eaffea; padding: 1rem; border-radius: 8px; text-align: center;">
@@ -296,7 +296,7 @@ $srcPath = '';
 
     
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
 <div class="edit-profile-overlay" id="edit-profile-modal" aria-hidden="true">
         <div class="edit-profile-modal" role="dialog" aria-modal="true" aria-labelledby="edit-profile-title">
             <button type="button" class="edit-profile-close" data-edit-close aria-label="Close edit profile">

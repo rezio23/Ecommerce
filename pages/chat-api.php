@@ -1,6 +1,6 @@
 <?php
 
-require 'includes/security.php';
+require '../includes/security.php';
 startSecureSession();
 
 header('Content-Type: application/json');
@@ -54,7 +54,7 @@ Store facts:
 - Shipping: Orders ship within 1-3 business days. Delivery time varies by location.
 - Payments: KHQR, debit card, and other checkout methods.
 - Authenticity: 100% authentic products sourced from brand-authorized distributors.
-- Terms page: /src/terms.php
+- Terms page: /pages/terms.php
 
 Guidelines:
 - Be concise, friendly, and professional.

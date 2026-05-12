@@ -1,6 +1,6 @@
 <?php
 
-require 'src/includes/db.php';
+require '../../includes/db.php';
 
 $queries = [
     "CREATE TABLE IF NOT EXISTS users (

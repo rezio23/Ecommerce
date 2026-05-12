@@ -1,5 +1,5 @@
 <?php
-require 'includes/security.php';
+require '../includes/security.php';
 startSecureSession();
 
 $termsSections = [
@@ -73,7 +73,7 @@ $rootPath = '../';
 $srcPath = '';
 ?>
 
-<?php include 'includes/navbar.php'; ?>
+<?php include '../includes/navbar.php'; ?>
 <main class="terms-main">
     <div class="terms-header-row">
         <nav class="terms-breadcrumb" aria-label="Breadcrumb">
@@ -124,7 +124,7 @@ $srcPath = '';
     </div>
 </main>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="../assets/js/app.js?v=23"></script>

@@ -9,7 +9,7 @@ Options -Indexes
 # Protect includes folder
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteRule ^src/includes/ - [F,L]
+    RewriteRule ^includes/ - [F,L]
     RewriteRule ^\.env - [F,L]
 </IfModule>
 

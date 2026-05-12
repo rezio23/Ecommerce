@@ -1,6 +1,6 @@
 <?php
 
-require 'includes/security.php';
+require '../includes/security.php';
 startSecureSession();
 
 $action = getPost('action');
@@ -13,7 +13,7 @@ if ($action === 'add' && $slug !== '') {
         $_SESSION['cart'] = [];
     }
 
-    require 'includes/db.php';
+    require '../includes/db.php';
     $stmt = $pdo->prepare('SELECT * FROM products WHERE slug = :slug');
     $stmt->execute([':slug' => $slug]);
     $product = $stmt->fetch();

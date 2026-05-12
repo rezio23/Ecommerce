@@ -1,8 +1,8 @@
 <?php
 
-require 'includes/security.php';
+require '../includes/security.php';
 startSecureSession();
-require 'includes/db.php';
+require '../includes/db.php';
 
 function getProductSlug(string $name): string
 {
@@ -188,7 +188,7 @@ $rootPath = '../';
 $srcPath = '';
 ?>
 
-<?php include 'includes/navbar.php'; ?>
+<?php include '../includes/navbar.php'; ?>
 <main class="product-detail-main">
         <nav class="product-breadcrumb" aria-label="Breadcrumb">
             <a href="shop.php">Shop</a>
@@ -291,7 +291,7 @@ $srcPath = '';
 
     
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/app.js?v=24"></script>

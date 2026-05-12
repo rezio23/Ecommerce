@@ -1,8 +1,8 @@
 <?php
 
-require 'includes/security.php';
+require '../includes/security.php';
 startSecureSession();
-require 'includes/db.php';
+require '../includes/db.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
@@ -97,7 +97,7 @@ $rootPath = '../';
 $srcPath = '';
 ?>
 
-<?php include 'includes/navbar.php'; ?>
+<?php include '../includes/navbar.php'; ?>
 <main class="shipping-main">
     <div class="shipping-header-row">
         <nav class="shipping-breadcrumb" aria-label="Checkout steps">
@@ -242,7 +242,7 @@ $srcPath = '';
     </div>
 </main>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="../assets/js/app.js?v=23"></script>

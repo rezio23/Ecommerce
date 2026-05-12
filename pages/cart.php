@@ -1,5 +1,5 @@
 <?php
-require 'includes/security.php';
+require '../includes/security.php';
 startSecureSession();
 
 $cartItems = $_SESSION['cart'] ?? [];
@@ -30,7 +30,7 @@ $rootPath = '../';
 $srcPath = '';
 ?>
 
-<?php include 'includes/navbar.php'; ?>
+<?php include '../includes/navbar.php'; ?>
 <main class="cart-main">
         <div class="cart-header-row">
             <nav class="cart-breadcrumb" aria-label="Breadcrumb">
@@ -101,7 +101,7 @@ $srcPath = '';
 
 
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/app.js?v=23"></script>

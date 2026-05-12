@@ -1,5 +1,5 @@
 <?php
-require 'includes/security.php';
+require '../includes/security.php';
 $aboutStats = [
     ['value' => '120+', 'label' => 'Premium Brands'],
     ['value' => '50K', 'label' => 'Happy Customers'],
@@ -78,7 +78,7 @@ $rootPath = '../';
 $srcPath = '';
 ?>
 
-<?php include 'includes/navbar.php'; ?>
+<?php include '../includes/navbar.php'; ?>
 <main class="about-main">
     <section class="about-hero" aria-labelledby="about-hero-heading">
         <div class="about-hero-copy">
@@ -156,7 +156,7 @@ $srcPath = '';
     </section>
 </main>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="../assets/js/app.js?v=26"></script>

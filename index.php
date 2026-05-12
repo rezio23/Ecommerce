@@ -1,7 +1,7 @@
 <?php
 
-require 'src/includes/security.php';
-require 'src/includes/db.php';
+require 'includes/security.php';
+require 'includes/db.php';
 
 $stmt = $pdo->query('SELECT * FROM products ORDER BY id');
 $allProducts = [];
@@ -199,7 +199,7 @@ function getProductDetailHref(array $product): string
 {
     $slug = trim((string) preg_replace('/[^a-z0-9]+/', '-', strtolower($product['name'])), '-');
 
-    return 'src/product-detail.php?product=' . rawurlencode($slug);
+    return 'pages/product-detail.php?product=' . rawurlencode($slug);
 }
 
 function getCategoryHref(string $label): string
@@ -213,10 +213,10 @@ function getCategoryHref(string $label): string
     ];
 
     if (isset($map[$label])) {
-        return 'src/shop.php?category=' . $map[$label] . '#shop-grid';
+        return 'pages/shop.php?category=' . $map[$label] . '#shop-grid';
     }
 
-    return 'src/shop.php#shop-grid';
+    return 'pages/shop.php#shop-grid';
 }
 ?>
 <!DOCTYPE html>
@@ -241,10 +241,10 @@ $activeButton = '';
 $currentPage = 'home';
 $searchTrigger = 'button';
 $rootPath = '';
-$srcPath = 'src/';
+$srcPath = 'pages/';
 ?>
 
-<?php include 'src/includes/navbar.php'; ?>
+<?php include 'includes/navbar.php'; ?>
 <main>
         <section class="hero-section" aria-labelledby="hero-heading">
             <div class="hero-copy">
@@ -291,7 +291,7 @@ $srcPath = 'src/';
                     <img class="stack-img stack-img--center" data-brand-stack="center" src="<?= htmlspecialchars($activeBrand['stack']['center']['image']); ?>" alt="<?= htmlspecialchars($activeBrand['stack']['center']['alt']); ?>">
                     <img class="stack-img stack-img--right" data-brand-stack="right" src="<?= htmlspecialchars($activeBrand['stack']['right']['image']); ?>" alt="<?= htmlspecialchars($activeBrand['stack']['right']['alt']); ?>">
                 </div>
-                <a class="outline-cta" href="src/shop.php?brand=<?= htmlspecialchars(strtolower($activeBrand['name']) === 'polo' ? 'ralph-lauren' : strtolower($activeBrand['name'])); ?>#brand_selector" data-see-product>
+                <a class="outline-cta" href="pages/shop.php?brand=<?= htmlspecialchars(strtolower($activeBrand['name']) === 'polo' ? 'ralph-lauren' : strtolower($activeBrand['name'])); ?>#brand_selector" data-see-product>
                     See Product
                     <i data-lucide="arrow-right"></i>
                 </a>
@@ -410,7 +410,7 @@ $srcPath = 'src/';
                                 <?php endif; ?>
                                 <div class="product-actions">
                                     <strong>$<?= number_format($product['price'], 2); ?></strong>
-                                    <form action="src/cart-action.php" method="post" style="display:inline;">
+                                    <form action="pages/cart-action.php" method="post" style="display:inline;">
                                         <?= csrfField(); ?>
                                         <input type="hidden" name="action" value="add">
                                         <input type="hidden" name="slug" value="<?= htmlspecialchars($product['slug'] ?? ''); ?>">
@@ -483,7 +483,7 @@ $srcPath = 'src/';
 
     
 
-<?php include 'src/includes/footer.php'; ?>
+<?php include 'includes/footer.php'; ?>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="assets/js/app.js?v=22"></script>

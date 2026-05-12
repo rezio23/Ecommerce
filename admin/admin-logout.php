@@ -1,5 +1,5 @@
 <?php
-require 'includes/security.php';
+require '../includes/security.php';
 startSecureSession();
 $_SESSION = [];
 if (ini_get('session.use_cookies')) {

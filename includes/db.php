@@ -3,7 +3,7 @@
 require_once __DIR__ . '/env.php';
 
 // Load environment variables from project root
-$envPath = realpath(__DIR__ . '/../../.env');
+$envPath = realpath(__DIR__ . '/../.env');
 if ($envPath && file_exists($envPath)) {
     loadEnv($envPath);
 }

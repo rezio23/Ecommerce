@@ -1,7 +1,7 @@
 <?php
 
-require 'includes/security.php';
-require 'includes/db.php';
+require '../includes/security.php';
+require '../includes/db.php';
 startSecureSession();
 
 if (isset($_SESSION['user_id'])) {

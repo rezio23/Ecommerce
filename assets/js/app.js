@@ -946,7 +946,7 @@ $(function () {
 
         if ($seeProductLink.length) {
             const brandFilter = $selectedButton.attr('data-brand-filter') || '';
-            $seeProductLink.attr('href', 'src/shop.php?brand=' + encodeURIComponent(brandFilter) + '#brand_selector');
+            $seeProductLink.attr('href', 'pages/shop.php?brand=' + encodeURIComponent(brandFilter) + '#brand_selector');
         }
 
         const nextStack = getBrandStack($selectedButton);

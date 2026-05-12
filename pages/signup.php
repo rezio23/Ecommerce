@@ -1,6 +1,6 @@
 <?php
-require 'includes/security.php';
-require 'includes/db.php';
+require '../includes/security.php';
+require '../includes/db.php';
 
 $errors = [];
 
@@ -71,7 +71,7 @@ $rootPath = '../';
 $srcPath = '';
 ?>
 
-<?php include 'includes/navbar.php'; ?>
+<?php include '../includes/navbar.php'; ?>
 <main class="auth-page">
         <div class="auth-card">
             <h1>Sign Up</h1>
@@ -113,7 +113,7 @@ $srcPath = '';
 
     
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/app.js?v=23"></script>
