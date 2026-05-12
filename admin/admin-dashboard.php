@@ -2,6 +2,36 @@
 require '../includes/security.php';
 require '../includes/db.php';
 
+// Helper: send plain-text email with optional file attachment via MIME multipart
+function sendEmailWithAttachment(string $to, string $subject, string $bodyText, string $from, ?string $filePath = null, ?string $fileName = null): bool {
+    $boundary = md5(uniqid('', true));
+    $headers = "From: {$from}\r\n";
+    $headers .= "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: multipart/mixed; boundary=\"{$boundary}\"\r\n";
+
+    $body = "--{$boundary}\r\n";
+    $body .= "Content-Type: text/plain; charset=\"UTF-8\"\r\n";
+    $body .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+    $body .= $bodyText . "\r\n\r\n";
+
+    if ($filePath && is_file($filePath) && is_readable($filePath)) {
+        $data = file_get_contents($filePath);
+        if ($data !== false) {
+            $encoded = chunk_split(base64_encode($data));
+            $mime = mime_content_type($filePath) ?: 'application/octet-stream';
+            $safeName = basename($fileName ?: basename($filePath));
+            $body .= "--{$boundary}\r\n";
+            $body .= "Content-Type: {$mime}; name=\"{$safeName}\"\r\n";
+            $body .= "Content-Transfer-Encoding: base64\r\n";
+            $body .= "Content-Disposition: attachment; filename=\"{$safeName}\"\r\n\r\n";
+            $body .= $encoded . "\r\n\r\n";
+        }
+    }
+
+    $body .= "--{$boundary}--";
+    return mail($to, $subject, $body, $headers);
+}
+
 startSecureSession();
 
 if (empty($_SESSION['admin'])) {
@@ -66,6 +96,10 @@ $allProducts = $productsStmt->fetchAll();
 // All orders for management
 $allOrdersStmt = $pdo->query('SELECT o.*, u.full_name AS user_name FROM orders o LEFT JOIN users u ON o.user_id = u.id ORDER BY o.created_at DESC');
 $allOrders = $allOrdersStmt->fetchAll();
+
+// All user requests for management
+$requestsStmt = $pdo->query('SELECT r.*, u.phone AS user_phone FROM user_requests r LEFT JOIN users u ON r.user_id = u.id ORDER BY r.created_at DESC');
+$allRequests = $requestsStmt->fetchAll();
 
 // Handle order status update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_order_status'])) {
@@ -210,6 +244,99 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_category'])) {
     exit;
 }
 
+// Handle request status update (accept / reject)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_request_status'])) {
+    requireCsrf();
+    $requestId = (int) ($_POST['request_id'] ?? 0);
+    $newStatus = getPost('status');
+    $allowedStatuses = ['pending', 'accepted', 'rejected'];
+    if ($requestId > 0 && in_array($newStatus, $allowedStatuses, true)) {
+        $stmt = $pdo->prepare('UPDATE user_requests SET status = :status WHERE id = :id');
+        $stmt->execute([':status' => $newStatus, ':id' => $requestId]);
+    }
+    header('Location: admin-dashboard.php?tab=requests');
+    exit;
+}
+
+// Handle announcement broadcast
+$announcementStatus = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_announcement'])) {
+    requireCsrf();
+    $subject = getPost('subject');
+    $message = getPost('message');
+
+    if ($subject === '' || $message === '') {
+        $announcementStatus = 'error_empty';
+    } else {
+        $filePath = null;
+        $fileName = null;
+        if (!empty($_FILES['attachment']['tmp_name'])) {
+            $result = validateFileUpload(
+                $_FILES['attachment'],
+                ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'],
+                5 * 1024 * 1024
+            );
+            if ($result['ok']) {
+                $filePath = $result['path'];
+                $fileName = $result['name'];
+            } else {
+                $announcementStatus = 'error_upload:' . $result['error'];
+            }
+        }
+
+        if ($announcementStatus === '' || !str_starts_with($announcementStatus, 'error_')) {
+            // Fetch all user emails
+            $emailsStmt = $pdo->query('SELECT email FROM users WHERE email IS NOT NULL AND email != "" ORDER BY id');
+            $emails = $emailsStmt->fetchAll(PDO::FETCH_COLUMN);
+            $sentCount = 0;
+            $from = 'The DS Store <thedaservice@store.com>';
+
+            foreach ($emails as $email) {
+                if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $ok = sendEmailWithAttachment($email, $subject, $message, $from, $filePath, $fileName);
+                    if ($ok) {
+                        $sentCount++;
+                    }
+                }
+            }
+
+            // Save record
+            $jsonPath = realpath(__DIR__ . '/../uploads/support/announcements.json') ?: __DIR__ . '/../uploads/support/announcements.json';
+            $records = [];
+            if (is_file($jsonPath)) {
+                $content = file_get_contents($jsonPath);
+                if ($content !== false) {
+                    $decoded = json_decode($content, true);
+                    if (is_array($decoded)) {
+                        $records = $decoded;
+                    }
+                }
+            }
+            $dir = dirname($jsonPath);
+            if (!is_dir($dir)) {
+                mkdir($dir, 0750, true);
+            }
+            $records[] = [
+                'id' => 'ann_' . uniqid('', true),
+                'subject' => $subject,
+                'message' => $message,
+                'file' => $fileName ?: '',
+                'sent_count' => $sentCount,
+                'total_users' => count($emails),
+                'created_at' => date('Y-m-d H:i:s'),
+            ];
+            $tmpFile = $dir . '/announcements.tmp.' . bin2hex(random_bytes(8)) . '.json';
+            file_put_contents($tmpFile, json_encode($records, JSON_PRETTY_PRINT));
+            rename($tmpFile, $jsonPath);
+
+            $announcementStatus = 'success:' . $sentCount;
+        }
+    }
+
+    header('Location: admin-dashboard.php?tab=announcements&status=' . urlencode($announcementStatus));
+    exit;
+}
+
 $activeTab = $_GET['tab'] ?? 'dashboard';
 ?>
 <!DOCTYPE html>
@@ -221,7 +348,7 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/styles.css?v=102">
+    <link rel="stylesheet" href="../assets/css/styles.css?v=106">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 </head>
 <body class="admin-body">
@@ -245,7 +372,12 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
             <a href="?tab=users" class="admin-nav-link <?= $activeTab === 'users' ? 'is-active' : ''; ?>">
                 <i data-lucide="users"></i> Users
             </a>
-        </nav>
+            <a href="?tab=requests" class="admin-nav-link <?= $activeTab === 'requests' ? 'is-active' : ''; ?>">
+                <i data-lucide="inbox"></i> User Requests
+            </a>
+            <a href="?tab=announcements" class="admin-nav-link <?= $activeTab === 'announcements' ? 'is-active' : ''; ?>">
+                <i data-lucide="megaphone"></i> Announcements
+            </a>
         <div class="admin-sidebar-footer">
             <span class="admin-email"><?= htmlspecialchars($_SESSION['admin_email'] ?? ''); ?></span>
             <a href="admin-logout.php" class="admin-logout">
@@ -388,11 +520,33 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
                                     <form method="post" action="admin-dashboard.php?tab=orders" style="display:flex;gap:0.5rem;align-items:center;">
                                         <?= csrfField(); ?>
                                         <input type="hidden" name="order_id" value="<?= (int) $order['id']; ?>">
-                                        <select name="status" class="admin-select">
-                                            <?php foreach (['pending', 'processing', 'shipped', 'delivered', 'cancelled'] as $s): ?>
-                                                <option value="<?= $s; ?>" <?= $order['status'] === $s ? 'selected' : ''; ?>><?= ucfirst($s); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
+                                        <input type="hidden" name="status" value="<?= htmlspecialchars($order['status']); ?>" data-order-status-input="<?= (int) $order['id']; ?>">
+                                        <div class="shop-select-control" data-order-status-select="<?= (int) $order['id']; ?>" style="min-width:0;padding:0 8px 0 10px;font-size:0.58rem;">
+                                            <button
+                                                class="shop-select-toggle"
+                                                type="button"
+                                                data-order-status-toggle="<?= (int) $order['id']; ?>"
+                                                aria-haspopup="listbox"
+                                                aria-expanded="false"
+                                                aria-controls="order-status-list-<?= (int) $order['id']; ?>"
+                                                style="min-width:90px;gap:6px;">
+                                                <span data-order-status-current="<?= (int) $order['id']; ?>"><?= ucfirst(htmlspecialchars($order['status'])); ?></span>
+                                                <i data-lucide="chevron-down" style="width:12px;height:12px;"></i>
+                                            </button>
+                                            <div class="shop-select-menu" id="order-status-list-<?= (int) $order['id']; ?>" role="listbox" aria-label="Select status" style="width:auto;min-width:120px;right:0;">
+                                                <?php foreach (['pending', 'processing', 'shipped', 'delivered', 'cancelled'] as $s): ?>
+                                                    <button
+                                                        class="<?= $order['status'] === $s ? 'is-selected' : ''; ?>"
+                                                        type="button"
+                                                        role="option"
+                                                        aria-selected="<?= $order['status'] === $s ? 'true' : 'false'; ?>"
+                                                        data-order-status-option="<?= (int) $order['id']; ?>"
+                                                        data-status-value="<?= htmlspecialchars($s); ?>">
+                                                        <?= ucfirst($s); ?>
+                                                    </button>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </div>
                                         <button type="submit" name="update_order_status" class="admin-btn admin-btn--small">Update</button>
                                     </form>
                                 </td>
@@ -401,6 +555,124 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
                     </tbody>
                 </table>
             </div>
+
+            <script>
+            (function() {
+                var selects = document.querySelectorAll('[data-order-status-select]');
+
+                function updateBodyOverflow() {
+                    var anyOpen = Array.from(selects).some(function(select) {
+                        return select.classList.contains('is-open');
+                    });
+                    if (anyOpen) {
+                        document.documentElement.style.overflow = 'hidden';
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        document.documentElement.style.overflow = '';
+                        document.body.style.overflow = '';
+                    }
+                }
+
+                function resetMenu(select) {
+                    var menu = select.querySelector('.shop-select-menu');
+                    if (menu) {
+                        menu.style.position = '';
+                        menu.style.top = '';
+                        menu.style.left = '';
+                        menu.style.right = '';
+                        menu.style.width = '';
+                        menu.style.minWidth = '';
+                    }
+                }
+
+                function positionMenu(select) {
+                    var toggle = select.querySelector('[data-order-status-toggle]');
+                    var menu = select.querySelector('.shop-select-menu');
+                    if (!toggle || !menu) return;
+                    var rect = toggle.getBoundingClientRect();
+                    menu.style.position = 'fixed';
+                    menu.style.top = (rect.bottom + 6) + 'px';
+                    menu.style.right = (window.innerWidth - rect.right) + 'px';
+                    menu.style.left = 'auto';
+                    menu.style.width = 'auto';
+                    menu.style.minWidth = Math.max(rect.width, 120) + 'px';
+                }
+
+                function closeSelect(select) {
+                    select.classList.remove('is-open');
+                    var toggle = select.querySelector('[data-order-status-toggle]');
+                    if (toggle) toggle.setAttribute('aria-expanded', 'false');
+                    resetMenu(select);
+                    updateBodyOverflow();
+                }
+
+                selects.forEach(function(select) {
+                    var toggle = select.querySelector('[data-order-status-toggle]');
+                    var options = select.querySelectorAll('[data-order-status-option]');
+                    var currentLabel = select.querySelector('[data-order-status-current]');
+                    var orderId = select.getAttribute('data-order-status-select');
+                    var input = document.querySelector('[data-order-status-input="' + orderId + '"]');
+
+                    if (!toggle) return;
+
+                    toggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var isOpen = select.classList.contains('is-open');
+                        if (isOpen) {
+                            closeSelect(select);
+                        } else {
+                            selects.forEach(function(other) {
+                                if (other !== select) closeSelect(other);
+                            });
+                            positionMenu(select);
+                            select.classList.add('is-open');
+                            toggle.setAttribute('aria-expanded', 'true');
+                            updateBodyOverflow();
+                        }
+                    });
+
+                    options.forEach(function(option) {
+                        option.addEventListener('click', function() {
+                            var value = option.getAttribute('data-status-value');
+                            var text = option.textContent.trim();
+
+                            options.forEach(function(opt) {
+                                var selected = opt === option;
+                                opt.classList.toggle('is-selected', selected);
+                                opt.setAttribute('aria-selected', String(selected));
+                            });
+
+                            if (currentLabel) currentLabel.textContent = text;
+                            if (input) input.value = value;
+                            closeSelect(select);
+                        });
+                    });
+                });
+
+                document.addEventListener('click', function(e) {
+                    selects.forEach(function(select) {
+                        if (!select.contains(e.target)) {
+                            closeSelect(select);
+                        }
+                    });
+                });
+
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        selects.forEach(function(select) {
+                            closeSelect(select);
+                        });
+                    }
+                });
+
+                window.addEventListener('scroll', function() {
+                    selects.forEach(function(select) {
+                        if (select.classList.contains('is-open')) closeSelect(select);
+                    });
+                });
+            })();
+            </script>
 
         <?php elseif ($activeTab === 'products'): ?>
             <div class="admin-header">
@@ -674,6 +946,25 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
             (function() {
                 var form = document.getElementById('admin-filter-form');
 
+                function resetMenu(menu) {
+                    menu.style.position = '';
+                    menu.style.top = '';
+                    menu.style.left = '';
+                    menu.style.right = '';
+                    menu.style.width = '';
+                    menu.style.minWidth = '';
+                }
+
+                function positionMenu(toggle, menu) {
+                    var rect = toggle.getBoundingClientRect();
+                    menu.style.position = 'fixed';
+                    menu.style.top = (rect.bottom + 6) + 'px';
+                    menu.style.right = (window.innerWidth - rect.right) + 'px';
+                    menu.style.left = 'auto';
+                    menu.style.width = 'auto';
+                    menu.style.minWidth = Math.max(rect.width, 178) + 'px';
+                }
+
                 // Category selector
                 var catSelect = document.querySelector('[data-admin-filter-select]');
                 var catToggle = document.querySelector('[data-admin-filter-toggle]');
@@ -685,6 +976,7 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
                 function closeCatSelect() {
                     catSelect.classList.remove('is-open');
                     catToggle.setAttribute('aria-expanded', 'false');
+                    resetMenu(catMenu);
                 }
 
                 catToggle.addEventListener('click', function(e) {
@@ -693,6 +985,8 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
                     if (isOpen) {
                         closeCatSelect();
                     } else {
+                        closeSortSelect();
+                        positionMenu(catToggle, catMenu);
                         catSelect.classList.add('is-open');
                         catToggle.setAttribute('aria-expanded', 'true');
                     }
@@ -717,15 +1011,11 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
                 });
 
                 document.addEventListener('click', function(e) {
-                    if (!catSelect.contains(e.target)) {
-                        closeCatSelect();
-                    }
+                    if (!catSelect.contains(e.target)) closeCatSelect();
                 });
 
                 document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape') {
-                        closeCatSelect();
-                    }
+                    if (e.key === 'Escape') closeCatSelect();
                 });
 
                 // Sort selector
@@ -739,6 +1029,7 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
                 function closeSortSelect() {
                     sortSelect.classList.remove('is-open');
                     sortToggle.setAttribute('aria-expanded', 'false');
+                    resetMenu(sortMenu);
                 }
 
                 sortToggle.addEventListener('click', function(e) {
@@ -747,6 +1038,8 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
                     if (isOpen) {
                         closeSortSelect();
                     } else {
+                        closeCatSelect();
+                        positionMenu(sortToggle, sortMenu);
                         sortSelect.classList.add('is-open');
                         sortToggle.setAttribute('aria-expanded', 'true');
                     }
@@ -771,15 +1064,16 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
                 });
 
                 document.addEventListener('click', function(e) {
-                    if (!sortSelect.contains(e.target)) {
-                        closeSortSelect();
-                    }
+                    if (!sortSelect.contains(e.target)) closeSortSelect();
                 });
 
                 document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape') {
-                        closeSortSelect();
-                    }
+                    if (e.key === 'Escape') closeSortSelect();
+                });
+
+                window.addEventListener('scroll', function() {
+                    closeCatSelect();
+                    closeSortSelect();
                 });
             })();
             </script>
@@ -892,6 +1186,272 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
                     </tbody>
                 </table>
             </div>
+
+        <?php elseif ($activeTab === 'requests'): ?>
+            <div class="admin-header">
+                <h1>User Requests</h1>
+            </div>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Subject</th>
+                            <th>Attached File</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($allRequests as $req): ?>
+                            <tr>
+                                <td>#<?= (int) $req['id']; ?></td>
+                                <td><?= htmlspecialchars($req['email']); ?></td>
+                                <td><?= htmlspecialchars($req['user_phone'] ?? $req['phone'] ?? '—'); ?></td>
+                                <td><?= htmlspecialchars($req['subject']); ?></td>
+                                <td>
+                                    <?php if (!empty($req['attachment'])): ?>
+                                        <a href="../<?= htmlspecialchars(ltrim($req['attachment'], '/')); ?>" target="_blank" class="admin-btn admin-btn--small">View File</a>
+                                    <?php else: ?>
+                                        <span class="admin-badge-status status-delivered">No File</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><span class="admin-badge-status status-<?= htmlspecialchars($req['status']); ?>"><?= htmlspecialchars(ucfirst($req['status'])); ?></span></td>
+                                <td><?= htmlspecialchars(date('M d, Y H:i', strtotime($req['created_at']))); ?></td>
+                                <td>
+                                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                                        <?php if ($req['status'] === 'pending'): ?>
+                                            <button type="button" class="admin-btn admin-btn--small admin-view-btn" data-admin-view-req data-req='<?= htmlspecialchars(json_encode([
+                                                'id' => (int) $req['id'],
+                                                'email' => $req['email'],
+                                                'phone' => $req['user_phone'] ?? $req['phone'] ?? '',
+                                                'subject' => $req['subject'],
+                                                'message' => $req['message'],
+                                                'attachment' => $req['attachment'] ?? '',
+                                                'status' => $req['status'],
+                                                'created_at' => $req['created_at'],
+                                            ]), ENT_QUOTES, 'UTF-8'); ?>'>View</button>
+                                            <form method="post" action="admin-dashboard.php?tab=requests" style="display:inline;">
+                                                <?= csrfField(); ?>
+                                                <input type="hidden" name="request_id" value="<?= (int) $req['id']; ?>">
+                                                <input type="hidden" name="status" value="accepted">
+                                                <button type="submit" name="update_request_status" class="admin-btn admin-btn--small">Accept</button>
+                                            </form>
+                                            <form method="post" action="admin-dashboard.php?tab=requests" style="display:inline;">
+                                                <?= csrfField(); ?>
+                                                <input type="hidden" name="request_id" value="<?= (int) $req['id']; ?>">
+                                                <input type="hidden" name="status" value="rejected">
+                                                <button type="submit" name="update_request_status" class="admin-btn admin-btn--danger admin-btn--small">Reject</button>
+                                            </form>
+                                        <?php else: ?>
+                                            <span class="admin-badge-status status-processed">Processed</span>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Request View Modal -->
+            <div class="admin-product-overlay" id="admin-request-overlay" aria-hidden="true">
+                <div class="admin-product-modal" role="dialog" aria-modal="true" aria-labelledby="admin-request-modal-title">
+                    <button type="button" class="admin-product-modal__close" id="admin-request-modal-close" aria-label="Close">
+                        <i data-lucide="x"></i>
+                    </button>
+                    <div class="admin-product-modal__content" id="admin-request-modal-content">
+                        <!-- populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <script>
+            (function() {
+                var overlay = document.getElementById('admin-request-overlay');
+                var content = document.getElementById('admin-request-modal-content');
+                var closeBtn = document.getElementById('admin-request-modal-close');
+                var viewBtns = document.querySelectorAll('[data-admin-view-req]');
+
+                function openModal(req) {
+                    var html = '';
+                    html += '<div class="admin-product-modal__info">';
+                    html += '<h2 id="admin-request-modal-title">' + escapeHtml(req.subject) + '</h2>';
+                    html += '<div class="admin-product-modal__meta">';
+                    html += '<div><span>Email</span><strong>' + escapeHtml(req.email) + '</strong></div>';
+                    html += '<div><span>Phone</span><strong>' + escapeHtml(req.phone || '—') + '</strong></div>';
+                    html += '<div><span>Status</span><strong>' + escapeHtml(req.status.charAt(0).toUpperCase() + req.status.slice(1)) + '</strong></div>';
+                    html += '</div>';
+                    if (req.attachment) {
+                        var attPath = req.attachment.replace(/^\//, '');
+                        html += '<div style="margin-bottom:18px;"><span style="font-size:0.52rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);display:block;margin-bottom:4px;">Attachment</span><a href="../' + escapeHtml(attPath) + '" target="_blank" class="admin-btn admin-btn--small">View Attached File</a></div>';
+                    }
+                    html += '<p class="admin-product-modal__desc">' + escapeHtml(req.message) + '</p>';
+                    html += '<div class="admin-product-modal__foot">';
+                    if (req.created_at) {
+                        html += '<span>Submitted: ' + escapeHtml(req.created_at) + '</span>';
+                    }
+                    html += '</div>';
+                    html += '</div>';
+
+                    content.innerHTML = html;
+                    overlay.classList.add('is-open');
+                    overlay.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                }
+
+                function closeModal() {
+                    overlay.classList.remove('is-open');
+                    overlay.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                }
+
+                function escapeHtml(text) {
+                    var div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                }
+
+                viewBtns.forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        var data = btn.getAttribute('data-req');
+                        if (!data) return;
+                        try {
+                            var req = JSON.parse(data);
+                            openModal(req);
+                        } catch (e) {
+                            console.error('Invalid request data', e);
+                        }
+                    });
+                });
+
+                closeBtn.addEventListener('click', closeModal);
+
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === overlay) {
+                        closeModal();
+                    }
+                });
+
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && overlay.classList.contains('is-open')) {
+                        closeModal();
+                    }
+                });
+            })();
+            </script>
+
+        <?php elseif ($activeTab === 'announcements'): ?>
+            <div class="admin-header">
+                <h1>Announcements</h1>
+            </div>
+
+            <?php
+            $statusParam = $_GET['status'] ?? '';
+            if (str_starts_with($statusParam, 'success:')):
+                $sent = (int) substr($statusParam, 8);
+            ?>
+                <div class="admin-alert admin-alert--success">Announcement sent successfully to <?= number_format($sent); ?> user(s).</div>
+            <?php elseif (str_starts_with($statusParam, 'error_upload:')): ?>
+                <div class="admin-alert admin-alert--error">Upload failed: <?= htmlspecialchars(substr($statusParam, 12)); ?></div>
+            <?php elseif ($statusParam === 'error_empty'): ?>
+                <div class="admin-alert admin-alert--error">Subject and message are required.</div>
+            <?php endif; ?>
+
+            <div class="admin-section" style="margin-bottom: 24px;">
+                <form method="post" action="admin-dashboard.php?tab=announcements" enctype="multipart/form-data" id="announcement-form">
+                    <?= csrfField(); ?>
+                    <div class="admin-form-grid">
+                        <div class="admin-form-group admin-form-group--full">
+                            <label for="ann-subject">Subject</label>
+                            <input type="text" id="ann-subject" name="subject" placeholder="e.g. New Collection Launch" maxlength="120" required>
+                        </div>
+                        <div class="admin-form-group admin-form-group--full">
+                            <label for="ann-message">Message</label>
+                            <textarea id="ann-message" name="message" rows="6" placeholder="Write your announcement here..." maxlength="2000" required></textarea>
+                        </div>
+                        <div class="admin-form-group admin-form-group--full">
+                            <label for="ann-file">Attachment (optional)</label>
+                            <div class="help-request-form__file">
+                                <span class="help-request-form__file-icon"><i data-lucide="upload-cloud"></i></span>
+                                <span class="help-request-form__file-text" id="ann-file-text">Click to choose a file</span>
+                                <span class="help-request-form__file-meta">Images & PDF only</span>
+                                <input id="ann-file" name="attachment" type="file" accept="image/*,application/pdf" aria-label="Attachment">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="admin-form-actions" style="margin-top: 14px;">
+                        <button type="submit" name="send_announcement" class="admin-btn"><i data-lucide="send"></i> Send to All Users</button>
+                    </div>
+                </form>
+                <script>
+                (function() {
+                    var fileInput = document.getElementById('ann-file');
+                    var fileText = document.getElementById('ann-file-text');
+                    if (fileInput && fileText) {
+                        fileInput.addEventListener('change', function() {
+                            fileText.textContent = fileInput.files[0]?.name || 'Choose file';
+                        });
+                    }
+                })();
+                </script>
+            </div>
+
+            <div class="admin-section">
+                <h2>Sent Announcements</h2>
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Subject</th>
+                                <th>Sent</th>
+                                <th>Users</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $annPath = realpath(__DIR__ . '/../uploads/support/announcements.json') ?: __DIR__ . '/../uploads/support/announcements.json';
+                            $announcements = [];
+                            if (is_file($annPath)) {
+                                $content = file_get_contents($annPath);
+                                if ($content !== false) {
+                                    $decoded = json_decode($content, true);
+                                    if (is_array($decoded)) {
+                                        $announcements = array_reverse($decoded);
+                                    }
+                                }
+                            }
+                            if (empty($announcements)):
+                            ?>
+                                <tr><td colspan="5" style="text-align:center;color:var(--muted);">No announcements sent yet.</td></tr>
+                            <?php else:
+                                foreach ($announcements as $ann):
+                            ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($ann['id'] ?? '—'); ?></td>
+                                    <td><?= htmlspecialchars($ann['subject'] ?? '—'); ?></td>
+                                    <td><?= (int) ($ann['sent_count'] ?? 0); ?></td>
+                                    <td><?= (int) ($ann['total_users'] ?? 0); ?></td>
+                                    <td><?= htmlspecialchars(date('M d, Y H:i', strtotime($ann['created_at'] ?? 'now'))); ?></td>
+                                </tr>
+                            <?php
+                                endforeach;
+                            endif;
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         <?php endif; ?>
     </main>
 </div>

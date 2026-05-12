@@ -436,6 +436,17 @@ $(function () {
 
     applyProductFilters({ keepPage: true });
 
+    (function () {
+        if (!$shopProductGrid.length || !$shopPagination.length) {
+            return;
+        }
+        const matchingCards = getMatchingProductCards();
+        if (matchingCards.length > productsPerPage) {
+            const height = $shopProductGrid[0].getBoundingClientRect().height;
+            $shopProductGrid.css('min-height', height + 'px');
+        }
+    })();
+
     $searchInputs.on('input', function (event) {
         syncSearchInputs(event.currentTarget);
         applyProductFilters();
@@ -1088,6 +1099,24 @@ $(function () {
         $(window).on('resize', recalcMaxTranslate);
         recalcMaxTranslate();
     }
+
+    let shopGridResizeTimer;
+    $(window).on('resize', function () {
+        window.clearTimeout(shopGridResizeTimer);
+        shopGridResizeTimer = window.setTimeout(function () {
+            if (!$shopProductGrid.length || !$shopPagination.length) {
+                return;
+            }
+            $shopProductGrid.css('min-height', '');
+            window.setTimeout(function () {
+                const matchingCards = getMatchingProductCards();
+                if (matchingCards.length > productsPerPage) {
+                    const height = $shopProductGrid[0].getBoundingClientRect().height;
+                    $shopProductGrid.css('min-height', height + 'px');
+                }
+            }, 0);
+        }, 250);
+    });
 
     const $pageHeroModels = $('.about-hero-model, .help-hero-model');
 
