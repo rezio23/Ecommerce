@@ -40,7 +40,7 @@ $helpTickerBrands = ['POLO', 'BALENCIAGA', 'ADIDAS', 'NIKE', 'PUMA', 'GUCCI', 'P
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;800&family=Krona+One&family=Modak&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/styles.css?v=109">
+    <link rel="stylesheet" href="../assets/css/styles.css?v=111">
 </head>
 <body class="help-page">
 
@@ -200,7 +200,10 @@ $srcPath = '';
             <h2 id="help-cta-heading">Still need help?</h2>
             <p>Our human support team is ready to assist you with anything the AI could not resolve.</p>
             <div class="help-cta-actions">
-                <a href="mailto:thedaservice@store.com" class="help-cta-btn help-cta-btn--primary">
+                <button type="button" class="help-cta-btn help-cta-btn--primary" id="help-request-open">
+                    <i data-lucide="file-text"></i> Send Request
+                </button>
+                <a href="mailto:thedaservice@store.com" class="help-cta-btn">
                     <i data-lucide="mail"></i> Email Support
                 </a>
                 <a href="tel:+855112233" class="help-cta-btn">
@@ -209,6 +212,54 @@ $srcPath = '';
             </div>
         </div>
     </section>
+
+    <!-- Request Modal -->
+    <div class="admin-product-overlay" id="help-request-overlay" aria-hidden="true">
+        <div class="admin-product-modal" role="dialog" aria-modal="true" aria-labelledby="help-request-modal-title">
+            <button type="button" class="admin-product-modal__close" id="help-request-modal-close" aria-label="Close">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="admin-product-modal__content">
+                <div style="text-align:center;margin-bottom:22px;">
+                    <h2 id="help-request-modal-title" style="margin:0 0 6px;">Send a Personal Request</h2>
+                    <p class="pixel-note" style="margin:0;">Describe what you need and we will review it as soon as possible.</p>
+                </div>
+                <form class="help-request-form" id="help-request-form" action="submit-request.php" method="post" enctype="multipart/form-data">
+                    <?= csrfField(); ?>
+                    <div class="help-request-form__group">
+                        <label class="help-request-form__label" for="request-email">Email</label>
+                        <input class="help-request-form__input" id="request-email" name="email" type="email" value="<?= htmlspecialchars($_SESSION['user_email'] ?? ''); ?>" placeholder="you@example.com" required>
+                    </div>
+                    <div class="help-request-form__group">
+                        <label class="help-request-form__label" for="request-phone">Phone</label>
+                        <input class="help-request-form__input" id="request-phone" name="phone" type="tel" value="" placeholder="+855 112 233" required>
+                    </div>
+                    <div class="help-request-form__group">
+                        <label class="help-request-form__label" for="request-subject">Subject</label>
+                        <input class="help-request-form__input" id="request-subject" name="subject" type="text" maxlength="120" placeholder="What is this about?" required>
+                    </div>
+                    <div class="help-request-form__group">
+                        <label class="help-request-form__label" for="request-message">Message</label>
+                        <textarea class="help-request-form__textarea" id="request-message" name="message" rows="4" maxlength="2000" placeholder="Tell us the details..." required></textarea>
+                    </div>
+                    <div class="help-request-form__group">
+                        <label class="help-request-form__label" for="request-file">Attachment (optional)</label>
+                        <div class="help-request-form__file">
+                            <span class="help-request-form__file-icon"><i data-lucide="upload-cloud"></i></span>
+                            <span class="help-request-form__file-text" id="request-file-text">Click to choose a file</span>
+                            <span class="help-request-form__file-meta">Images & PDF only</span>
+                            <input id="request-file" name="attachment" type="file" accept="image/*,application/pdf" aria-label="Attachment">
+                        </div>
+                    </div>
+                    <div class="help-request-form__actions">
+                        <button type="submit" class="help-request-form__submit">Submit Request</button>
+                    </div>
+                    <p class="help-request__success" id="request-success" hidden><i data-lucide="check-circle-2"></i> Your request has been sent successfully.</p>
+                    <p class="help-request__error" id="request-error" hidden></p>
+                </form>
+            </div>
+        </div>
+    </div>
 </main>
 
 <?php include '../includes/footer.php'; ?>
@@ -299,6 +350,91 @@ $srcPath = '';
             } catch (e) {}
             appendMessage('assistant', 'Sorry: ' + errorText);
         });
+    });
+
+    // Personal Request form
+    var $requestForm = $('#help-request-form');
+    var $requestSuccess = $('#request-success');
+    var $requestError = $('#request-error');
+    var $requestFileInput = $('#request-file');
+    var $requestFileText = $('#request-file-text');
+
+    if ($requestFileInput.length && $requestFileText.length) {
+        $requestFileInput.on('change', function () {
+            $requestFileText.text(this.files[0]?.name || 'Choose file');
+        });
+    }
+
+    $requestForm.on('submit', function (event) {
+        event.preventDefault();
+        $requestSuccess.prop('hidden', true);
+        $requestError.prop('hidden', true);
+
+        var formData = new FormData(this);
+        var $submitBtn = $requestForm.find('.help-request-form__submit');
+        $submitBtn.prop('disabled', true).text('Sending...');
+
+        $.ajax({
+            url: 'submit-request.php',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+        }).done(function (response) {
+            $submitBtn.prop('disabled', false).text('Submit Request');
+            if (response.success) {
+                $requestForm[0].reset();
+                $requestFileText.text('Click to choose a file');
+                $requestSuccess.prop('hidden', false);
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            } else {
+                $requestError.text(response.error || 'Something went wrong. Please try again.').prop('hidden', false);
+            }
+        }).fail(function (xhr) {
+            $submitBtn.prop('disabled', false).text('Submit Request');
+            var errorText = 'Something went wrong. Please try again later.';
+            try {
+                var resp = JSON.parse(xhr.responseText);
+                if (resp.error) errorText = resp.error;
+            } catch (e) {}
+            $requestError.text(errorText).prop('hidden', false);
+        });
+    });
+
+    // Request modal
+    var $requestOverlay = $('#help-request-overlay');
+    var $requestOpenBtn = $('#help-request-open');
+    var $requestCloseBtn = $('#help-request-modal-close');
+
+    function openRequestModal() {
+        $requestOverlay.addClass('is-open').attr('aria-hidden', 'false');
+        $('body').css('overflow', 'hidden');
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    }
+
+    function closeRequestModal() {
+        $requestOverlay.removeClass('is-open').attr('aria-hidden', 'true');
+        $('body').css('overflow', '');
+    }
+
+    $requestOpenBtn.on('click', openRequestModal);
+    $requestCloseBtn.on('click', closeRequestModal);
+
+    $requestOverlay.on('click', function (e) {
+        if (e.target === this) {
+            closeRequestModal();
+        }
+    });
+
+    $(document).on('keydown', function (e) {
+        if (e.key === 'Escape' && $requestOverlay.hasClass('is-open')) {
+            closeRequestModal();
+        }
     });
 
     scrollToBottom();
